@@ -1,7 +1,33 @@
 {
-  "wins": 16,
-  "losses": 10,
-  "total": 26,
-  "winrate": 61.5,
-  "last_updated": "2025-11-14T15:50:00.074365Z"
+  "overall": {
+    "wins": 17,
+    "losses": 10,
+    "total": 27,
+    "winrate": 63.0
+  },
+  "ytd": {
+    "wins": 17,
+    "losses": 10,
+    "total": 27,
+    "winrate": 63.0
+  },
+  "this_month": {
+    "wins": 17,
+    "losses": 10,
+    "total": 27,
+    "winrate": 63.0
+  },
+  "last_month": {
+    "wins": 17,
+    "losses": 10,
+    "total": 27,
+    "winrate": 63.0
+  },
+  "last_week": {
+    "wins": 17,
+    "losses": 10,
+    "total": 27,
+    "winrate": 63.0
+  },
+  "last_updated": "2025-11-14T16:51:08.070366Z"
 }
