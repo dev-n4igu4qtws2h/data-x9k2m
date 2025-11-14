@@ -312,10 +312,10 @@
         // Initialize Equity Chart
         function initEquityChart() {
             const options = {
-                series: [
-                    { name: 'Equity', data: [] },
-                    { name: 'Loss', data: [] }
-                ],
+                series: [{
+                    name: 'Equity',
+                    data: []
+                }],
                 chart: {
                     type: 'area',
                     height: 350,
@@ -329,8 +329,7 @@
                 },
                 stroke: {
                     curve: 'monotoneCubic',
-                    width: 1.5,
-                    colors: ['#3fb950', '#f85149']
+                    width: 1.5
                 },
                 fill: {
                     type: 'gradient',
@@ -341,10 +340,22 @@
                         inverseColors: false,
                         opacityFrom: 0.8,
                         opacityTo: 0.1,
-                        stops: [0, 100]
+                        stops: [0, 100],
+                        colorStops: [
+                            {
+                                offset: 0,
+                                color: '#3fb950',
+                                opacity: 0.8
+                            },
+                            {
+                                offset: 100,
+                                color: '#0d1117',
+                                opacity: 0.1
+                            }
+                        ]
                     }
                 },
-                colors: ['#3fb950', '#f85149'],
+                colors: ['#3fb950'],
                 markers: {
                     size: 0
                 },
@@ -413,9 +424,6 @@
                         }
                     }
                 },
-                legend: {
-                    show: false
-                },
                 theme: {
                     mode: 'dark'
                 }
@@ -481,54 +489,25 @@
                 const firstDate = new Date(aggregatedEquity[0].date);
                 const startDate = new Date(firstDate.getTime() - 24 * 60 * 60 * 1000);
 
-                const allPoints = [
-                    { x: startDate.getTime(), y: 0 },
+                const chartData = [
+                    { x: startDate.getTime(), y: 0, fillColor: '#3fb950', strokeColor: '#3fb950' },
                     ...aggregatedEquity.map(point => ({
                         x: new Date(point.date).getTime(),
-                        y: point.equity
+                        y: point.equity,
+                        fillColor: point.equity >= 0 ? '#3fb950' : '#f85149',
+                        strokeColor: point.equity >= 0 ? '#3fb950' : '#f85149'
                     }))
                 ];
 
-                // Split into positive and negative series for different colors
-                const positiveData = [];
-                const negativeData = [];
-
-                allPoints.forEach((point, i) => {
-                    const prevPoint = i > 0 ? allPoints[i - 1] : null;
-                    const nextPoint = i < allPoints.length - 1 ? allPoints[i + 1] : null;
-
-                    // Check if this is a transition point
-                    const isTransition = (prevPoint && Math.sign(prevPoint.y) !== Math.sign(point.y)) ||
-                                       (nextPoint && Math.sign(point.y) !== Math.sign(nextPoint.y));
-
-                    if (point.y >= 0) {
-                        positiveData.push(point);
-                        // Add transition point to negative series
-                        if (isTransition && nextPoint && nextPoint.y < 0) {
-                            negativeData.push(point);
-                        } else {
-                            negativeData.push({ x: point.x, y: null });
-                        }
-                    } else {
-                        // Add transition point to positive series
-                        if (isTransition && prevPoint && prevPoint.y >= 0) {
-                            positiveData.push(point);
-                        } else {
-                            positiveData.push({ x: point.x, y: null });
-                        }
-                        negativeData.push(point);
-                    }
-                });
-
-                equityChart.updateSeries([
-                    { name: 'Equity', data: positiveData },
-                    { name: 'Loss', data: negativeData }
-                ]);
+                equityChart.updateSeries([{
+                    name: 'Equity',
+                    data: chartData
+                }]);
             } else {
-                equityChart.updateSeries([
-                    { name: 'Equity', data: [] },
-                    { name: 'Loss', data: [] }
-                ]);
+                equityChart.updateSeries([{
+                    name: 'Equity',
+                    data: []
+                }]);
             }
 
             // Update timestamp
