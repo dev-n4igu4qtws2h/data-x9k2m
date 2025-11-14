@@ -3,10 +3,10 @@ name: Update Trading Data
 on:
   schedule:
     - cron: '*/15 * * * *'  # Alle 15 Minuten
-  workflow_dispatch:
+  workflow_dispatch:  # Manueller Trigger
 
 jobs:
-  update:
+  update-data:
     runs-on: ubuntu-latest
     
     steps:
@@ -15,188 +15,214 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Setup Python
+      - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install requests python-dateutil
 
       - name: Fetch and process all strategies
         env:
           NOTION_API_KEY: ${{ secrets.NOTION_API_KEY }}
           AS2_EURUSD_M5_DB_ID: ${{ secrets.AS2_EURUSD_M5_DB_ID }}
-          COT_N_DB_ID: ${{ secrets.COT_N_DB_ID }}
-          STOCKS_DB_ID: ${{ secrets.STOCKS_DB_ID }}
         run: |
           python3 << 'EOF'
+          import requests
           import json
-          import urllib.request
           import os
           from datetime import datetime, timedelta
+          from dateutil import parser
 
           def fetch_notion_data(database_id, api_key):
-              """Fetch data from Notion database"""
-              url = f'https://api.notion.com/v1/databases/{database_id}/query'
+              url = f"https://api.notion.com/v1/databases/{database_id}/query"
               headers = {
-                  'Authorization': f'Bearer {api_key}',
-                  'Notion-Version': '2022-06-28',
-                  'Content-Type': 'application/json'
+                  "Authorization": f"Bearer {api_key}",
+                  "Content-Type": "application/json",
+                  "Notion-Version": "2022-06-28"
               }
               
-              req = urllib.request.Request(url, method='POST', headers=headers)
+              all_results = []
+              has_more = True
+              start_cursor = None
               
-              try:
-                  with urllib.request.urlopen(req) as response:
-                      return json.loads(response.read().decode())
-              except Exception as e:
-                  print(f"❌ Error fetching data: {e}")
-                  return None
+              while has_more:
+                  payload = {}
+                  if start_cursor:
+                      payload["start_cursor"] = start_cursor
+                  
+                  response = requests.post(url, headers=headers, json=payload)
+                  response.raise_for_status()
+                  data = response.json()
+                  
+                  all_results.extend(data.get('results', []))
+                  has_more = data.get('has_more', False)
+                  start_cursor = data.get('next_cursor')
+              
+              return {'results': all_results}
 
-          def calculate_stats_with_timeframes(data):
-              """Calculate stats for all timeframes"""
+          def get_trade_date(trade):
+              """Extract trade date from 'Close Date / Time' or fallback to 'Date'"""
+              date_prop = trade.get('properties', {}).get('Close Date / Time', {})
               
-              if not data:
-                  empty = {'wins': 0, 'losses': 0, 'total': 0, 'winrate': 0}
-                  return {
-                      'overall': empty,
-                      'ytd': empty,
-                      'this_month': empty,
-                      'last_month': empty,
-                      'last_week': empty,
-                      'last_updated': datetime.utcnow().isoformat() + 'Z'
-                  }
+              if not date_prop or 'date' not in date_prop:
+                  date_prop = trade.get('properties', {}).get('Date', {})
               
-              now = datetime.utcnow()
+              if date_prop and 'date' in date_prop and date_prop['date']:
+                  date_data = date_prop['date']
+                  trade_date_str = date_data.get('start')
+                  
+                  if trade_date_str:
+                      try:
+                          clean_date = trade_date_str.split('T')[0]
+                          return datetime.strptime(clean_date, '%Y-%m-%d')
+                      except ValueError:
+                          pass
               
-              # Define timeframes
-              ytd_start = datetime(now.year, 1, 1)
-              this_month_start = datetime(now.year, now.month, 1)
-              last_month_start = (this_month_start - timedelta(days=1)).replace(day=1)
-              last_month_end = this_month_start - timedelta(seconds=1)
-              last_week_start = now - timedelta(days=now.weekday() + 7)
-              last_week_end = now - timedelta(days=now.weekday() + 1)
+              return None
+
+          def get_profit(trade):
+              """Extract Final Profit value"""
+              profit_prop = trade.get('properties', {}).get('Final Profit', {})
               
-              def filter_and_count(trades, start=None, end=None):
-                  """Filter trades by date range and count wins/losses"""
+              if profit_prop and 'number' in profit_prop:
+                  return profit_prop['number']
+              
+              return None
+
+          def calculate_equity_curve(trades, start_date=None, end_date=None):
+              """Calculate equity curve data points with dates"""
+              # Filter trades by date if specified
+              filtered_trades = []
+              for trade in trades:
+                  trade_date = get_trade_date(trade)
+                  if trade_date:
+                      if start_date and trade_date < start_date:
+                          continue
+                      if end_date and trade_date > end_date:
+                          continue
+                      
+                      profit = get_profit(trade)
+                      if profit is not None:
+                          filtered_trades.append({
+                              'date': trade_date,
+                              'profit': profit
+                          })
+              
+              # Sort by date
+              filtered_trades.sort(key=lambda x: x['date'])
+              
+              # Calculate cumulative equity
+              equity_data = []
+              cumulative = 0
+              
+              for trade in filtered_trades:
+                  cumulative += trade['profit']
+                  equity_data.append({
+                      'date': trade['date'].strftime('%Y-%m-%d'),
+                      'equity': round(cumulative, 2)
+                  })
+              
+              return equity_data
+
+          def process_strategy(database_id, api_key, strategy_name):
+              print(f"\nProcessing {strategy_name}...")
+              
+              data = fetch_notion_data(database_id, api_key)
+              trades = data.get('results', [])
+              
+              now = datetime.now()
+              start_of_year = datetime(now.year, 1, 1)
+              start_of_month = datetime(now.year, now.month, 1)
+              
+              if now.month == 1:
+                  start_of_last_month = datetime(now.year - 1, 12, 1)
+                  end_of_last_month = datetime(now.year, 1, 1) - timedelta(days=1)
+              else:
+                  start_of_last_month = datetime(now.year, now.month - 1, 1)
+                  end_of_last_month = start_of_month - timedelta(days=1)
+              
+              start_of_week = now - timedelta(days=now.weekday())
+              start_of_week = datetime(start_of_week.year, start_of_week.month, start_of_week.day)
+              
+              def calculate_stats(trade_list, start=None, end=None):
                   wins = 0
                   losses = 0
                   
-                  for trade in trades:
-                      try:
-                          outcome = trade.get('properties', {}).get('Outcome', {}).get('select', {}).get('name')
-                          
-                          # Check date if Close Date / Time column exists
-                          if start or end:
-                              # Try "Close Date / Time" first, then fallback to "Date"
-                              date_prop = trade.get('properties', {}).get('Close Date / Time', {})
-                              if not date_prop or 'date' not in date_prop:
-                                  date_prop = trade.get('properties', {}).get('Date', {})
-                              
-                              if date_prop and 'date' in date_prop and date_prop['date']:
-                                  trade_date_str = date_prop['date'].get('start', '')
-                                  if trade_date_str:
-                                      try:
-                                          # Parse datetime - handle ISO format
-                                          # Remove timezone and take only date part
-                                          clean_date = trade_date_str.split('T')[0]
-                                          trade_date = datetime.strptime(clean_date, '%Y-%m-%d')
-                                          
-                                          # Apply filters
-                                          if start and trade_date < start:
-                                              continue
-                                          if end and trade_date > end:
-                                              continue
-                                      except Exception as parse_error:
-                                          # If date parsing fails, skip this trade for filtered queries
-                                          if start or end:
-                                              continue
-                          
+                  for trade in trade_list:
+                      trade_date = get_trade_date(trade)
+                      if not trade_date:
+                          continue
+                      
+                      if start and trade_date < start:
+                          continue
+                      if end and trade_date > end:
+                          continue
+                      
+                      outcome_prop = trade.get('properties', {}).get('Outcome', {})
+                      if outcome_prop and 'select' in outcome_prop and outcome_prop['select']:
+                          outcome = outcome_prop['select']['name']
                           if outcome == 'Win':
                               wins += 1
                           elif outcome == 'Loss':
                               losses += 1
-                      except Exception as e:
-                          # Skip trades with errors
-                          continue
                   
                   total = wins + losses
-                  winrate = round(wins / total * 100, 1) if total > 0 else 0
-                  return {'wins': wins, 'losses': losses, 'total': total, 'winrate': winrate}
+                  winrate = round((wins / total * 100), 1) if total > 0 else 0
+                  
+                  return {
+                      'wins': wins,
+                      'losses': losses,
+                      'total': total,
+                      'winrate': winrate
+                  }
               
-              results = data.get('results', [])
-              
-              # Calculate all timeframes
-              stats = {
-                  'overall': filter_and_count(results),
-                  'ytd': filter_and_count(results, ytd_start),
-                  'this_month': filter_and_count(results, this_month_start),
-                  'last_month': filter_and_count(results, last_month_start, last_month_end),
-                  'last_week': filter_and_count(results, last_week_start, last_week_end),
+              result = {
+                  'overall': calculate_stats(trades),
+                  'ytd': calculate_stats(trades, start_of_year),
+                  'this_month': calculate_stats(trades, start_of_month),
+                  'last_month': calculate_stats(trades, start_of_last_month, end_of_last_month),
+                  'last_week': calculate_stats(trades, start_of_week),
+                  'equity': {
+                      'overall': calculate_equity_curve(trades),
+                      'ytd': calculate_equity_curve(trades, start_of_year),
+                      'this_month': calculate_equity_curve(trades, start_of_month),
+                      'last_month': calculate_equity_curve(trades, start_of_last_month, end_of_last_month),
+                      'last_week': calculate_equity_curve(trades, start_of_week)
+                  },
                   'last_updated': datetime.utcnow().isoformat() + 'Z'
               }
               
-              return stats
-
-          def save_json(filename, data):
-              """Save data to JSON file"""
-              os.makedirs('data', exist_ok=True)
-              filepath = f'data/{filename}'
-              with open(filepath, 'w') as f:
-                  json.dump(data, f, indent=2)
+              print(f"✅ {strategy_name}:")
+              print(f"   Overall: {result['overall']['wins']}W / {result['overall']['losses']}L = {result['overall']['winrate']}%")
+              print(f"   Equity points (Overall): {len(result['equity']['overall'])}")
+              print(f"   YTD: {result['ytd']['wins']}W / {result['ytd']['losses']}L = {result['ytd']['winrate']}%")
+              print(f"   This Month: {result['this_month']['wins']}W / {result['this_month']['losses']}L = {result['this_month']['winrate']}%")
               
-              # Print summary
-              if 'overall' in data:
-                  overall = data['overall']
-                  print(f"✅ Saved {filename}:")
-                  print(f"   Overall: {overall['wins']}W / {overall['losses']}L = {overall['winrate']}%")
-                  if 'this_month' in data and data['this_month']['total'] > 0:
-                      month = data['this_month']
-                      print(f"   This Month: {month['wins']}W / {month['losses']}L = {month['winrate']}%")
-                  if 'ytd' in data and data['ytd']['total'] > 0:
-                      ytd = data['ytd']
-                      print(f"   YTD: {ytd['wins']}W / {ytd['losses']}L = {ytd['winrate']}%")
-              else:
-                  print(f"✅ Saved {filename}")
+              return result
 
-          # Get API key
-          api_key = os.environ['NOTION_API_KEY']
+          # Process AS2 EURUSD M5
+          as2_data = process_strategy(
+              os.environ['AS2_EURUSD_M5_DB_ID'],
+              os.environ['NOTION_API_KEY'],
+              'AS2 EURUSD M5'
+          )
+
+          # Save to JSON
+          os.makedirs('data', exist_ok=True)
           
-          # Process AS-2 EURUSD M5
-          if os.environ.get('AS2_EURUSD_M5_DB_ID'):
-              print("📊 Processing AS-2 EURUSD M5...")
-              data = fetch_notion_data(os.environ['AS2_EURUSD_M5_DB_ID'], api_key)
-              if data:
-                  stats = calculate_stats_with_timeframes(data)
-                  save_json('as2-eurusd-m5.json', stats)
-              else:
-                  print("⚠️ No data fetched for AS-2 EURUSD M5")
+          with open('data/as2-eurusd-m5.json', 'w') as f:
+              json.dump(as2_data, f, indent=2)
           
-          # Process COT-N
-          if os.environ.get('COT_N_DB_ID'):
-              print("📊 Processing COT-N...")
-              data = fetch_notion_data(os.environ['COT_N_DB_ID'], api_key)
-              if data:
-                  stats = calculate_stats_with_timeframes(data)
-                  save_json('cot-n.json', stats)
-              else:
-                  print("⚠️ No data fetched for COT-N")
-          
-          # Process Stocks
-          if os.environ.get('STOCKS_DB_ID'):
-              print("📊 Processing Stocks...")
-              data = fetch_notion_data(os.environ['STOCKS_DB_ID'], api_key)
-              if data:
-                  stats = calculate_stats_with_timeframes(data)
-                  save_json('stocks.json', stats)
-              else:
-                  print("⚠️ No data fetched for Stocks")
-          
-          print("✅ All data updated successfully!")
+          print(f"\n✅ Saved as2-eurusd-m5.json")
+
           EOF
 
-      - name: Commit and push changes
+      - name: Commit and push if changed
         run: |
-          git config user.name "GitHub Actions"
-          git config user.email "actions@github.com"
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
           git add data/*.json
-          git diff --quiet && git diff --staged --quiet || git commit -m "Update trading data"
-          git push
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Update trading data [automated]" && git push)
