@@ -312,29 +312,26 @@
                 const response = await fetch('../../data/as2-eurusd-m5.json?t=' + Date.now());
                 const data = await response.json();
                 
-                // For now, we only have overall data
-                // Later we'll calculate timeframes in GitHub Action
-                allData = {
-                    overall: data,
-                    ytd: data,  // Placeholder
-                    this_month: data,  // Placeholder
-                    last_month: { wins: 0, losses: 0, total: 0, winrate: 0 },  // Placeholder
-                    last_week: { wins: 0, losses: 0, total: 0, winrate: 0 }   // Placeholder
-                };
+                console.log('Loaded data:', data); // Debug
+                
+                // Use data directly - it already has all timeframes
+                allData = data;
                 
                 // Initial display
                 updateDashboard('overall');
                 
                 // Update timestamp
-                const date = new Date(data.last_updated);
-                document.getElementById('lastUpdate').textContent = 
-                    'Last updated: ' + date.toLocaleString('de-DE', {
-                        day: '2-digit',
-                        month: '2-digit',
-                        year: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                    });
+                if (data.last_updated) {
+                    const date = new Date(data.last_updated);
+                    document.getElementById('lastUpdate').textContent = 
+                        'Last updated: ' + date.toLocaleString('de-DE', {
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        });
+                }
                 
             } catch (error) {
                 console.error('Error loading data:', error);
@@ -344,10 +341,15 @@
         
         // Update dashboard for selected timeframe
         function updateDashboard(timeframe) {
-            if (!allData || !allData[timeframe]) return;
+            if (!allData || !allData[timeframe]) {
+                console.error('No data for timeframe:', timeframe);
+                return;
+            }
             
             currentTimeframe = timeframe;
             const data = allData[timeframe];
+            
+            console.log('Updating dashboard with:', data); // Debug
             
             // Update all stats
             document.getElementById('wins').textContent = data.wins;
