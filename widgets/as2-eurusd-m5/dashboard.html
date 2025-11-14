@@ -434,10 +434,17 @@
 
             // Update equity chart
             if (equity && equity.length > 0) {
-                const chartData = equity.map(point => ({
-                    x: new Date(point.date).getTime(),
-                    y: point.equity
-                }));
+                // Add starting point at €0 (one day before first trade)
+                const firstDate = new Date(equity[0].date);
+                const startDate = new Date(firstDate.getTime() - 24 * 60 * 60 * 1000); // 1 day before
+
+                const chartData = [
+                    { x: startDate.getTime(), y: 0 },
+                    ...equity.map(point => ({
+                        x: new Date(point.date).getTime(),
+                        y: point.equity
+                    }))
+                ];
 
                 equityChart.updateSeries([{
                     name: 'Equity',
