@@ -84,11 +84,18 @@ jobs:
               return None
 
           def get_profit(trade):
-              """Extract Final Profit value"""
-              profit_prop = trade.get('properties', {}).get('Final Profit', {})
+              """Extract Final Profit value - WITH DEBUG OUTPUT"""
+              properties = trade.get('properties', {})
               
-              if profit_prop and 'number' in profit_prop:
-                  return profit_prop['number']
+              # Try multiple possible column names
+              possible_names = ['Final Profit', 'Profit', 'P&L', 'PnL', 'Final P&L']
+              
+              for name in possible_names:
+                  profit_prop = properties.get(name, {})
+                  
+                  if profit_prop and 'number' in profit_prop and profit_prop['number'] is not None:
+                      print(f"  ✅ Found profit in '{name}': {profit_prop['number']}")
+                      return profit_prop['number']
               
               return None
 
@@ -128,10 +135,38 @@ jobs:
               return equity_data
 
           def process_strategy(database_id, api_key, strategy_name):
-              print(f"\nProcessing {strategy_name}...")
+              print(f"\n{'='*50}")
+              print(f"Processing {strategy_name}...")
+              print(f"{'='*50}")
               
               data = fetch_notion_data(database_id, api_key)
               trades = data.get('results', [])
+              
+              # DEBUG: Print first trade's properties
+              if trades:
+                  print(f"\n🔍 DEBUG: First trade properties:")
+                  first_trade = trades[0]
+                  properties = first_trade.get('properties', {})
+                  print(f"Available columns: {list(properties.keys())}")
+                  
+                  # Check each property type
+                  print(f"\n🔍 Property details:")
+                  for prop_name, prop_data in properties.items():
+                      prop_type = prop_data.get('type', 'unknown')
+                      print(f"  - {prop_name}: type={prop_type}")
+                      
+                      if prop_type == 'number':
+                          value = prop_data.get('number')
+                          print(f"    → Value: {value}")
+                  
+                  print(f"\n🔍 Checking for profit in first 3 trades:")
+                  for i, trade in enumerate(trades[:3]):
+                      print(f"\nTrade {i+1}:")
+                      profit = get_profit(trade)
+                      if profit:
+                          print(f"  ✅ Profit found: {profit}")
+                      else:
+                          print(f"  ❌ No profit found")
               
               now = datetime.now()
               start_of_year = datetime(now.year, 1, 1)
@@ -195,11 +230,20 @@ jobs:
                   'last_updated': datetime.utcnow().isoformat() + 'Z'
               }
               
-              print(f"✅ {strategy_name}:")
-              print(f"   Overall: {result['overall']['wins']}W / {result['overall']['losses']}L = {result['overall']['winrate']}%")
-              print(f"   Equity points (Overall): {len(result['equity']['overall'])}")
-              print(f"   YTD: {result['ytd']['wins']}W / {result['ytd']['losses']}L = {result['ytd']['winrate']}%")
-              print(f"   This Month: {result['this_month']['wins']}W / {result['this_month']['losses']}L = {result['this_month']['winrate']}%")
+              print(f"\n{'='*50}")
+              print(f"✅ {strategy_name} Results:")
+              print(f"{'='*50}")
+              print(f"Overall: {result['overall']['wins']}W / {result['overall']['losses']}L = {result['overall']['winrate']}%")
+              print(f"Equity points (Overall): {len(result['equity']['overall'])}")
+              print(f"YTD: {result['ytd']['wins']}W / {result['ytd']['losses']}L = {result['ytd']['winrate']}%")
+              print(f"This Month: {result['this_month']['wins']}W / {result['this_month']['losses']}L = {result['this_month']['winrate']}%")
+              
+              if result['equity']['overall']:
+                  print(f"\n📈 Equity Curve Sample (first 3 points):")
+                  for point in result['equity']['overall'][:3]:
+                      print(f"  {point['date']}: €{point['equity']}")
+              else:
+                  print(f"\n⚠️  WARNING: No equity data found!")
               
               return result
 
