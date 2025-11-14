@@ -175,6 +175,13 @@ jobs:
                       if end and trade_date > end:
                           continue
 
+                      # Check if trade is excluded from winrate calculation
+                      exclude_prop = trade.get('properties', {}).get('Exclude', {})
+                      is_excluded = exclude_prop.get('checkbox', False) if 'checkbox' in exclude_prop else False
+
+                      if is_excluded:
+                          continue
+
                       outcome_prop = trade.get('properties', {}).get('Outcome', {})
                       if outcome_prop and 'select' in outcome_prop and outcome_prop['select']:
                           outcome = outcome_prop['select']['name']
