@@ -317,7 +317,7 @@
                     data: []
                 }],
                 chart: {
-                    type: 'line',
+                    type: 'area',
                     height: 350,
                     background: 'transparent',
                     toolbar: {
@@ -329,15 +329,27 @@
                 },
                 stroke: {
                     curve: 'smooth',
-                    width: 3,
-                    colors: ['#58a6ff']
+                    width: 2,
+                    colors: ['#3fb950']
+                },
+                fill: {
+                    type: 'gradient',
+                    gradient: {
+                        shade: 'dark',
+                        type: 'vertical',
+                        shadeIntensity: 0.5,
+                        gradientToColors: ['#0d1117'],
+                        inverseColors: false,
+                        opacityFrom: 0.8,
+                        opacityTo: 0.1,
+                        stops: [0, 100]
+                    }
                 },
                 markers: {
-                    size: 4,
-                    colors: ['#58a6ff'],
-                    strokeWidth: 0,
+                    size: 0,
                     hover: {
-                        size: 6
+                        size: 5,
+                        sizeOffset: 3
                     }
                 },
                 xaxis: {
