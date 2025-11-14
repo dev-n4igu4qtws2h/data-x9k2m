@@ -368,7 +368,7 @@
                     }
                 },
                 yaxis: {
-                    min: 0,
+                    forceNiceScale: true,
                     labels: {
                         style: {
                             colors: '#8b949e',
@@ -378,6 +378,15 @@
                             return '€' + val.toFixed(0);
                         }
                     }
+                },
+                annotations: {
+                    yaxis: [{
+                        y: 0,
+                        borderColor: '#30363d',
+                        strokeDashArray: 0,
+                        borderWidth: 2,
+                        opacity: 0.5
+                    }]
                 },
                 grid: {
                     borderColor: '#30363d',
