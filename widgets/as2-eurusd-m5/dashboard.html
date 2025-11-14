@@ -312,10 +312,10 @@
         // Initialize Equity Chart
         function initEquityChart() {
             const options = {
-                series: [{
-                    name: 'Equity',
-                    data: []
-                }],
+                series: [
+                    { name: 'Equity', data: [] },
+                    { name: 'Loss', data: [] }
+                ],
                 chart: {
                     type: 'area',
                     height: 350,
@@ -330,7 +330,7 @@
                 stroke: {
                     curve: 'monotoneCubic',
                     width: 1.5,
-                    colors: ['#3fb950']
+                    colors: ['#3fb950', '#f85149']
                 },
                 fill: {
                     type: 'gradient',
@@ -338,13 +338,13 @@
                         shade: 'dark',
                         type: 'vertical',
                         shadeIntensity: 0.5,
-                        gradientToColors: ['#0d1117'],
                         inverseColors: false,
                         opacityFrom: 0.8,
                         opacityTo: 0.1,
                         stops: [0, 100]
                     }
                 },
+                colors: ['#3fb950', '#f85149'],
                 markers: {
                     size: 0
                 },
@@ -413,6 +413,9 @@
                         }
                     }
                 },
+                legend: {
+                    show: false
+                },
                 theme: {
                     mode: 'dark'
                 }
@@ -478,7 +481,7 @@
                 const firstDate = new Date(aggregatedEquity[0].date);
                 const startDate = new Date(firstDate.getTime() - 24 * 60 * 60 * 1000);
 
-                const chartData = [
+                const allPoints = [
                     { x: startDate.getTime(), y: 0 },
                     ...aggregatedEquity.map(point => ({
                         x: new Date(point.date).getTime(),
@@ -486,15 +489,29 @@
                     }))
                 ];
 
-                equityChart.updateSeries([{
-                    name: 'Equity',
-                    data: chartData
-                }]);
+                // Split into positive and negative series for different colors
+                const positiveData = [];
+                const negativeData = [];
+
+                allPoints.forEach((point, i) => {
+                    if (point.y >= 0) {
+                        positiveData.push(point);
+                        negativeData.push({ x: point.x, y: null });
+                    } else {
+                        positiveData.push({ x: point.x, y: null });
+                        negativeData.push(point);
+                    }
+                });
+
+                equityChart.updateSeries([
+                    { name: 'Equity', data: positiveData },
+                    { name: 'Loss', data: negativeData }
+                ]);
             } else {
-                equityChart.updateSeries([{
-                    name: 'Equity',
-                    data: []
-                }]);
+                equityChart.updateSeries([
+                    { name: 'Equity', data: [] },
+                    { name: 'Loss', data: [] }
+                ]);
             }
 
             // Update timestamp
