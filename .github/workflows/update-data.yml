@@ -31,7 +31,7 @@ jobs:
           import json
           import urllib.request
           import os
-          from datetime import datetime
+          from datetime import datetime, timedelta
 
           def fetch_notion_data(database_id, api_key):
               """Fetch data from Notion database"""
@@ -51,41 +51,96 @@ jobs:
                   print(f"❌ Error fetching data: {e}")
                   return None
 
-          def calculate_stats(data):
-              """Calculate wins, losses, and winrate"""
-              wins = 0
-              losses = 0
+          def calculate_stats_with_timeframes(data):
+              """Calculate stats for all timeframes"""
               
               if not data:
-                  return {'wins': 0, 'losses': 0, 'total': 0, 'winrate': 0}
+                  empty = {'wins': 0, 'losses': 0, 'total': 0, 'winrate': 0}
+                  return {
+                      'overall': empty,
+                      'ytd': empty,
+                      'this_month': empty,
+                      'last_month': empty,
+                      'last_week': empty,
+                      'last_updated': datetime.utcnow().isoformat() + 'Z'
+                  }
               
-              for trade in data.get('results', []):
-                  try:
-                      outcome = trade.get('properties', {}).get('Outcome', {}).get('select', {}).get('name')
-                      if outcome == 'Win':
-                          wins += 1
-                      elif outcome == 'Loss':
-                          losses += 1
-                  except:
-                      continue
+              now = datetime.utcnow()
               
-              total = wins + losses
-              winrate = round(wins / total * 100, 1) if total > 0 else 0
+              # Define timeframes
+              ytd_start = datetime(now.year, 1, 1)
+              this_month_start = datetime(now.year, now.month, 1)
+              last_month_start = (this_month_start - timedelta(days=1)).replace(day=1)
+              last_month_end = this_month_start - timedelta(seconds=1)
+              last_week_start = now - timedelta(days=now.weekday() + 7)
+              last_week_end = now - timedelta(days=now.weekday() + 1)
               
-              return {
-                  'wins': wins,
-                  'losses': losses,
-                  'total': total,
-                  'winrate': winrate,
+              def filter_and_count(trades, start=None, end=None):
+                  """Filter trades by date range and count wins/losses"""
+                  wins = 0
+                  losses = 0
+                  
+                  for trade in trades:
+                      try:
+                          outcome = trade.get('properties', {}).get('Outcome', {}).get('select', {}).get('name')
+                          
+                          # Check date if Date column exists
+                          if start or end:
+                              date_prop = trade.get('properties', {}).get('Date', {})
+                              if 'date' in date_prop and date_prop['date']:
+                                  trade_date_str = date_prop['date'].get('start', '')
+                                  if trade_date_str:
+                                      # Parse ISO date
+                                      trade_date = datetime.fromisoformat(trade_date_str.replace('Z', '+00:00').replace('+00:00', ''))
+                                      
+                                      if start and trade_date < start:
+                                          continue
+                                      if end and trade_date > end:
+                                          continue
+                          
+                          if outcome == 'Win':
+                              wins += 1
+                          elif outcome == 'Loss':
+                              losses += 1
+                      except Exception as e:
+                          # Skip trades with errors
+                          continue
+                  
+                  total = wins + losses
+                  winrate = round(wins / total * 100, 1) if total > 0 else 0
+                  return {'wins': wins, 'losses': losses, 'total': total, 'winrate': winrate}
+              
+              results = data.get('results', [])
+              
+              # Calculate all timeframes
+              stats = {
+                  'overall': filter_and_count(results),
+                  'ytd': filter_and_count(results, ytd_start),
+                  'this_month': filter_and_count(results, this_month_start),
+                  'last_month': filter_and_count(results, last_month_start, last_month_end),
+                  'last_week': filter_and_count(results, last_week_start, last_week_end),
                   'last_updated': datetime.utcnow().isoformat() + 'Z'
               }
+              
+              return stats
 
           def save_json(filename, data):
               """Save data to JSON file"""
               os.makedirs('data', exist_ok=True)
-              with open(f'data/{filename}', 'w') as f:
+              filepath = f'data/{filename}'
+              with open(filepath, 'w') as f:
                   json.dump(data, f, indent=2)
-              print(f"✅ Saved {filename}: {data['wins']} wins, {data['losses']} losses, {data['winrate']}% winrate")
+              
+              # Print summary
+              if 'overall' in data:
+                  overall = data['overall']
+                  print(f"✅ Saved {filename}:")
+                  print(f"   Overall: {overall['wins']}W / {overall['losses']}L = {overall['winrate']}%")
+                  if 'this_month' in data and data['this_month']['total'] > 0:
+                      month = data['this_month']
+                      print(f"   This Month: {month['wins']}W / {month['losses']}L = {month['winrate']}%")
+              else:
+                  print(f"✅ Saved {filename}")
 
           # Get API key
           api_key = os.environ['NOTION_API_KEY']
@@ -94,22 +149,31 @@ jobs:
           if os.environ.get('AS2_EURUSD_M5_DB_ID'):
               print("📊 Processing AS-2 EURUSD M5...")
               data = fetch_notion_data(os.environ['AS2_EURUSD_M5_DB_ID'], api_key)
-              stats = calculate_stats(data)
-              save_json('as2-eurusd-m5.json', stats)
+              if data:
+                  stats = calculate_stats_with_timeframes(data)
+                  save_json('as2-eurusd-m5.json', stats)
+              else:
+                  print("⚠️ No data fetched for AS-2 EURUSD M5")
           
           # Process COT-N
           if os.environ.get('COT_N_DB_ID'):
               print("📊 Processing COT-N...")
               data = fetch_notion_data(os.environ['COT_N_DB_ID'], api_key)
-              stats = calculate_stats(data)
-              save_json('cot-n.json', stats)
+              if data:
+                  stats = calculate_stats_with_timeframes(data)
+                  save_json('cot-n.json', stats)
+              else:
+                  print("⚠️ No data fetched for COT-N")
           
           # Process Stocks
           if os.environ.get('STOCKS_DB_ID'):
               print("📊 Processing Stocks...")
               data = fetch_notion_data(os.environ['STOCKS_DB_ID'], api_key)
-              stats = calculate_stats(data)
-              save_json('stocks.json', stats)
+              if data:
+                  stats = calculate_stats_with_timeframes(data)
+                  save_json('stocks.json', stats)
+              else:
+                  print("⚠️ No data fetched for Stocks")
           
           print("✅ All data updated successfully!")
           EOF
