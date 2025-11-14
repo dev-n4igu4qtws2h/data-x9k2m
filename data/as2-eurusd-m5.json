@@ -24,10 +24,17 @@
     "winrate": 66.7
   },
   "last_week": {
-    "wins": 2,
-    "losses": 2,
-    "total": 4,
-    "winrate": 50.0
+    "wins": 6,
+    "losses": 4,
+    "total": 10,
+    "winrate": 60.0
   },
-  "last_updated": "2025-11-14T17:06:07.723114Z"
+  "equity": {
+    "overall": [],
+    "ytd": [],
+    "this_month": [],
+    "last_month": [],
+    "last_week": []
+  },
+  "last_updated": "2025-11-14T17:27:15.994051Z"
 }
