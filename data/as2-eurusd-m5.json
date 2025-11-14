@@ -1,21 +1,21 @@
 {
   "overall": {
-    "wins": 17,
+    "wins": 15,
     "losses": 10,
-    "total": 27,
-    "winrate": 63.0
+    "total": 25,
+    "winrate": 60.0
   },
   "ytd": {
-    "wins": 17,
+    "wins": 15,
     "losses": 10,
-    "total": 27,
-    "winrate": 63.0
+    "total": 25,
+    "winrate": 60.0
   },
   "this_month": {
-    "wins": 9,
+    "wins": 7,
     "losses": 6,
-    "total": 15,
-    "winrate": 60.0
+    "total": 13,
+    "winrate": 53.8
   },
   "last_month": {
     "wins": 8,
@@ -24,10 +24,10 @@
     "winrate": 66.7
   },
   "last_week": {
-    "wins": 6,
+    "wins": 5,
     "losses": 4,
-    "total": 10,
-    "winrate": 60.0
+    "total": 9,
+    "winrate": 55.6
   },
   "equity": {
     "overall": [
@@ -405,5 +405,5 @@
       }
     ]
   },
-  "last_updated": "2025-11-14T20:51:09.402494Z"
+  "last_updated": "2025-11-14T20:59:59.320383Z"
 }
