@@ -434,21 +434,40 @@
 
             // Update equity chart
             if (equity && equity.length > 0) {
-                // Aggregate equity by day (take last value per day for smoother curve)
-                const equityByDay = {};
-                equity.forEach(point => {
-                    equityByDay[point.date] = point.equity; // Overwrites if multiple per day
-                });
+                let aggregatedEquity;
 
-                // Convert back to array
-                const aggregatedEquity = Object.entries(equityByDay).map(([date, equity]) => ({
-                    date: date,
-                    equity: equity
-                }));
+                // Weekly aggregation for YTD and Overall, daily for shorter timeframes
+                if (timeframe === 'overall' || timeframe === 'ytd') {
+                    // Group by week (ISO week number)
+                    const equityByWeek = {};
+                    equity.forEach(point => {
+                        const date = new Date(point.date);
+                        const weekStart = new Date(date);
+                        weekStart.setDate(date.getDate() - date.getDay() + 1); // Monday
+                        const weekKey = weekStart.toISOString().split('T')[0];
+                        equityByWeek[weekKey] = point.equity; // Last value of the week
+                    });
+
+                    aggregatedEquity = Object.entries(equityByWeek).map(([date, equity]) => ({
+                        date: date,
+                        equity: equity
+                    }));
+                } else {
+                    // Daily aggregation for shorter timeframes
+                    const equityByDay = {};
+                    equity.forEach(point => {
+                        equityByDay[point.date] = point.equity;
+                    });
+
+                    aggregatedEquity = Object.entries(equityByDay).map(([date, equity]) => ({
+                        date: date,
+                        equity: equity
+                    }));
+                }
 
                 // Add starting point at €0 (one day before first trade)
                 const firstDate = new Date(aggregatedEquity[0].date);
-                const startDate = new Date(firstDate.getTime() - 24 * 60 * 60 * 1000); // 1 day before
+                const startDate = new Date(firstDate.getTime() - 24 * 60 * 60 * 1000);
 
                 const chartData = [
                     { x: startDate.getTime(), y: 0 },
