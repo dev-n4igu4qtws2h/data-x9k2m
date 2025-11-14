@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>AS-2 EURUSD M5 - Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: #0d1117;
+            color: #c9d1d9;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .dashboard {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .strategy-name {
+            font-size: 28px;
+            color: #58a6ff;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .subtitle {
+            font-size: 14px;
+            color: #8b949e;
+        }
+        
+        /* Timeframe Selector */
+        .timeframe-selector {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+        
+        .timeframe-btn {
+            padding: 10px 24px;
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            color: #8b949e;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+            font-weight: 500;
+            font-family: inherit;
+        }
+        
+        .timeframe-btn:hover {
+            border-color: #58a6ff;
+            color: #c9d1d9;
+        }
+        
+        .timeframe-btn.active {
+            background: #58a6ff;
+            color: #fff;
+            border-color: #58a6ff;
+        }
+        
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            padding: 24px;
+            transition: border-color 0.2s;
+        }
+        
+        .stat-card:hover {
+            border-color: #58a6ff;
+        }
+        
+        .stat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #8b949e;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .stat-icon {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+        
+        .icon-win { background: #3fb950; }
+        .icon-loss { background: #f85149; }
+        .icon-neutral { background: #58a6ff; }
+        
+        .stat-value {
+            font-size: 48px;
+            font-weight: 600;
+            line-height: 1;
+            margin-bottom: 8px;
+        }
+        
+        .stat-value.win { color: #3fb950; }
+        .stat-value.loss { color: #f85149; }
+        .stat-value.neutral { color: #c9d1d9; }
+        
+        .stat-subtext {
+            font-size: 12px;
+            color: #6e7681;
+        }
+        
+        .stat-ratio {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 36px;
+            font-weight: 600;
+        }
+        
+        .ratio-wins { color: #3fb950; }
+        .ratio-separator { color: #6e7681; font-size: 24px; }
+        .ratio-losses { color: #f85149; }
+        
+        /* Gauge Card */
+        .gauge-card {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            padding: 24px;
+        }
+        
+        .gauge-header {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        
+        .gauge-title {
+            font-size: 14px;
+            color: #8b949e;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #21262d;
+            font-size: 12px;
+            color: #6e7681;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .strategy-name {
+                font-size: 22px;
+            }
+            
+            .timeframe-selector {
+                gap: 8px;
+            }
+            
+            .timeframe-btn {
+                padding: 8px 16px;
+                font-size: 13px;
+            }
+            
+            .stat-value {
+                font-size: 36px;
+            }
+            
+            .stat-ratio {
+                font-size: 28px;
+            }
+        }
+        
+        /* Loading state */
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Header -->
+        <div class="header">
+            <div class="strategy-name">AS-2 EURUSD M5</div>
+            <div class="subtitle">Live Trading Dashboard</div>
+        </div>
+        
+        <!-- Timeframe Selector -->
+        <div class="timeframe-selector">
+            <button class="timeframe-btn active" data-timeframe="overall">Max</button>
+            <button class="timeframe-btn" data-timeframe="ytd">YTD</button>
+            <button class="timeframe-btn" data-timeframe="this_month">This Month</button>
+            <button class="timeframe-btn" data-timeframe="last_month">Last Month</button>
+            <button class="timeframe-btn" data-timeframe="last_week">Last Week</button>
+        </div>
+        
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <!-- Winrate Gauge -->
+            <div class="gauge-card">
+                <div class="gauge-header">
+                    <div class="gauge-title">Winrate</div>
+                </div>
+                <div id="gauge-chart"></div>
+            </div>
+            
+            <!-- Win/Loss Ratio -->
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span class="stat-label">Win / Loss Ratio</span>
+                    <div class="stat-icon icon-neutral"></div>
+                </div>
+                <div class="stat-ratio">
+                    <span class="ratio-wins" id="wins">-</span>
+                    <span class="ratio-separator">vs</span>
+                    <span class="ratio-losses" id="losses">-</span>
+                </div>
+                <div class="stat-subtext">Total Trades: <span id="total">-</span></div>
+            </div>
+        </div>
+        
+        <!-- Additional Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span class="stat-label">Total Wins</span>
+                    <div class="stat-icon icon-win"></div>
+                </div>
+                <div class="stat-value win" id="wins-detail">-</div>
+                <div class="stat-subtext" id="wins-percent">-</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span class="stat-label">Total Losses</span>
+                    <div class="stat-icon icon-loss"></div>
+                </div>
+                <div class="stat-value loss" id="losses-detail">-</div>
+                <div class="stat-subtext" id="losses-percent">-</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span class="stat-label">Total Trades</span>
+                    <div class="stat-icon icon-neutral"></div>
+                </div>
+                <div class="stat-value neutral" id="total-detail">-</div>
+                <div class="stat-subtext" id="period-label">All Time</div>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="footer">
+            <div id="lastUpdate">Loading data...</div>
+        </div>
+    </div>
+
+    <script>
+        let allData = null;
+        let currentTimeframe = 'overall';
+        let gaugeChart = null;
+        
+        // Timeframe labels
+        const timeframeLabels = {
+            'overall': 'All Time',
+            'ytd': 'Year to Date 2025',
+            'this_month': 'November 2025',
+            'last_month': 'October 2025',
+            'last_week': 'Last Week'
+        };
+        
+        // Load data from JSON
+        async function loadData() {
+            try {
+                const response = await fetch('../../data/as2-eurusd-m5.json?t=' + Date.now());
+                const data = await response.json();
+                
+                // For now, we only have overall data
+                // Later we'll calculate timeframes in GitHub Action
+                allData = {
+                    overall: data,
+                    ytd: data,  // Placeholder
+                    this_month: data,  // Placeholder
+                    last_month: { wins: 0, losses: 0, total: 0, winrate: 0 },  // Placeholder
+                    last_week: { wins: 0, losses: 0, total: 0, winrate: 0 }   // Placeholder
+                };
+                
+                // Initial display
+                updateDashboard('overall');
+                
+                // Update timestamp
+                const date = new Date(data.last_updated);
+                document.getElementById('lastUpdate').textContent = 
+                    'Last updated: ' + date.toLocaleString('de-DE', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                
+            } catch (error) {
+                console.error('Error loading data:', error);
+                document.getElementById('lastUpdate').textContent = 'Error loading data';
+            }
+        }
+        
+        // Update dashboard for selected timeframe
+        function updateDashboard(timeframe) {
+            if (!allData || !allData[timeframe]) return;
+            
+            currentTimeframe = timeframe;
+            const data = allData[timeframe];
+            
+            // Update all stats
+            document.getElementById('wins').textContent = data.wins;
+            document.getElementById('losses').textContent = data.losses;
+            document.getElementById('total').textContent = data.total;
+            
+            document.getElementById('wins-detail').textContent = data.wins;
+            document.getElementById('losses-detail').textContent = data.losses;
+            document.getElementById('total-detail').textContent = data.total;
+            
+            // Calculate percentages
+            const winPercent = data.total > 0 ? ((data.wins / data.total) * 100).toFixed(1) : 0;
+            const lossPercent = data.total > 0 ? ((data.losses / data.total) * 100).toFixed(1) : 0;
+            
+            document.getElementById('wins-percent').textContent = `${winPercent}% of total trades`;
+            document.getElementById('losses-percent').textContent = `${lossPercent}% of total trades`;
+            
+            // Update period label
+            document.getElementById('period-label').textContent = timeframeLabels[timeframe];
+            
+            // Update gauge
+            updateGauge(data.winrate);
+        }
+        
+        // Update gauge chart
+        function updateGauge(winrate) {
+            if (gaugeChart) {
+                gaugeChart.updateSeries([winrate]);
+            } else {
+                renderGauge(winrate);
+            }
+        }
+        
+        // Render gauge chart
+        function renderGauge(winrate) {
+            const options = {
+                series: [winrate],
+                chart: {
+                    type: 'radialBar',
+                    height: 280,
+                    background: 'transparent',
+                    fontFamily: '-apple-system, sans-serif',
+                },
+                plotOptions: {
+                    radialBar: {
+                        startAngle: -135,
+                        endAngle: 135,
+                        hollow: {
+                            margin: 0,
+                            size: '70%',
+                            background: '#0d1117',
+                        },
+                        track: {
+                            background: '#21262d',
+                            strokeWidth: '100%',
+                            margin: 0,
+                        },
+                        dataLabels: {
+                            show: true,
+                            name: {
+                                show: false
+                            },
+                            value: {
+                                fontSize: '42px',
+                                fontWeight: 600,
+                                color: '#3fb950',
+                                offsetY: 8,
+                                formatter: function (val) {
+                                    return val.toFixed(1) + '%';
+                                }
+                            }
+                        }
+                    }
+                },
+                fill: {
+                    type: 'gradient',
+                    gradient: {
+                        shade: 'dark',
+                        type: 'horizontal',
+                        shadeIntensity: 0.5,
+                        gradientToColors: ['#3fb950'],
+                        inverseColors: false,
+                        opacityFrom: 1,
+                        opacityTo: 1,
+                        stops: [0, 100]
+                    }
+                },
+                stroke: {
+                    lineCap: 'round'
+                },
+                theme: {
+                    mode: 'dark'
+                }
+            };
+
+            gaugeChart = new ApexCharts(document.querySelector("#gauge-chart"), options);
+            gaugeChart.render();
+        }
+        
+        // Button click handlers
+        document.querySelectorAll('.timeframe-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Remove active class from all buttons
+                document.querySelectorAll('.timeframe-btn').forEach(b => 
+                    b.classList.remove('active')
+                );
+                
+                // Add active class to clicked button
+                this.classList.add('active');
+                
+                // Update dashboard
+                const timeframe = this.dataset.timeframe;
+                updateDashboard(timeframe);
+            });
+        });
+        
+        // Initialize
+        loadData();
+        
+        // Refresh every minute
+        setInterval(loadData, 60000);
+    </script>
+</body>
+</html>
