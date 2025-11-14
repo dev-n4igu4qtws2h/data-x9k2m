@@ -312,10 +312,10 @@
         // Initialize Equity Chart
         function initEquityChart() {
             const options = {
-                series: [{
-                    name: 'Equity',
-                    data: []
-                }],
+                series: [
+                    { name: 'Profit', data: [] },
+                    { name: 'Loss', data: [] }
+                ],
                 chart: {
                     type: 'area',
                     height: 350,
@@ -329,7 +329,8 @@
                 },
                 stroke: {
                     curve: 'monotoneCubic',
-                    width: 1.5
+                    width: 1.5,
+                    colors: ['#3fb950', '#f85149']
                 },
                 fill: {
                     type: 'gradient',
@@ -340,22 +341,10 @@
                         inverseColors: false,
                         opacityFrom: 0.8,
                         opacityTo: 0.1,
-                        stops: [0, 100],
-                        colorStops: [
-                            {
-                                offset: 0,
-                                color: '#3fb950',
-                                opacity: 0.8
-                            },
-                            {
-                                offset: 100,
-                                color: '#0d1117',
-                                opacity: 0.1
-                            }
-                        ]
+                        stops: [0, 100]
                     }
                 },
-                colors: ['#3fb950'],
+                colors: ['#3fb950', '#f85149'],
                 markers: {
                     size: 0
                 },
@@ -424,6 +413,9 @@
                         }
                     }
                 },
+                legend: {
+                    show: false
+                },
                 theme: {
                     mode: 'dark'
                 }
@@ -489,25 +481,58 @@
                 const firstDate = new Date(aggregatedEquity[0].date);
                 const startDate = new Date(firstDate.getTime() - 24 * 60 * 60 * 1000);
 
-                const chartData = [
-                    { x: startDate.getTime(), y: 0, fillColor: '#3fb950', strokeColor: '#3fb950' },
+                const allPoints = [
+                    { x: startDate.getTime(), y: 0 },
                     ...aggregatedEquity.map(point => ({
                         x: new Date(point.date).getTime(),
-                        y: point.equity,
-                        fillColor: point.equity >= 0 ? '#3fb950' : '#f85149',
-                        strokeColor: point.equity >= 0 ? '#3fb950' : '#f85149'
+                        y: point.equity
                     }))
                 ];
 
-                equityChart.updateSeries([{
-                    name: 'Equity',
-                    data: chartData
-                }]);
+                // Split into positive and negative series with interpolated zero crossings
+                const profitData = [];
+                const lossData = [];
+
+                for (let i = 0; i < allPoints.length; i++) {
+                    const point = allPoints[i];
+                    const nextPoint = i < allPoints.length - 1 ? allPoints[i + 1] : null;
+
+                    if (point.y >= 0) {
+                        profitData.push([point.x, point.y]);
+                        lossData.push([point.x, null]);
+
+                        // Check if next point crosses into negative
+                        if (nextPoint && nextPoint.y < 0) {
+                            // Interpolate zero crossing point
+                            const ratio = Math.abs(point.y) / (Math.abs(point.y) + Math.abs(nextPoint.y));
+                            const crossX = point.x + (nextPoint.x - point.x) * ratio;
+                            profitData.push([crossX, 0]);
+                            lossData.push([crossX, 0]);
+                        }
+                    } else {
+                        profitData.push([point.x, null]);
+                        lossData.push([point.x, point.y]);
+
+                        // Check if next point crosses into positive
+                        if (nextPoint && nextPoint.y >= 0) {
+                            // Interpolate zero crossing point
+                            const ratio = Math.abs(point.y) / (Math.abs(point.y) + Math.abs(nextPoint.y));
+                            const crossX = point.x + (nextPoint.x - point.x) * ratio;
+                            profitData.push([crossX, 0]);
+                            lossData.push([crossX, 0]);
+                        }
+                    }
+                }
+
+                equityChart.updateSeries([
+                    { name: 'Profit', data: profitData },
+                    { name: 'Loss', data: lossData }
+                ]);
             } else {
-                equityChart.updateSeries([{
-                    name: 'Equity',
-                    data: []
-                }]);
+                equityChart.updateSeries([
+                    { name: 'Profit', data: [] },
+                    { name: 'Loss', data: [] }
+                ]);
             }
 
             // Update timestamp
