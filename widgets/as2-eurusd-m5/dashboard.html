@@ -494,11 +494,28 @@
                 const negativeData = [];
 
                 allPoints.forEach((point, i) => {
+                    const prevPoint = i > 0 ? allPoints[i - 1] : null;
+                    const nextPoint = i < allPoints.length - 1 ? allPoints[i + 1] : null;
+
+                    // Check if this is a transition point
+                    const isTransition = (prevPoint && Math.sign(prevPoint.y) !== Math.sign(point.y)) ||
+                                       (nextPoint && Math.sign(point.y) !== Math.sign(nextPoint.y));
+
                     if (point.y >= 0) {
                         positiveData.push(point);
-                        negativeData.push({ x: point.x, y: null });
+                        // Add transition point to negative series
+                        if (isTransition && nextPoint && nextPoint.y < 0) {
+                            negativeData.push(point);
+                        } else {
+                            negativeData.push({ x: point.x, y: null });
+                        }
                     } else {
-                        positiveData.push({ x: point.x, y: null });
+                        // Add transition point to positive series
+                        if (isTransition && prevPoint && prevPoint.y >= 0) {
+                            positiveData.push(point);
+                        } else {
+                            positiveData.push({ x: point.x, y: null });
+                        }
                         negativeData.push(point);
                     }
                 });
