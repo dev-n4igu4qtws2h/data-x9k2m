@@ -84,19 +84,31 @@ jobs:
                       try:
                           outcome = trade.get('properties', {}).get('Outcome', {}).get('select', {}).get('name')
                           
-                          # Check date if Date column exists
+                          # Check date if Close Date / Time column exists
                           if start or end:
-                              date_prop = trade.get('properties', {}).get('Date', {})
-                              if 'date' in date_prop and date_prop['date']:
+                              # Try "Close Date / Time" first, then fallback to "Date"
+                              date_prop = trade.get('properties', {}).get('Close Date / Time', {})
+                              if not date_prop or 'date' not in date_prop:
+                                  date_prop = trade.get('properties', {}).get('Date', {})
+                              
+                              if date_prop and 'date' in date_prop and date_prop['date']:
                                   trade_date_str = date_prop['date'].get('start', '')
                                   if trade_date_str:
-                                      # Parse ISO date
-                                      trade_date = datetime.fromisoformat(trade_date_str.replace('Z', '+00:00').replace('+00:00', ''))
-                                      
-                                      if start and trade_date < start:
-                                          continue
-                                      if end and trade_date > end:
-                                          continue
+                                      try:
+                                          # Parse datetime - handle ISO format
+                                          # Remove timezone and take only date part
+                                          clean_date = trade_date_str.split('T')[0]
+                                          trade_date = datetime.strptime(clean_date, '%Y-%m-%d')
+                                          
+                                          # Apply filters
+                                          if start and trade_date < start:
+                                              continue
+                                          if end and trade_date > end:
+                                              continue
+                                      except Exception as parse_error:
+                                          # If date parsing fails, skip this trade for filtered queries
+                                          if start or end:
+                                              continue
                           
                           if outcome == 'Win':
                               wins += 1
@@ -139,6 +151,9 @@ jobs:
                   if 'this_month' in data and data['this_month']['total'] > 0:
                       month = data['this_month']
                       print(f"   This Month: {month['wins']}W / {month['losses']}L = {month['winrate']}%")
+                  if 'ytd' in data and data['ytd']['total'] > 0:
+                      ytd = data['ytd']
+                      print(f"   YTD: {ytd['wins']}W / {ytd['losses']}L = {ytd['winrate']}%")
               else:
                   print(f"✅ Saved {filename}")
 
