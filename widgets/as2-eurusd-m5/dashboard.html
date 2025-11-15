@@ -163,31 +163,6 @@
             border-top: 1px solid var(--border-primary);
         }
 
-        .signal-accuracy-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            gap: 15px;
-            padding: 10px 0;
-        }
-
-        .signal-stat {
-            flex: 1;
-            text-align: center;
-        }
-
-        .signal-stat-label {
-            color: var(--text-secondary);
-            font-size: 12px;
-            margin-bottom: 8px;
-        }
-
-        .signal-stat-value {
-            font-size: 16px;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
         @media (max-width: 768px) {
             .stats-grid {
                 grid-template-columns: 1fr;
@@ -250,26 +225,24 @@
                     <span class="stat-value" id="wlRatio">-</span>
                 </div>
             </div>
-        </div>
 
-        <div class="card" id="signalAccuracyCard" style="display: none;">
-            <div class="card-title">Signal Accuracy</div>
-            <div class="signal-accuracy-row">
-                <div class="signal-stat">
-                    <div class="signal-stat-label">Your Stats</div>
-                    <div class="signal-stat-value" id="yourStats">-</div>
+            <div class="card" id="signalAccuracyCard" style="display: none;">
+                <div class="card-title">Misdeeds</div>
+                <div class="stat-row">
+                    <span class="stat-label">Your Stats</span>
+                    <span class="stat-value" id="yourStats">-</span>
                 </div>
-                <div class="signal-stat">
-                    <div class="signal-stat-label">Reference Signal Service</div>
-                    <div class="signal-stat-value" id="refStats">-</div>
+                <div class="stat-row">
+                    <span class="stat-label">Reference Signal Service</span>
+                    <span class="stat-value" id="refStats">-</span>
                 </div>
-                <div class="signal-stat">
-                    <div class="signal-stat-label">Datafeed Diff</div>
-                    <div class="signal-stat-value" id="datafeedDiff">-</div>
+                <div class="stat-row">
+                    <span class="stat-label">Datafeed Diff</span>
+                    <span class="stat-value" id="datafeedDiff">-</span>
                 </div>
-                <div class="signal-stat">
-                    <div class="signal-stat-label">Misdeeds</div>
-                    <div class="signal-stat-value" id="missetaten">-</div>
+                <div class="stat-row">
+                    <span class="stat-label">Misdeeds</span>
+                    <span class="stat-value" id="missetaten">-</span>
                 </div>
             </div>
         </div>
@@ -602,11 +575,11 @@
                 diffElem.textContent = `${ref.datafeed_diff >= 0 ? '+' : ''}${ref.datafeed_diff}`;
                 diffElem.style.color = ref.datafeed_diff >= 0 ? 'var(--color-win)' : 'var(--color-loss)';
 
-                // Missetaten (discrepancies from expected)
-                const missetaten = Math.abs(data.wins - ref.expected_wins) + Math.abs(data.losses - ref.expected_losses);
-                const missetatenElem = document.getElementById('missetaten');
-                missetatenElem.textContent = missetaten.toString();
-                missetatenElem.style.color = missetaten === 0 ? 'var(--color-win)' : 'var(--color-loss)';
+                // Misdeeds (discrepancies from expected)
+                const misdeeds = Math.abs(data.wins - ref.expected_wins) + Math.abs(data.losses - ref.expected_losses);
+                const misdeedsElem = document.getElementById('missetaten');
+                misdeedsElem.textContent = misdeeds.toString();
+                misdeedsElem.style.color = misdeeds === 0 ? 'var(--color-win)' : 'var(--color-loss)';
             } else {
                 signalCard.style.display = 'none';
             }
