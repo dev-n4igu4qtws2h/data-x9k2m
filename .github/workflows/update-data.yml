@@ -230,21 +230,30 @@ jobs:
 
           def fetch_signal_reference(database_id, api_key):
               """Fetch signal service reference data"""
+              print(f"   Fetching from DB: {database_id}")
               data = fetch_notion_data(database_id, api_key)
               references = {}
+
+              print(f"   Found {len(data.get('results', []))} entries")
 
               for entry in data.get('results', []):
                   props = entry.get('properties', {})
 
+                  print(f"\n   📝 Entry properties: {list(props.keys())}")
+
                   # Parse date (format: 01/10/2025)
                   date_prop = props.get('Date', {})
+                  print(f"   Date prop type: {date_prop.get('type', 'unknown')}")
+
                   if date_prop and 'title' in date_prop and date_prop['title']:
                       date_str = date_prop['title'][0]['plain_text']
+                      print(f"   Date string: {date_str}")
 
                       # Parse DD/MM/YYYY
                       try:
                           day, month, year = date_str.split('/')
                           month_key = f"{year}-{month.zfill(2)}"  # e.g., "2025-10"
+                          print(f"   Month key: {month_key}")
 
                           # Get winners
                           winners_prop = props.get('Winners', {})
@@ -263,9 +272,12 @@ jobs:
                               'losers': losers,
                               'datafeed_diff': datafeed_diff
                           }
-                      except:
-                          pass
 
+                          print(f"   ✅ Added: {month_key} -> {winners}W/{losers}L (diff: {datafeed_diff})")
+                      except Exception as e:
+                          print(f"   ❌ Parse error: {e}")
+
+              print(f"\n   Total references collected: {list(references.keys())}")
               return references
 
           def compare_with_reference(actual_stats, reference_data, month_key):
