@@ -405,9 +405,18 @@
       }
     ]
   },
-  "last_updated": "2025-11-15T17:19:35.435132Z",
+  "last_updated": "2025-11-15T17:25:56.612785Z",
   "signal_accuracy": {
-    "last_month": null,
+    "last_month": {
+      "reference_wins": 7,
+      "reference_losses": 4,
+      "datafeed_diff": 1,
+      "expected_wins": 8,
+      "expected_losses": 4,
+      "wins_match": true,
+      "losses_match": true,
+      "in_sync": true
+    },
     "this_month": null
   }
 }
