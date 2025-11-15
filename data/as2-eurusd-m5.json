@@ -405,5 +405,9 @@
       }
     ]
   },
-  "last_updated": "2025-11-15T16:50:13.073289Z"
+  "last_updated": "2025-11-15T17:14:58.200985Z",
+  "signal_accuracy": {
+    "last_month": null,
+    "this_month": null
+  }
 }
