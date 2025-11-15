@@ -477,9 +477,9 @@
                     }));
                 }
 
-                // Add starting point at €0 (one day before first trade)
+                // Add starting point at €0 (a few hours before first trade for smoother transition)
                 const firstDate = new Date(aggregatedEquity[0].date);
-                const startDate = new Date(firstDate.getTime() - 24 * 60 * 60 * 1000);
+                const startDate = new Date(firstDate.getTime() - 6 * 60 * 60 * 1000); // 6 hours before
 
                 const allPoints = [
                     { x: startDate.getTime(), y: 0 },
