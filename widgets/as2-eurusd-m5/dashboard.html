@@ -227,6 +227,30 @@
             </div>
         </div>
 
+        <div class="card" id="signalAccuracyCard" style="display: none;">
+            <div class="card-title">Signal Accuracy vs Reference</div>
+            <div class="stat-row">
+                <span class="stat-label">Your Stats</span>
+                <span class="stat-value" id="yourStats">-</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-label">Reference</span>
+                <span class="stat-value" id="refStats">-</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-label">Datafeed Diff</span>
+                <span class="stat-value" id="datafeedDiff">-</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-label">Expected</span>
+                <span class="stat-value" id="expectedStats">-</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-label">Status</span>
+                <span class="stat-value" id="syncStatus">-</span>
+            </div>
+        </div>
+
         <div class="card equity-card">
             <div class="card-title">Equity Curve</div>
             <div class="equity-chart">
@@ -533,6 +557,43 @@
                     { name: 'Profit', data: [] },
                     { name: 'Loss', data: [] }
                 ]);
+            }
+
+            // Update Signal Accuracy widget (only visible for last_month)
+            const signalCard = document.getElementById('signalAccuracyCard');
+            if (timeframe === 'last_month' && allData.signal_accuracy && allData.signal_accuracy.last_month) {
+                signalCard.style.display = 'block';
+
+                const ref = allData.signal_accuracy.last_month;
+
+                // Your Stats
+                document.getElementById('yourStats').textContent =
+                    `${data.wins}W / ${data.losses}L (${data.winrate.toFixed(1)}%)`;
+
+                // Reference
+                document.getElementById('refStats').textContent =
+                    `${ref.reference_wins}W / ${ref.reference_losses}L`;
+
+                // Datafeed Diff
+                const diffElem = document.getElementById('datafeedDiff');
+                diffElem.textContent = `${ref.datafeed_diff >= 0 ? '+' : ''}${ref.datafeed_diff}`;
+                diffElem.style.color = ref.datafeed_diff >= 0 ? 'var(--color-win)' : 'var(--color-loss)';
+
+                // Expected
+                document.getElementById('expectedStats').textContent =
+                    `${ref.expected_wins}W / ${ref.expected_losses}L`;
+
+                // Status
+                const statusElem = document.getElementById('syncStatus');
+                if (ref.in_sync) {
+                    statusElem.textContent = '✅ In Sync';
+                    statusElem.style.color = 'var(--color-win)';
+                } else {
+                    statusElem.textContent = '⚠️ Mismatch';
+                    statusElem.style.color = 'var(--color-loss)';
+                }
+            } else {
+                signalCard.style.display = 'none';
             }
 
             // Update timestamp

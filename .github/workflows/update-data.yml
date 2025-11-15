@@ -228,12 +228,106 @@ jobs:
 
               return result
 
+          def fetch_signal_reference(database_id, api_key):
+              """Fetch signal service reference data"""
+              data = fetch_notion_data(database_id, api_key)
+              references = {}
+
+              for entry in data.get('results', []):
+                  props = entry.get('properties', {})
+
+                  # Parse date (format: 01/10/2025)
+                  date_prop = props.get('Date', {})
+                  if date_prop and 'title' in date_prop and date_prop['title']:
+                      date_str = date_prop['title'][0]['plain_text']
+
+                      # Parse DD/MM/YYYY
+                      try:
+                          day, month, year = date_str.split('/')
+                          month_key = f"{year}-{month.zfill(2)}"  # e.g., "2025-10"
+
+                          # Get winners
+                          winners_prop = props.get('Winners', {})
+                          winners = winners_prop.get('number', 0) if 'number' in winners_prop else 0
+
+                          # Get losers
+                          losers_prop = props.get('Losers', {})
+                          losers = losers_prop.get('number', 0) if 'number' in losers_prop else 0
+
+                          # Get datafeed difference
+                          diff_prop = props.get('Datafeed Difference', {})
+                          datafeed_diff = diff_prop.get('number', 0) if 'number' in diff_prop else 0
+
+                          references[month_key] = {
+                              'winners': winners,
+                              'losers': losers,
+                              'datafeed_diff': datafeed_diff
+                          }
+                      except:
+                          pass
+
+              return references
+
+          def compare_with_reference(actual_stats, reference_data, month_key):
+              """Compare actual stats with signal service reference"""
+              if month_key not in reference_data:
+                  return None
+
+              ref = reference_data[month_key]
+              expected_wins = ref['winners'] + ref['datafeed_diff']
+              expected_losses = ref['losers']
+
+              wins_match = actual_stats['wins'] == expected_wins
+              losses_match = actual_stats['losses'] == expected_losses
+
+              return {
+                  'reference_wins': ref['winners'],
+                  'reference_losses': ref['losers'],
+                  'datafeed_diff': ref['datafeed_diff'],
+                  'expected_wins': expected_wins,
+                  'expected_losses': expected_losses,
+                  'wins_match': wins_match,
+                  'losses_match': losses_match,
+                  'in_sync': wins_match and losses_match
+              }
+
           # Process AS2 EURUSD M5
           as2_data = process_strategy(
               os.environ['AS2_EURUSD_M5_DB_ID'],
               os.environ['NOTION_API_KEY'],
               'AS2 EURUSD M5'
           )
+
+          # Fetch signal reference data
+          print(f"\nFetching signal service reference data...")
+          reference_data = fetch_signal_reference(
+              os.environ.get('SIGNAL_REFERENCE_DB_ID', '2ac482524f4580359865d6fb85fd5bd0'),
+              os.environ['NOTION_API_KEY']
+          )
+
+          # Compare last month with reference
+          now = datetime.now()
+          if now.month == 1:
+              last_month_key = f"{now.year - 1}-12"
+          else:
+              last_month_key = f"{now.year}-{str(now.month - 1).zfill(2)}"
+
+          this_month_key = f"{now.year}-{str(now.month).zfill(2)}"
+
+          as2_data['signal_accuracy'] = {
+              'last_month': compare_with_reference(as2_data['last_month'], reference_data, last_month_key),
+              'this_month': compare_with_reference(as2_data['this_month'], reference_data, this_month_key)
+          }
+
+          print(f"\n📊 Signal Accuracy Check:")
+          if as2_data['signal_accuracy']['last_month']:
+              ref = as2_data['signal_accuracy']['last_month']
+              status = "✅ In Sync" if ref['in_sync'] else "⚠️ Mismatch"
+              print(f"   Last Month: {status}")
+              print(f"   Reference: {ref['reference_wins']}W / {ref['reference_losses']}L")
+              print(f"   Datafeed Diff: {ref['datafeed_diff']:+d}")
+              print(f"   Expected: {ref['expected_wins']}W / {ref['expected_losses']}L")
+              print(f"   Actual: {as2_data['last_month']['wins']}W / {as2_data['last_month']['losses']}L")
 
           # Save to JSON
           os.makedirs('data', exist_ok=True)
