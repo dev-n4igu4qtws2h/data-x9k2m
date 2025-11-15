@@ -241,18 +241,38 @@ jobs:
 
                   print(f"\n   📝 Entry properties: {list(props.keys())}")
 
-                  # Parse date (format: 01/10/2025)
+                  # Parse date (format: 01/10/2025 or YYYY-MM-DD)
                   date_prop = props.get('Date', {})
                   print(f"   Date prop type: {date_prop.get('type', 'unknown')}")
 
-                  if date_prop and 'title' in date_prop and date_prop['title']:
+                  date_str = None
+
+                  # Handle different date field types
+                  if date_prop.get('type') == 'date' and date_prop.get('date'):
+                      # For date type, get the start date
+                      date_data = date_prop['date']
+                      if isinstance(date_data, dict):
+                          date_str = date_data.get('start')
+                      else:
+                          date_str = date_data
+                  elif date_prop.get('type') == 'title' and date_prop.get('title'):
+                      # For title type
                       date_str = date_prop['title'][0]['plain_text']
+
+                  if date_str:
                       print(f"   Date string: {date_str}")
 
-                      # Parse DD/MM/YYYY
+                      # Parse date - support both DD/MM/YYYY and YYYY-MM-DD formats
                       try:
-                          day, month, year = date_str.split('/')
-                          month_key = f"{year}-{month.zfill(2)}"  # e.g., "2025-10"
+                          if '/' in date_str:
+                              # DD/MM/YYYY format
+                              day, month, year = date_str.split('/')
+                              month_key = f"{year}-{month.zfill(2)}"  # e.g., "2025-10"
+                          else:
+                              # YYYY-MM-DD format (ISO)
+                              year, month, day = date_str.split('-')
+                              month_key = f"{year}-{month}"  # e.g., "2025-10"
+
                           print(f"   Month key: {month_key}")
 
                           # Get winners
