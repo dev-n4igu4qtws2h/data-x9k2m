@@ -464,7 +464,7 @@
             const finalProfit = equity && equity.length > 0 ? equity[equity.length - 1].equity : 0;
             const profitElem = document.getElementById('profit');
             const formattedProfit = Math.round(finalProfit).toLocaleString('de-DE');
-            profitElem.textContent = formattedProfit + '€';
+            profitElem.textContent = formattedProfit + ' €';
             profitElem.className = 'stat-value' + (finalProfit >= 0 ? ' win' : ' loss');
 
             const wlRatio = data.losses > 0 ? (data.wins / data.losses).toFixed(2) : data.wins;
