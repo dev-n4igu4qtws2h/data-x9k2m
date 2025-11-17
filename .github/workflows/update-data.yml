@@ -2,7 +2,7 @@ name: Update Trading Data
 
 on:
   schedule:
-    - cron: '*/15 * * * *'  # Alle 15 Minuten
+    - cron: '0 * * * *'  # Jede volle Stunde
   workflow_dispatch:  # Manueller Trigger
 
 jobs:
