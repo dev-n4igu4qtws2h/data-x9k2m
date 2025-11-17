@@ -1,21 +1,21 @@
 {
   "overall": {
     "wins": 16,
-    "losses": 10,
-    "total": 26,
-    "winrate": 61.5
+    "losses": 11,
+    "total": 27,
+    "winrate": 59.3
   },
   "ytd": {
     "wins": 16,
-    "losses": 10,
-    "total": 26,
-    "winrate": 61.5
+    "losses": 11,
+    "total": 27,
+    "winrate": 59.3
   },
   "this_month": {
     "wins": 8,
-    "losses": 6,
-    "total": 14,
-    "winrate": 57.1
+    "losses": 7,
+    "total": 15,
+    "winrate": 53.3
   },
   "last_month": {
     "wins": 8,
@@ -25,9 +25,9 @@
   },
   "last_week": {
     "wins": 1,
-    "losses": 0,
-    "total": 1,
-    "winrate": 100.0
+    "losses": 1,
+    "total": 2,
+    "winrate": 50.0
   },
   "equity": {
     "overall": [
@@ -141,7 +141,11 @@
       },
       {
         "date": "2025-11-17",
-        "equity": 344.1
+        "equity": 214.62
+      },
+      {
+        "date": "2025-11-17",
+        "equity": 273.86
       }
     ],
     "ytd": [
@@ -255,7 +259,11 @@
       },
       {
         "date": "2025-11-17",
-        "equity": 344.1
+        "equity": 214.62
+      },
+      {
+        "date": "2025-11-17",
+        "equity": 273.86
       }
     ],
     "this_month": [
@@ -321,7 +329,11 @@
       },
       {
         "date": "2025-11-17",
-        "equity": 119.0
+        "equity": -10.48
+      },
+      {
+        "date": "2025-11-17",
+        "equity": 48.76
       }
     ],
     "last_month": [
@@ -377,11 +389,15 @@
     "last_week": [
       {
         "date": "2025-11-17",
-        "equity": 59.24
+        "equity": -70.24
+      },
+      {
+        "date": "2025-11-17",
+        "equity": -11.0
       }
     ]
   },
-  "last_updated": "2025-11-17T10:47:27.950920Z",
+  "last_updated": "2025-11-17T13:41:22.766466Z",
   "signal_accuracy": {
     "last_month": {
       "reference_wins": 7,
