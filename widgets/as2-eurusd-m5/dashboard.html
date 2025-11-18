@@ -525,7 +525,6 @@
 
                     if (point.y >= 0) {
                         profitData.push([point.x, point.y]);
-                        lossData.push([point.x, null]);
 
                         // Check if next point crosses into negative
                         if (nextPoint && nextPoint.y < 0) {
@@ -536,7 +535,6 @@
                             lossData.push([crossX, 0]);
                         }
                     } else {
-                        profitData.push([point.x, null]);
                         lossData.push([point.x, point.y]);
 
                         // Check if next point crosses into positive
