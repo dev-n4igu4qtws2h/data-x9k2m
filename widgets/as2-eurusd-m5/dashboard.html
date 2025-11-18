@@ -333,7 +333,8 @@
         function initEquityChart() {
             const options = {
                 series: [
-                    { name: 'Equity', data: [] }
+                    { name: 'Profit', data: [] },
+                    { name: 'Loss', data: [] }
                 ],
                 chart: {
                     type: 'area',
@@ -344,17 +345,12 @@
                     },
                     zoom: {
                         enabled: false
-                    },
-                    events: {
-                        beforeMount: function(chartContext, config) {
-                            // Dynamic coloring will be handled in update
-                        }
                     }
                 },
                 stroke: {
-                    curve: 'monotoneCubic',
-                    width: 2,
-                    colors: ['#3fb950']
+                    curve: 'smooth',
+                    width: 1.5,
+                    colors: ['#3fb950', '#f85149']
                 },
                 fill: {
                     type: 'gradient',
@@ -368,7 +364,7 @@
                         stops: [0, 100]
                     }
                 },
-                colors: ['#3fb950'],
+                colors: ['#3fb950', '#f85149'],
                 markers: {
                     size: 0
                 },
@@ -511,7 +507,7 @@
                 const firstDate = new Date(aggregatedEquity[0].date);
                 const startDate = new Date(firstDate.getTime() - 24 * 60 * 60 * 1000); // 1 day before
 
-                const chartData = [
+                const allPoints = [
                     { x: startDate.getTime(), y: 0 },
                     ...aggregatedEquity.map(point => ({
                         x: new Date(point.date).getTime(),
@@ -519,25 +515,50 @@
                     }))
                 ];
 
-                // Update chart with single series
-                // Determine color based on final value
-                const finalValue = chartData[chartData.length - 1].y;
-                const color = finalValue >= 0 ? '#3fb950' : '#f85149';
+                // Split into positive and negative series with interpolated zero crossings
+                const profitData = [];
+                const lossData = [];
 
-                equityChart.updateOptions({
-                    stroke: { colors: [color] },
-                    colors: [color]
-                });
+                for (let i = 0; i < allPoints.length; i++) {
+                    const point = allPoints[i];
+                    const nextPoint = i < allPoints.length - 1 ? allPoints[i + 1] : null;
 
-                equityChart.updateSeries([{
-                    name: 'Equity',
-                    data: chartData
-                }]);
+                    if (point.y >= 0) {
+                        profitData.push([point.x, point.y]);
+
+                        // Check if next point crosses into negative
+                        if (nextPoint && nextPoint.y < 0) {
+                            // Interpolate zero crossing point
+                            const ratio = Math.abs(point.y) / (Math.abs(point.y) + Math.abs(nextPoint.y));
+                            const crossX = point.x + (nextPoint.x - point.x) * ratio;
+                            profitData.push([crossX, 0]);
+                            profitData.push([crossX, null]); // End profit segment
+                            lossData.push([crossX, 0]); // Start loss segment
+                        }
+                    } else {
+                        lossData.push([point.x, point.y]);
+
+                        // Check if next point crosses into positive
+                        if (nextPoint && nextPoint.y >= 0) {
+                            // Interpolate zero crossing point
+                            const ratio = Math.abs(point.y) / (Math.abs(point.y) + Math.abs(nextPoint.y));
+                            const crossX = point.x + (nextPoint.x - point.x) * ratio;
+                            lossData.push([crossX, 0]);
+                            lossData.push([crossX, null]); // End loss segment
+                            profitData.push([crossX, 0]); // Start new profit segment
+                        }
+                    }
+                }
+
+                equityChart.updateSeries([
+                    { name: 'Profit', data: profitData },
+                    { name: 'Loss', data: lossData }
+                ]);
             } else {
-                equityChart.updateSeries([{
-                    name: 'Equity',
-                    data: []
-                }]);
+                equityChart.updateSeries([
+                    { name: 'Profit', data: [] },
+                    { name: 'Loss', data: [] }
+                ]);
             }
 
             // Update Signal Accuracy widget (only visible for last_month)
