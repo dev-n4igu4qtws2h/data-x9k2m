@@ -532,6 +532,7 @@
                             const ratio = Math.abs(point.y) / (Math.abs(point.y) + Math.abs(nextPoint.y));
                             const crossX = point.x + (nextPoint.x - point.x) * ratio;
                             profitData.push([crossX, 0]);
+                            profitData.push([crossX, null]); // End profit series
                             lossData.push([crossX, 0]);
                         }
                     } else {
@@ -542,8 +543,9 @@
                             // Interpolate zero crossing point
                             const ratio = Math.abs(point.y) / (Math.abs(point.y) + Math.abs(nextPoint.y));
                             const crossX = point.x + (nextPoint.x - point.x) * ratio;
-                            profitData.push([crossX, 0]);
                             lossData.push([crossX, 0]);
+                            lossData.push([crossX, null]); // End loss series
+                            profitData.push([crossX, 0]);
                         }
                     }
                 }
