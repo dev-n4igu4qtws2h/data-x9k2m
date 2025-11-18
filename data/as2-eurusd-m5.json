@@ -1,21 +1,21 @@
 {
   "overall": {
     "wins": 16,
-    "losses": 11,
-    "total": 27,
-    "winrate": 59.3
+    "losses": 12,
+    "total": 28,
+    "winrate": 57.1
   },
   "ytd": {
     "wins": 16,
-    "losses": 11,
-    "total": 27,
-    "winrate": 59.3
+    "losses": 12,
+    "total": 28,
+    "winrate": 57.1
   },
   "this_month": {
     "wins": 8,
-    "losses": 7,
-    "total": 15,
-    "winrate": 53.3
+    "losses": 8,
+    "total": 16,
+    "winrate": 50.0
   },
   "last_month": {
     "wins": 8,
@@ -25,9 +25,9 @@
   },
   "last_week": {
     "wins": 1,
-    "losses": 1,
-    "total": 2,
-    "winrate": 50.0
+    "losses": 2,
+    "total": 3,
+    "winrate": 33.3
   },
   "equity": {
     "overall": [
@@ -146,6 +146,10 @@
       {
         "date": "2025-11-17",
         "equity": 273.86
+      },
+      {
+        "date": "2025-11-18",
+        "equity": 212.26
       }
     ],
     "ytd": [
@@ -264,6 +268,10 @@
       {
         "date": "2025-11-17",
         "equity": 273.86
+      },
+      {
+        "date": "2025-11-18",
+        "equity": 212.26
       }
     ],
     "this_month": [
@@ -334,6 +342,10 @@
       {
         "date": "2025-11-17",
         "equity": 48.76
+      },
+      {
+        "date": "2025-11-18",
+        "equity": -12.84
       }
     ],
     "last_month": [
@@ -394,10 +406,14 @@
       {
         "date": "2025-11-17",
         "equity": -11.0
+      },
+      {
+        "date": "2025-11-18",
+        "equity": -72.6
       }
     ]
   },
-  "last_updated": "2025-11-18T03:35:28.271483Z",
+  "last_updated": "2025-11-18T04:42:28.606493Z",
   "signal_accuracy": {
     "last_month": {
       "reference_wins": 7,
