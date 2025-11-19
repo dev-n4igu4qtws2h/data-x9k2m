@@ -454,7 +454,7 @@
             // Update stats
             // W/L Performance: green wins / red losses (white total)
             const wlPerfElem = document.getElementById('wlPerformance');
-            wlPerfElem.innerHTML = `<span style="color: var(--color-win)">${data.wins}</span> / <span style="color: var(--color-loss)">${data.losses}</span> <span style="opacity: 0.6">(${data.total})</span>`;
+            wlPerfElem.innerHTML = `<span style="color: var(--color-win)">${data.wins}</span> / <span style="color: var(--color-loss)">${data.losses}</span> <span style="opacity: 0.6">[${data.total}]</span>`;
 
             // Get final profit from equity curve
             const finalProfit = equity && equity.length > 0 ? equity[equity.length - 1].equity : 0;
@@ -471,7 +471,7 @@
                 const streakElem = document.getElementById('wlStreak');
                 const currentStreakType = data.streak.current_type === 'win' ? 'W' : 'L';
                 const currentStreakColor = data.streak.current_type === 'win' ? 'var(--color-win)' : 'var(--color-loss)';
-                streakElem.innerHTML = `<span style="color: ${currentStreakColor}">${data.streak.current}${currentStreakType}</span> (<span style="color: var(--color-win); opacity: 0.5">${data.streak.max_win}W</span> / <span style="color: var(--color-loss); opacity: 0.5">${data.streak.max_loss}L</span>)`;
+                streakElem.innerHTML = `<span style="color: ${currentStreakColor}">${data.streak.current}${currentStreakType}</span> [<span style="color: var(--color-win); opacity: 0.5">${data.streak.max_win}W</span> / <span style="color: var(--color-loss); opacity: 0.5">${data.streak.max_loss}L</span>]`;
             } else {
                 document.getElementById('wlStreak').textContent = '-';
             }
