@@ -478,7 +478,7 @@
                 const streakElem = document.getElementById('wlStreak');
                 const currentStreakType = data.streak.current_type === 'win' ? 'W' : 'L';
                 const currentStreakColor = data.streak.current_type === 'win' ? 'var(--color-win)' : 'var(--color-loss)';
-                streakElem.innerHTML = `<span style="color: ${currentStreakColor}">${data.streak.current}${currentStreakType}</span> <span style="color: var(--text-secondary)">[</span><span style="color: var(--text-secondary)">${data.streak.max_win}W</span><span style="color: var(--text-secondary)"> / </span><span style="color: var(--text-secondary)">${data.streak.max_loss}L</span><span style="color: var(--text-secondary)">]</span>`;
+                streakElem.innerHTML = `<span style="color: ${currentStreakColor}">${data.streak.current}${currentStreakType}</span> <span style="color: var(--text-secondary)">[</span><span style="color: var(--color-win); opacity: 0.5">${data.streak.max_win}W</span><span style="color: var(--text-secondary)"> / </span><span style="color: var(--color-loss); opacity: 0.5">${data.streak.max_loss}L</span><span style="color: var(--text-secondary)">]</span>`;
             } else {
                 document.getElementById('wlStreak').textContent = '-';
             }
