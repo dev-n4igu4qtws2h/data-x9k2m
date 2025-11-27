@@ -1,9 +1,9 @@
 {
   "overall": {
-    "wins": 18,
+    "wins": 19,
     "losses": 17,
-    "total": 35,
-    "winrate": 51.4,
+    "total": 36,
+    "winrate": 52.8,
     "streak": {
       "current": 1,
       "current_type": "loss",
@@ -12,10 +12,10 @@
     }
   },
   "ytd": {
-    "wins": 18,
+    "wins": 19,
     "losses": 17,
-    "total": 35,
-    "winrate": 51.4,
+    "total": 36,
+    "winrate": 52.8,
     "streak": {
       "current": 1,
       "current_type": "loss",
@@ -24,10 +24,10 @@
     }
   },
   "this_month": {
-    "wins": 10,
+    "wins": 11,
     "losses": 13,
-    "total": 23,
-    "winrate": 43.5,
+    "total": 24,
+    "winrate": 45.8,
     "streak": {
       "current": 1,
       "current_type": "loss",
@@ -48,14 +48,14 @@
     }
   },
   "last_week": {
-    "wins": 1,
+    "wins": 2,
     "losses": 1,
-    "total": 2,
-    "winrate": 50.0,
+    "total": 3,
+    "winrate": 66.7,
     "streak": {
       "current": 1,
       "current_type": "loss",
-      "max_win": 1,
+      "max_win": 2,
       "max_loss": 1
     }
   },
@@ -207,7 +207,11 @@
       },
       {
         "date": "2025-11-27",
-        "equity": 24.16
+        "equity": 145.72
+      },
+      {
+        "date": "2025-11-27",
+        "equity": 81.02
       }
     ],
     "ytd": [
@@ -357,7 +361,11 @@
       },
       {
         "date": "2025-11-27",
-        "equity": 24.16
+        "equity": 145.72
+      },
+      {
+        "date": "2025-11-27",
+        "equity": 81.02
       }
     ],
     "this_month": [
@@ -459,7 +467,11 @@
       },
       {
         "date": "2025-11-27",
-        "equity": -200.94
+        "equity": -79.38
+      },
+      {
+        "date": "2025-11-27",
+        "equity": -144.08
       }
     ],
     "last_month": [
@@ -519,11 +531,15 @@
       },
       {
         "date": "2025-11-27",
-        "equity": -7.49
+        "equity": 114.07
+      },
+      {
+        "date": "2025-11-27",
+        "equity": 49.37
       }
     ]
   },
-  "last_updated": "2025-11-27T15:37:39.678910Z",
+  "last_updated": "2025-11-27T16:48:18.616770Z",
   "signal_accuracy": {
     "last_month": {
       "reference_wins": 7,
