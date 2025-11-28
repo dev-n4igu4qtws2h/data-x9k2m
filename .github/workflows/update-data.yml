@@ -118,28 +118,12 @@ jobs:
                       if end_date and trade_date > end_date:
                           continue
 
-                      # Check if trade is excluded
-                      exclude_prop = trade.get('properties', {}).get('Exclude', {})
-                      is_excluded = exclude_prop.get('checkbox', False) if 'checkbox' in exclude_prop else False
-                      if is_excluded:
-                          continue
-
                       profit = get_profit(trade)
-                      if profit is None:
-                          continue
-
-                      # Exclude Break Even trades (within ±10% of risk)
-                      risk_prop = trade.get('properties', {}).get('Risk $', {})
-                      risk = risk_prop.get('number') if 'number' in risk_prop else None
-                      if risk is not None and risk > 0:
-                          break_even_threshold = abs(risk) * 0.10
-                          if -break_even_threshold <= profit <= break_even_threshold:
-                              continue  # Exclude break even trades from equity curve
-
-                      filtered_trades.append({
-                          'date': trade_date,
-                          'profit': profit
-                      })
+                      if profit is not None:
+                          filtered_trades.append({
+                              'date': trade_date,
+                              'profit': profit
+                          })
 
               # Sort by date
               filtered_trades.sort(key=lambda x: x['date'])
