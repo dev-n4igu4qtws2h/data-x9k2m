@@ -185,6 +185,16 @@ jobs:
                       if is_excluded:
                           continue
 
+                      # Exclude Break Even trades (within ±10% of risk)
+                      profit = get_profit(trade)
+                      risk_prop = trade.get('properties', {}).get('Risk $', {})
+                      risk = risk_prop.get('number') if 'number' in risk_prop else None
+
+                      if profit is not None and risk is not None and risk > 0:
+                          break_even_threshold = abs(risk) * 0.10
+                          if -break_even_threshold <= profit <= break_even_threshold:
+                              continue  # Exclude break even trades from W/L stats
+
                       outcome_prop = trade.get('properties', {}).get('Outcome', {})
                       if outcome_prop and 'select' in outcome_prop and outcome_prop['select']:
                           outcome = outcome_prop['select']['name']
