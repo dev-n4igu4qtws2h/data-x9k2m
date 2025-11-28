@@ -1,9 +1,9 @@
 {
   "overall": {
-    "wins": 25,
+    "wins": 23,
     "losses": 17,
-    "total": 42,
-    "winrate": 59.5,
+    "total": 40,
+    "winrate": 57.5,
     "streak": {
       "current": 4,
       "current_type": "win",
@@ -12,10 +12,10 @@
     }
   },
   "ytd": {
-    "wins": 25,
+    "wins": 23,
     "losses": 17,
-    "total": 42,
-    "winrate": 59.5,
+    "total": 40,
+    "winrate": 57.5,
     "streak": {
       "current": 4,
       "current_type": "win",
@@ -24,10 +24,10 @@
     }
   },
   "this_month": {
-    "wins": 17,
+    "wins": 15,
     "losses": 13,
-    "total": 30,
-    "winrate": 56.7,
+    "total": 28,
+    "winrate": 53.6,
     "streak": {
       "current": 4,
       "current_type": "win",
@@ -603,7 +603,7 @@
       }
     ]
   },
-  "last_updated": "2025-11-28T21:29:20.703011Z",
+  "last_updated": "2025-11-28T21:59:43.917639Z",
   "signal_accuracy": {
     "last_month": {
       "reference_wins": 7,
