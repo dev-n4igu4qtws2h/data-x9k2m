@@ -49,7 +49,9 @@ jobs:
               start_cursor = None
 
               while has_more:
-                  payload = {}
+                  payload = {
+                      "archived": False
+                  }
                   if start_cursor:
                       payload["start_cursor"] = start_cursor
 
