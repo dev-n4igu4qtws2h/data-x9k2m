@@ -145,9 +145,17 @@ jobs:
 
           def process_strategy(database_id, api_key, strategy_name):
               print(f"\nProcessing {strategy_name}...")
+              print(f"Database ID: {database_id}")
 
               data = fetch_notion_data(database_id, api_key)
               trades = data.get('results', [])
+
+              print(f"📊 Total trades fetched from Notion: {len(trades)}")
+              print(f"   (This includes ALL non-archived entries)")
+
+              # Count trades with dates
+              trades_with_dates = sum(1 for t in trades if get_trade_date(t) is not None)
+              print(f"   Trades with valid dates: {trades_with_dates}")
 
               now = datetime.now()
               start_of_year = datetime(now.year, 1, 1)
