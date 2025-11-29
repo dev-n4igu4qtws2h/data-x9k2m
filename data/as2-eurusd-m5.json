@@ -1,9 +1,9 @@
 {
   "overall": {
-    "wins": 23,
-    "losses": 17,
-    "total": 40,
-    "winrate": 57.5,
+    "wins": 26,
+    "losses": 18,
+    "total": 44,
+    "winrate": 59.1,
     "streak": {
       "current": 4,
       "current_type": "win",
@@ -12,10 +12,10 @@
     }
   },
   "ytd": {
-    "wins": 23,
-    "losses": 17,
-    "total": 40,
-    "winrate": 57.5,
+    "wins": 26,
+    "losses": 18,
+    "total": 44,
+    "winrate": 59.1,
     "streak": {
       "current": 4,
       "current_type": "win",
@@ -36,10 +36,10 @@
     }
   },
   "last_month": {
-    "wins": 8,
-    "losses": 4,
-    "total": 12,
-    "winrate": 66.7,
+    "wins": 11,
+    "losses": 5,
+    "total": 16,
+    "winrate": 68.8,
     "streak": {
       "current": 1,
       "current_type": "win",
@@ -66,168 +66,184 @@
         "equity": 50.82
       },
       {
+        "date": "2025-10-06",
+        "equity": 101.64
+      },
+      {
         "date": "2025-10-07",
-        "equity": -1.37
+        "equity": 49.45
+      },
+      {
+        "date": "2025-10-07",
+        "equity": -2.74
       },
       {
         "date": "2025-10-09",
-        "equity": 49.68
+        "equity": 48.31
+      },
+      {
+        "date": "2025-10-09",
+        "equity": 99.36
       },
       {
         "date": "2025-10-14",
-        "equity": 102.53
+        "equity": 152.21
+      },
+      {
+        "date": "2025-10-14",
+        "equity": 205.06
       },
       {
         "date": "2025-10-15",
-        "equity": 50.77
+        "equity": 153.3
       },
       {
         "date": "2025-10-15",
-        "equity": 99.12
+        "equity": 201.65
       },
       {
         "date": "2025-10-16",
-        "equity": 146.71
+        "equity": 249.24
       },
       {
         "date": "2025-10-22",
-        "equity": 196.28
+        "equity": 298.81
       },
       {
         "date": "2025-10-24",
-        "equity": 279.56
+        "equity": 382.09
       },
       {
         "date": "2025-10-27",
-        "equity": 229.48
+        "equity": 329.49
       },
       {
         "date": "2025-10-27",
-        "equity": 176.88
+        "equity": 279.41
       },
       {
         "date": "2025-10-28",
-        "equity": 225.1
+        "equity": 327.63
       },
       {
         "date": "2025-11-03",
-        "equity": 223.53
+        "equity": 326.06
       },
       {
         "date": "2025-11-04",
-        "equity": 159.27
+        "equity": 261.8
       },
       {
         "date": "2025-11-05",
-        "equity": 97.3
+        "equity": 199.83
       },
       {
         "date": "2025-11-06",
-        "equity": 156.35
+        "equity": 258.88
       },
       {
         "date": "2025-11-07",
-        "equity": 225.0
+        "equity": 327.53
       },
       {
         "date": "2025-11-10",
-        "equity": 161.99
+        "equity": 264.52
       },
       {
         "date": "2025-11-11",
-        "equity": 224.54
+        "equity": 327.07
       },
       {
         "date": "2025-11-11",
-        "equity": 163.67
+        "equity": 266.2
       },
       {
         "date": "2025-11-12",
-        "equity": 100.97
+        "equity": 327.92
       },
       {
         "date": "2025-11-12",
-        "equity": 162.69
+        "equity": 265.22
       },
       {
         "date": "2025-11-13",
-        "equity": 100.06
+        "equity": 325.61
       },
       {
         "date": "2025-11-13",
-        "equity": 164.89
+        "equity": 262.98
       },
       {
         "date": "2025-11-13",
-        "equity": 225.28
+        "equity": 327.81
       },
       {
         "date": "2025-11-14",
-        "equity": 225.28
+        "equity": 327.81
       },
       {
         "date": "2025-11-14",
-        "equity": 284.86
+        "equity": 387.39
       },
       {
         "date": "2025-11-17",
-        "equity": 217.48
+        "equity": 320.01
       },
       {
         "date": "2025-11-17",
-        "equity": 277.12
+        "equity": 379.65
       },
       {
         "date": "2025-11-18",
-        "equity": 215.28
+        "equity": 317.81
       },
       {
         "date": "2025-11-18",
-        "equity": 155.38
+        "equity": 257.91
       },
       {
         "date": "2025-11-18",
-        "equity": 94.65
+        "equity": 197.18
       },
       {
         "date": "2025-11-19",
-        "equity": 33.51
+        "equity": 136.04
       },
       {
         "date": "2025-11-19",
-        "equity": 95.91
+        "equity": 198.44
       },
       {
         "date": "2025-11-21",
-        "equity": 35.19
+        "equity": 137.72
       },
       {
         "date": "2025-11-26",
-        "equity": 94.92
+        "equity": 197.45
       },
       {
         "date": "2025-11-27",
-        "equity": 154.9
+        "equity": 257.43
       },
       {
         "date": "2025-11-27",
-        "equity": 92.02
+        "equity": 194.55
       },
       {
         "date": "2025-11-28",
-        "equity": 151.75
+        "equity": 252.04
       },
       {
         "date": "2025-11-28",
-        "equity": 209.24
+        "equity": 309.87
       },
       {
         "date": "2025-11-28",
-        "equity": 269.05
+        "equity": 369.6
       },
       {
         "date": "2025-11-28",
-        "equity": 326.88
+        "equity": 429.41
       }
     ],
     "ytd": [
@@ -236,168 +252,184 @@
         "equity": 50.82
       },
       {
+        "date": "2025-10-06",
+        "equity": 101.64
+      },
+      {
         "date": "2025-10-07",
-        "equity": -1.37
+        "equity": 49.45
+      },
+      {
+        "date": "2025-10-07",
+        "equity": -2.74
       },
       {
         "date": "2025-10-09",
-        "equity": 49.68
+        "equity": 48.31
+      },
+      {
+        "date": "2025-10-09",
+        "equity": 99.36
       },
       {
         "date": "2025-10-14",
-        "equity": 102.53
+        "equity": 152.21
+      },
+      {
+        "date": "2025-10-14",
+        "equity": 205.06
       },
       {
         "date": "2025-10-15",
-        "equity": 50.77
+        "equity": 153.3
       },
       {
         "date": "2025-10-15",
-        "equity": 99.12
+        "equity": 201.65
       },
       {
         "date": "2025-10-16",
-        "equity": 146.71
+        "equity": 249.24
       },
       {
         "date": "2025-10-22",
-        "equity": 196.28
+        "equity": 298.81
       },
       {
         "date": "2025-10-24",
-        "equity": 279.56
+        "equity": 382.09
       },
       {
         "date": "2025-10-27",
-        "equity": 229.48
+        "equity": 329.49
       },
       {
         "date": "2025-10-27",
-        "equity": 176.88
+        "equity": 279.41
       },
       {
         "date": "2025-10-28",
-        "equity": 225.1
+        "equity": 327.63
       },
       {
         "date": "2025-11-03",
-        "equity": 223.53
+        "equity": 326.06
       },
       {
         "date": "2025-11-04",
-        "equity": 159.27
+        "equity": 261.8
       },
       {
         "date": "2025-11-05",
-        "equity": 97.3
+        "equity": 199.83
       },
       {
         "date": "2025-11-06",
-        "equity": 156.35
+        "equity": 258.88
       },
       {
         "date": "2025-11-07",
-        "equity": 225.0
+        "equity": 327.53
       },
       {
         "date": "2025-11-10",
-        "equity": 161.99
+        "equity": 264.52
       },
       {
         "date": "2025-11-11",
-        "equity": 224.54
+        "equity": 327.07
       },
       {
         "date": "2025-11-11",
-        "equity": 163.67
+        "equity": 266.2
       },
       {
         "date": "2025-11-12",
-        "equity": 100.97
+        "equity": 327.92
       },
       {
         "date": "2025-11-12",
-        "equity": 162.69
+        "equity": 265.22
       },
       {
         "date": "2025-11-13",
-        "equity": 100.06
+        "equity": 325.61
       },
       {
         "date": "2025-11-13",
-        "equity": 164.89
+        "equity": 262.98
       },
       {
         "date": "2025-11-13",
-        "equity": 225.28
+        "equity": 327.81
       },
       {
         "date": "2025-11-14",
-        "equity": 225.28
+        "equity": 327.81
       },
       {
         "date": "2025-11-14",
-        "equity": 284.86
+        "equity": 387.39
       },
       {
         "date": "2025-11-17",
-        "equity": 217.48
+        "equity": 320.01
       },
       {
         "date": "2025-11-17",
-        "equity": 277.12
+        "equity": 379.65
       },
       {
         "date": "2025-11-18",
-        "equity": 215.28
+        "equity": 317.81
       },
       {
         "date": "2025-11-18",
-        "equity": 155.38
+        "equity": 257.91
       },
       {
         "date": "2025-11-18",
-        "equity": 94.65
+        "equity": 197.18
       },
       {
         "date": "2025-11-19",
-        "equity": 33.51
+        "equity": 136.04
       },
       {
         "date": "2025-11-19",
-        "equity": 95.91
+        "equity": 198.44
       },
       {
         "date": "2025-11-21",
-        "equity": 35.19
+        "equity": 137.72
       },
       {
         "date": "2025-11-26",
-        "equity": 94.92
+        "equity": 197.45
       },
       {
         "date": "2025-11-27",
-        "equity": 154.9
+        "equity": 257.43
       },
       {
         "date": "2025-11-27",
-        "equity": 92.02
+        "equity": 194.55
       },
       {
         "date": "2025-11-28",
-        "equity": 151.75
+        "equity": 252.04
       },
       {
         "date": "2025-11-28",
-        "equity": 209.24
+        "equity": 309.87
       },
       {
         "date": "2025-11-28",
-        "equity": 269.05
+        "equity": 369.6
       },
       {
         "date": "2025-11-28",
-        "equity": 326.88
+        "equity": 429.41
       }
     ],
     "this_month": [
@@ -435,7 +467,7 @@
       },
       {
         "date": "2025-11-12",
-        "equity": -124.13
+        "equity": 0.29
       },
       {
         "date": "2025-11-12",
@@ -443,11 +475,11 @@
       },
       {
         "date": "2025-11-13",
-        "equity": -125.04
+        "equity": -2.02
       },
       {
         "date": "2025-11-13",
-        "equity": -60.21
+        "equity": -64.65
       },
       {
         "date": "2025-11-13",
@@ -507,15 +539,15 @@
       },
       {
         "date": "2025-11-28",
-        "equity": -73.35
+        "equity": -75.59
       },
       {
         "date": "2025-11-28",
-        "equity": -15.86
+        "equity": -17.76
       },
       {
         "date": "2025-11-28",
-        "equity": 43.95
+        "equity": 41.97
       },
       {
         "date": "2025-11-28",
@@ -528,48 +560,64 @@
         "equity": 50.82
       },
       {
+        "date": "2025-10-06",
+        "equity": 101.64
+      },
+      {
         "date": "2025-10-07",
-        "equity": -1.37
+        "equity": 49.45
+      },
+      {
+        "date": "2025-10-07",
+        "equity": -2.74
       },
       {
         "date": "2025-10-09",
-        "equity": 49.68
+        "equity": 48.31
+      },
+      {
+        "date": "2025-10-09",
+        "equity": 99.36
       },
       {
         "date": "2025-10-14",
-        "equity": 102.53
+        "equity": 152.21
+      },
+      {
+        "date": "2025-10-14",
+        "equity": 205.06
       },
       {
         "date": "2025-10-15",
-        "equity": 50.77
+        "equity": 153.3
       },
       {
         "date": "2025-10-15",
-        "equity": 99.12
+        "equity": 201.65
       },
       {
         "date": "2025-10-16",
-        "equity": 146.71
+        "equity": 249.24
       },
       {
         "date": "2025-10-22",
-        "equity": 196.28
+        "equity": 298.81
       },
       {
         "date": "2025-10-24",
-        "equity": 279.56
+        "equity": 382.09
       },
       {
         "date": "2025-10-27",
-        "equity": 229.48
+        "equity": 329.49
       },
       {
         "date": "2025-10-27",
-        "equity": 176.88
+        "equity": 279.41
       },
       {
         "date": "2025-10-28",
-        "equity": 225.1
+        "equity": 327.63
       }
     ],
     "last_week": [
@@ -587,15 +635,15 @@
       },
       {
         "date": "2025-11-28",
-        "equity": 116.56
+        "equity": 114.32
       },
       {
         "date": "2025-11-28",
-        "equity": 174.05
+        "equity": 172.15
       },
       {
         "date": "2025-11-28",
-        "equity": 233.86
+        "equity": 231.88
       },
       {
         "date": "2025-11-28",
@@ -603,7 +651,7 @@
       }
     ]
   },
-  "last_updated": "2025-11-29T11:25:57.061692Z",
+  "last_updated": "2025-11-29T13:17:41.483498Z",
   "signal_accuracy": {
     "last_month": {
       "reference_wins": 7,
@@ -611,9 +659,9 @@
       "datafeed_diff": 1,
       "expected_wins": 8,
       "expected_losses": 4,
-      "wins_match": true,
-      "losses_match": true,
-      "in_sync": true
+      "wins_match": false,
+      "losses_match": false,
+      "in_sync": false
     },
     "this_month": null
   }
