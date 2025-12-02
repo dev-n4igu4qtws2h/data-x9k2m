@@ -1,11 +1,11 @@
 {
   "overall": {
     "wins": 22,
-    "losses": 19,
-    "total": 41,
-    "winrate": 53.7,
+    "losses": 20,
+    "total": 42,
+    "winrate": 52.4,
     "streak": {
-      "current": 2,
+      "current": 3,
       "current_type": "loss",
       "max_win": 4,
       "max_loss": 3
@@ -13,11 +13,11 @@
   },
   "ytd": {
     "wins": 22,
-    "losses": 19,
-    "total": 41,
-    "winrate": 53.7,
+    "losses": 20,
+    "total": 42,
+    "winrate": 52.4,
     "streak": {
-      "current": 2,
+      "current": 3,
       "current_type": "loss",
       "max_win": 4,
       "max_loss": 3
@@ -25,14 +25,14 @@
   },
   "this_month": {
     "wins": 1,
-    "losses": 2,
-    "total": 3,
-    "winrate": 33.3,
+    "losses": 3,
+    "total": 4,
+    "winrate": 25.0,
     "streak": {
-      "current": 2,
+      "current": 3,
       "current_type": "loss",
       "max_win": 1,
-      "max_loss": 2
+      "max_loss": 3
     }
   },
   "last_month": {
@@ -49,14 +49,14 @@
   },
   "last_week": {
     "wins": 1,
-    "losses": 2,
-    "total": 3,
-    "winrate": 33.3,
+    "losses": 3,
+    "total": 4,
+    "winrate": 25.0,
     "streak": {
-      "current": 2,
+      "current": 3,
       "current_type": "loss",
       "max_win": 1,
-      "max_loss": 2
+      "max_loss": 3
     }
   },
   "equity": {
@@ -232,6 +232,10 @@
       {
         "date": "2025-12-02",
         "equity": 138.83
+      },
+      {
+        "date": "2025-12-02",
+        "equity": 75.45
       }
     ],
     "ytd": [
@@ -406,6 +410,10 @@
       {
         "date": "2025-12-02",
         "equity": 138.83
+      },
+      {
+        "date": "2025-12-02",
+        "equity": 75.45
       }
     ],
     "this_month": [
@@ -420,6 +428,10 @@
       {
         "date": "2025-12-02",
         "equity": -72.73
+      },
+      {
+        "date": "2025-12-02",
+        "equity": -136.11
       }
     ],
     "last_month": [
@@ -548,10 +560,14 @@
       {
         "date": "2025-12-02",
         "equity": -72.73
+      },
+      {
+        "date": "2025-12-02",
+        "equity": -136.11
       }
     ]
   },
-  "last_updated": "2025-12-02T19:35:30.288455Z",
+  "last_updated": "2025-12-02T20:42:27.289614Z",
   "signal_accuracy": {
     "last_month": null,
     "this_month": null
