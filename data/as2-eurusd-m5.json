@@ -1,37 +1,37 @@
 {
   "overall": {
-    "wins": 26,
+    "wins": 27,
     "losses": 22,
-    "total": 48,
-    "winrate": 54.2,
+    "total": 49,
+    "winrate": 55.1,
     "streak": {
-      "current": 2,
+      "current": 3,
       "current_type": "win",
       "max_win": 4,
       "max_loss": 4
     }
   },
   "ytd": {
-    "wins": 26,
+    "wins": 27,
     "losses": 22,
-    "total": 48,
-    "winrate": 54.2,
+    "total": 49,
+    "winrate": 55.1,
     "streak": {
-      "current": 2,
+      "current": 3,
       "current_type": "win",
       "max_win": 4,
       "max_loss": 4
     }
   },
   "this_month": {
-    "wins": 5,
+    "wins": 6,
     "losses": 5,
-    "total": 10,
-    "winrate": 50.0,
+    "total": 11,
+    "winrate": 54.5,
     "streak": {
-      "current": 2,
+      "current": 3,
       "current_type": "win",
-      "max_win": 2,
+      "max_win": 3,
       "max_loss": 4
     }
   },
@@ -48,14 +48,14 @@
     }
   },
   "last_week": {
-    "wins": 0,
+    "wins": 1,
     "losses": 0,
-    "total": 0,
-    "winrate": 0,
+    "total": 1,
+    "winrate": 100.0,
     "streak": {
-      "current": 0,
-      "current_type": "none",
-      "max_win": 0,
+      "current": 1,
+      "current_type": "win",
+      "max_win": 1,
       "max_loss": 0
     }
   },
@@ -260,6 +260,10 @@
       {
         "date": "2025-12-05",
         "equity": 169.63
+      },
+      {
+        "date": "2025-12-08",
+        "equity": 227.76
       }
     ],
     "ytd": [
@@ -462,6 +466,10 @@
       {
         "date": "2025-12-05",
         "equity": 169.63
+      },
+      {
+        "date": "2025-12-08",
+        "equity": 227.76
       }
     ],
     "this_month": [
@@ -504,6 +512,10 @@
       {
         "date": "2025-12-05",
         "equity": -41.93
+      },
+      {
+        "date": "2025-12-08",
+        "equity": 16.2
       }
     ],
     "last_month": [
@@ -620,9 +632,14 @@
         "equity": -13.54
       }
     ],
-    "last_week": []
+    "last_week": [
+      {
+        "date": "2025-12-08",
+        "equity": 58.13
+      }
+    ]
   },
-  "last_updated": "2025-12-08T14:47:52.731072Z",
+  "last_updated": "2025-12-08T15:40:21.892447Z",
   "signal_accuracy": {
     "last_month": null,
     "this_month": null
