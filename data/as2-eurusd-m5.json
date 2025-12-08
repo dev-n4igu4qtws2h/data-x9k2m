@@ -48,15 +48,15 @@
     }
   },
   "last_week": {
-    "wins": 5,
-    "losses": 5,
-    "total": 10,
-    "winrate": 50.0,
+    "wins": 0,
+    "losses": 0,
+    "total": 0,
+    "winrate": 0,
     "streak": {
-      "current": 2,
-      "current_type": "win",
-      "max_win": 2,
-      "max_loss": 4
+      "current": 0,
+      "current_type": "none",
+      "max_win": 0,
+      "max_loss": 0
     }
   },
   "equity": {
@@ -620,50 +620,9 @@
         "equity": -13.54
       }
     ],
-    "last_week": [
-      {
-        "date": "2025-12-01",
-        "equity": 57.15
-      },
-      {
-        "date": "2025-12-02",
-        "equity": -6.17
-      },
-      {
-        "date": "2025-12-02",
-        "equity": -72.73
-      },
-      {
-        "date": "2025-12-02",
-        "equity": -136.11
-      },
-      {
-        "date": "2025-12-03",
-        "equity": -200.92
-      },
-      {
-        "date": "2025-12-03",
-        "equity": -141.41
-      },
-      {
-        "date": "2025-12-04",
-        "equity": -91.6
-      },
-      {
-        "date": "2025-12-04",
-        "equity": -153.94
-      },
-      {
-        "date": "2025-12-05",
-        "equity": -97.82
-      },
-      {
-        "date": "2025-12-05",
-        "equity": -41.93
-      }
-    ]
+    "last_week": []
   },
-  "last_updated": "2025-12-07T23:29:15.841538Z",
+  "last_updated": "2025-12-08T03:45:39.937811Z",
   "signal_accuracy": {
     "last_month": null,
     "this_month": null
