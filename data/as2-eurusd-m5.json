@@ -1,35 +1,35 @@
 {
   "overall": {
-    "wins": 28,
+    "wins": 29,
     "losses": 23,
-    "total": 51,
-    "winrate": 54.9,
+    "total": 52,
+    "winrate": 55.8,
     "streak": {
-      "current": 1,
+      "current": 2,
       "current_type": "win",
       "max_win": 4,
       "max_loss": 4
     }
   },
   "ytd": {
-    "wins": 28,
+    "wins": 29,
     "losses": 23,
-    "total": 51,
-    "winrate": 54.9,
+    "total": 52,
+    "winrate": 55.8,
     "streak": {
-      "current": 1,
+      "current": 2,
       "current_type": "win",
       "max_win": 4,
       "max_loss": 4
     }
   },
   "this_month": {
-    "wins": 7,
+    "wins": 8,
     "losses": 6,
-    "total": 13,
-    "winrate": 53.8,
+    "total": 14,
+    "winrate": 57.1,
     "streak": {
-      "current": 1,
+      "current": 2,
       "current_type": "win",
       "max_win": 3,
       "max_loss": 4
@@ -48,14 +48,14 @@
     }
   },
   "last_week": {
-    "wins": 2,
+    "wins": 3,
     "losses": 1,
-    "total": 3,
-    "winrate": 66.7,
+    "total": 4,
+    "winrate": 75.0,
     "streak": {
-      "current": 1,
+      "current": 2,
       "current_type": "win",
-      "max_win": 1,
+      "max_win": 2,
       "max_loss": 1
     }
   },
@@ -272,6 +272,10 @@
       {
         "date": "2025-12-10",
         "equity": 222.34
+      },
+      {
+        "date": "2025-12-11",
+        "equity": 281.18
       }
     ],
     "ytd": [
@@ -486,6 +490,10 @@
       {
         "date": "2025-12-10",
         "equity": 222.34
+      },
+      {
+        "date": "2025-12-11",
+        "equity": 281.18
       }
     ],
     "this_month": [
@@ -540,6 +548,10 @@
       {
         "date": "2025-12-10",
         "equity": 10.78
+      },
+      {
+        "date": "2025-12-11",
+        "equity": 69.62
       }
     ],
     "last_month": [
@@ -668,10 +680,14 @@
       {
         "date": "2025-12-10",
         "equity": 52.71
+      },
+      {
+        "date": "2025-12-11",
+        "equity": 111.55
       }
     ]
   },
-  "last_updated": "2025-12-11T12:23:20.888675Z",
+  "last_updated": "2025-12-11T13:32:14.530999Z",
   "signal_accuracy": {
     "last_month": null,
     "this_month": null
