@@ -86,12 +86,26 @@ jobs:
               return None
 
           def get_profit(trade):
-              """Calculate Final Profit = Net Profit + Swap + Commission"""
+              """Calculate Final Profit = Calculated Profit + Swap + Commission"""
               properties = trade.get('properties', {})
 
-              # Get Net Profit
-              net_profit_prop = properties.get('Net Profit', {})
-              net_profit = net_profit_prop.get('number') if 'number' in net_profit_prop else None
+              # Get Order Type (Buy/Sell)
+              order_type_prop = properties.get('Order Type', {})
+              order_type = None
+              if 'select' in order_type_prop and order_type_prop['select']:
+                  order_type = order_type_prop['select']['name']
+
+              # Get Volume (in standard lots)
+              volume_prop = properties.get('Volume', {})
+              volume = volume_prop.get('number') if 'number' in volume_prop else None
+
+              # Get Open Price
+              open_price_prop = properties.get('Open Price', {})
+              open_price = open_price_prop.get('number') if 'number' in open_price_prop else None
+
+              # Get Close Price
+              close_price_prop = properties.get('Close Price', {})
+              close_price = close_price_prop.get('number') if 'number' in close_price_prop else None
 
               # Get Swap
               swap_prop = properties.get('Swap', {})
@@ -101,9 +115,18 @@ jobs:
               commission_prop = properties.get('Commission', {})
               commission = commission_prop.get('number') if 'number' in commission_prop else None
 
-              # Calculate Final Profit if all values exist
-              if net_profit is not None and swap is not None and commission is not None:
-                  final_profit = net_profit + swap + commission
+              # Calculate profit if all required values exist
+              if all(v is not None for v in [order_type, volume, open_price, close_price, swap, commission]):
+                  # Calculate profit based on order type (EURUSD)
+                  if order_type == 'Buy':
+                      calculated_profit = (close_price - open_price) * volume * 100000
+                  elif order_type == 'Sell':
+                      calculated_profit = (open_price - close_price) * volume * 100000
+                  else:
+                      return None
+
+                  # Add swap and commission
+                  final_profit = calculated_profit + swap + commission
                   return final_profit
 
               return None
