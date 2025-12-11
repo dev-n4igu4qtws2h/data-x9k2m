@@ -419,11 +419,38 @@ jobs:
                   'in_sync': wins_match and losses_match
               }
 
+          def fetch_deposits_withdrawals(database_id, api_key):
+              """Fetch deposits and withdrawals from Notion"""
+              print(f"\nFetching deposits/withdrawals...")
+              data = fetch_notion_data(database_id, api_key)
+              entries = data.get('results', [])
+
+              total_deposits = 0
+              for entry in entries:
+                  props = entry.get('properties', {})
+
+                  # Get Deposit / Withdrawal amount
+                  amount_prop = props.get('Deposit / Withdrawal', {})
+                  amount = amount_prop.get('number') if 'number' in amount_prop else None
+
+                  if amount is not None:
+                      total_deposits += amount
+
+              print(f"   Total Deposits/Withdrawals: {total_deposits}€")
+              return total_deposits
+
           # Process AS2 EURUSD M5
           as2_data = process_strategy(
               os.environ['AS2_EURUSD_M5_DB_ID'],
               os.environ['NOTION_API_KEY'],
               'AS2 EURUSD M5'
+          )
+
+          # Fetch deposits/withdrawals
+          deposits_db_id = os.environ.get('DEPOSITS_DB_ID', '2c6482524f4581a88b2debfcdcefd3c6')
+          as2_data['total_deposits'] = fetch_deposits_withdrawals(
+              deposits_db_id,
+              os.environ['NOTION_API_KEY']
           )
 
           # Fetch signal reference data
