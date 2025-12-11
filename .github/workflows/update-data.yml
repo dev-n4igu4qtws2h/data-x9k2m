@@ -89,10 +89,28 @@ jobs:
               """Calculate Final Profit = Calculated Profit + Swap + Commission"""
               properties = trade.get('properties', {})
 
-              # Debug: Print first trade's available properties
+              # Debug: Write first trade's available properties to file
               global _debug_printed
               if '_debug_printed' not in globals():
-                  print(f"\n🔍 DEBUG - First trade properties: {list(properties.keys())}")
+                  debug_info = {
+                      'available_properties': list(properties.keys()),
+                      'sample_values': {}
+                  }
+                  # Sample first value of each property
+                  for key, value in properties.items():
+                      if isinstance(value, dict):
+                          debug_info['sample_values'][key] = {
+                              'type': value.get('type'),
+                              'has_number': 'number' in value,
+                              'has_select': 'select' in value
+                          }
+
+                  import os
+                  os.makedirs('data', exist_ok=True)
+                  with open('data/debug.json', 'w') as f:
+                      json.dump(debug_info, f, indent=2)
+
+                  print(f"\n🔍 DEBUG - Available properties: {list(properties.keys())}")
                   _debug_printed = True
 
               # Get Order Type (Buy/Sell)
@@ -485,4 +503,7 @@ jobs:
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           git add data/*.json
+          if [ -f data/debug.json ]; then
+            git add data/debug.json
+          fi
           git diff --quiet && git diff --staged --quiet || (git commit -m "Update trading data [automated]" && git push)
