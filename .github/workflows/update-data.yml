@@ -89,6 +89,12 @@ jobs:
               """Calculate Final Profit = Calculated Profit + Swap + Commission"""
               properties = trade.get('properties', {})
 
+              # Debug: Print first trade's available properties
+              global _debug_printed
+              if '_debug_printed' not in globals():
+                  print(f"\n🔍 DEBUG - First trade properties: {list(properties.keys())}")
+                  _debug_printed = True
+
               # Get Order Type (Buy/Sell)
               order_type_prop = properties.get('Order Type', {})
               order_type = None
@@ -114,6 +120,18 @@ jobs:
               # Get Commission
               commission_prop = properties.get('Commission', {})
               commission = commission_prop.get('number') if 'number' in commission_prop else None
+
+              # Debug missing values
+              missing = []
+              if order_type is None: missing.append('Order Type')
+              if volume is None: missing.append('Volume')
+              if open_price is None: missing.append('Open Price')
+              if close_price is None: missing.append('Close Price')
+              if swap is None: missing.append('Swap')
+              if commission is None: missing.append('Commission')
+
+              if missing and '_debug_printed' in globals():
+                  print(f"   ⚠️ Missing values: {', '.join(missing)}")
 
               # Calculate profit if all required values exist
               if all(v is not None for v in [order_type, volume, open_price, close_price, swap, commission]):
