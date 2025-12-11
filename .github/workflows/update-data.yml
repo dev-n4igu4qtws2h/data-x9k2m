@@ -89,35 +89,12 @@ jobs:
               """Calculate Final Profit = Calculated Profit + Swap + Commission"""
               properties = trade.get('properties', {})
 
-              # Debug: Write first trade's available properties to file
-              global _debug_printed
-              if '_debug_printed' not in globals():
-                  debug_info = {
-                      'available_properties': list(properties.keys()),
-                      'sample_values': {}
-                  }
-                  # Sample first value of each property
-                  for key, value in properties.items():
-                      if isinstance(value, dict):
-                          debug_info['sample_values'][key] = {
-                              'type': value.get('type'),
-                              'has_number': 'number' in value,
-                              'has_select': 'select' in value
-                          }
-
-                  import os
-                  os.makedirs('data', exist_ok=True)
-                  with open('data/debug.json', 'w') as f:
-                      json.dump(debug_info, f, indent=2)
-
-                  print(f"\n🔍 DEBUG - Available properties: {list(properties.keys())}")
-                  _debug_printed = True
-
-              # Get Order Type (Buy/Sell)
+              # Get Order Type (Buy/Sell) - it's a rich_text field
               order_type_prop = properties.get('Order Type', {})
               order_type = None
-              if 'select' in order_type_prop and order_type_prop['select']:
-                  order_type = order_type_prop['select']['name']
+              if 'rich_text' in order_type_prop and order_type_prop['rich_text']:
+                  if len(order_type_prop['rich_text']) > 0:
+                      order_type = order_type_prop['rich_text'][0]['plain_text']
 
               # Get Volume (in standard lots)
               volume_prop = properties.get('Volume', {})
@@ -138,18 +115,6 @@ jobs:
               # Get Commission
               commission_prop = properties.get('Commission', {})
               commission = commission_prop.get('number') if 'number' in commission_prop else None
-
-              # Debug missing values
-              missing = []
-              if order_type is None: missing.append('Order Type')
-              if volume is None: missing.append('Volume')
-              if open_price is None: missing.append('Open Price')
-              if close_price is None: missing.append('Close Price')
-              if swap is None: missing.append('Swap')
-              if commission is None: missing.append('Commission')
-
-              if missing and '_debug_printed' in globals():
-                  print(f"   ⚠️ Missing values: {', '.join(missing)}")
 
               # Calculate profit if all required values exist
               if all(v is not None for v in [order_type, volume, open_price, close_price, swap, commission]):
