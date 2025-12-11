@@ -119,14 +119,18 @@ jobs:
               # Calculate profit if all required values exist
               if all(v is not None for v in [order_type, volume, open_price, close_price, swap, commission]):
                   # Calculate profit based on order type (EURUSD)
+                  # Profit is in USD first, then converted to EUR
                   if order_type == 'Buy':
-                      calculated_profit = (close_price - open_price) * volume * 100000
+                      profit_usd = (close_price - open_price) * volume * 100000
                   elif order_type == 'Sell':
-                      calculated_profit = (open_price - close_price) * volume * 100000
+                      profit_usd = (open_price - close_price) * volume * 100000
                   else:
                       return None
 
-                  # Add swap and commission
+                  # Convert USD profit to EUR (for EURUSD, divide by close price)
+                  calculated_profit = profit_usd / close_price
+
+                  # Add swap and commission (already in EUR)
                   final_profit = calculated_profit + swap + commission
                   return final_profit
 
