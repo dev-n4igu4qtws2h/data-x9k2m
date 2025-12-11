@@ -1,0 +1,156 @@
+{
+  "available_properties": [
+    "S/L",
+    "Net Profit",
+    "Open Date / Time",
+    "T/P",
+    "Risk Reward",
+    "Volume",
+    "Status",
+    "Final Profit",
+    "Balance",
+    "Commission",
+    "Swap",
+    "Comment",
+    "Gross Profit",
+    "Risk %",
+    "Open Price",
+    "Close Price",
+    "Account ID",
+    "Order Type",
+    "Exclude",
+    "Reward %",
+    "Risk $",
+    "Magic Number",
+    "Outcome",
+    "Close Date / Time",
+    "Symbol"
+  ],
+  "sample_values": {
+    "S/L": {
+      "type": "number",
+      "has_number": true,
+      "has_select": false
+    },
+    "Net Profit": {
+      "type": "number",
+      "has_number": true,
+      "has_select": false
+    },
+    "Open Date / Time": {
+      "type": "date",
+      "has_number": false,
+      "has_select": false
+    },
+    "T/P": {
+      "type": "number",
+      "has_number": true,
+      "has_select": false
+    },
+    "Risk Reward": {
+      "type": "number",
+      "has_number": true,
+      "has_select": false
+    },
+    "Volume": {
+      "type": "number",
+      "has_number": true,
+      "has_select": false
+    },
+    "Status": {
+      "type": "rich_text",
+      "has_number": false,
+      "has_select": false
+    },
+    "Final Profit": {
+      "type": "formula",
+      "has_number": false,
+      "has_select": false
+    },
+    "Balance": {
+      "type": "number",
+      "has_number": true,
+      "has_select": false
+    },
+    "Commission": {
+      "type": "number",
+      "has_number": true,
+      "has_select": false
+    },
+    "Swap": {
+      "type": "number",
+      "has_number": true,
+      "has_select": false
+    },
+    "Comment": {
+      "type": "rich_text",
+      "has_number": false,
+      "has_select": false
+    },
+    "Gross Profit": {
+      "type": "number",
+      "has_number": true,
+      "has_select": false
+    },
+    "Risk %": {
+      "type": "number",
+      "has_number": true,
+      "has_select": false
+    },
+    "Open Price": {
+      "type": "number",
+      "has_number": true,
+      "has_select": false
+    },
+    "Close Price": {
+      "type": "number",
+      "has_number": true,
+      "has_select": false
+    },
+    "Account ID": {
+      "type": "number",
+      "has_number": true,
+      "has_select": false
+    },
+    "Order Type": {
+      "type": "rich_text",
+      "has_number": false,
+      "has_select": false
+    },
+    "Exclude": {
+      "type": "checkbox",
+      "has_number": false,
+      "has_select": false
+    },
+    "Reward %": {
+      "type": "number",
+      "has_number": true,
+      "has_select": false
+    },
+    "Risk $": {
+      "type": "number",
+      "has_number": true,
+      "has_select": false
+    },
+    "Magic Number": {
+      "type": "number",
+      "has_number": true,
+      "has_select": false
+    },
+    "Outcome": {
+      "type": "select",
+      "has_number": false,
+      "has_select": true
+    },
+    "Close Date / Time": {
+      "type": "date",
+      "has_number": false,
+      "has_select": false
+    },
+    "Symbol": {
+      "type": "title",
+      "has_number": false,
+      "has_select": false
+    }
+  }
+}
