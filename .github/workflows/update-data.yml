@@ -137,37 +137,52 @@ jobs:
               return None
 
           def calculate_equity_curve(trades, start_date=None, end_date=None):
-              """Calculate equity curve data points with dates"""
-              # Filter trades by date if specified
-              filtered_trades = []
+              """Calculate equity curve data points with dates (absolute values)"""
+              # First, calculate cumulative equity for ALL trades to get absolute values
+              all_trades = []
               for trade in trades:
                   trade_date = get_trade_date(trade)
                   if trade_date:
-                      if start_date and trade_date < start_date:
-                          continue
-                      if end_date and trade_date > end_date:
-                          continue
-
                       profit = get_profit(trade)
                       if profit is not None:
-                          filtered_trades.append({
+                          all_trades.append({
                               'date': trade_date,
                               'profit': profit
                           })
 
-              # Sort by date
-              filtered_trades.sort(key=lambda x: x['date'])
+              # Sort all trades by date
+              all_trades.sort(key=lambda x: x['date'])
 
-              # Calculate cumulative equity
-              equity_data = []
+              # Calculate absolute cumulative equity for all trades
               cumulative = 0
+              trade_equity_map = {}
 
-              for trade in filtered_trades:
+              for trade in all_trades:
                   cumulative += trade['profit']
-                  equity_data.append({
-                      'date': trade['date'].strftime('%Y-%m-%d'),
-                      'equity': round(cumulative, 2)
-                  })
+                  date_str = trade['date'].strftime('%Y-%m-%d')
+                  # Store each point (multiple trades per day possible)
+                  if date_str not in trade_equity_map:
+                      trade_equity_map[date_str] = []
+                  trade_equity_map[date_str].append(round(cumulative, 2))
+
+              # Now filter by date range if specified
+              equity_data = []
+              for date_str, equity_values in trade_equity_map.items():
+                  trade_date = datetime.strptime(date_str, '%Y-%m-%d')
+                  if start_date and trade_date.date() < start_date:
+                      continue
+                  if end_date and trade_date.date() > end_date:
+                      continue
+
+                  # Add all equity points for this date
+                  for equity in equity_values:
+                      equity_data.append({
+                          'date': date_str,
+                          'equity': equity
+                      })
+
+              # Sort by date (should already be sorted, but to be safe)
+              equity_data.sort(key=lambda x: x['date'])
 
               return equity_data
 
