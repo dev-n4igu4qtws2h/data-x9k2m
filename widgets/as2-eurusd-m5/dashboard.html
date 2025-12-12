@@ -222,6 +222,10 @@
                     <span class="stat-value" id="profit">-</span>
                 </div>
                 <div class="stat-row">
+                    <span class="stat-label">Drawdown</span>
+                    <span class="stat-value" id="drawdown">-</span>
+                </div>
+                <div class="stat-row">
                     <span class="stat-label">Max Drawdown</span>
                     <span class="stat-value" id="maxDrawdown">-</span>
                 </div>
@@ -470,6 +474,25 @@
             const formattedProfit = Math.round(finalProfit).toLocaleString('de-DE');
             profitElem.innerHTML = `${formattedProfit} €<span style="color: var(--text-secondary)"> / </span>${profitPercent}%`;
             profitElem.className = 'stat-value' + (finalProfit >= 0 ? ' win' : ' loss');
+
+            // Calculate current Drawdown from global All-Time-High
+            let globalATH = 0;
+            const overallEquity = allData.equity.overall;
+            if (overallEquity && overallEquity.length > 0) {
+                overallEquity.forEach(point => {
+                    if (point.equity > globalATH) {
+                        globalATH = point.equity;
+                    }
+                });
+            }
+
+            const currentDrawdown = globalATH - finalProfit;
+            const currentDrawdownPercent = globalATH > 0 ? ((currentDrawdown / globalATH) * 100).toFixed(1) : 0;
+
+            const drawdownElem = document.getElementById('drawdown');
+            const formattedCurrentDrawdown = Math.round(currentDrawdown).toLocaleString('de-DE');
+            drawdownElem.innerHTML = `${formattedCurrentDrawdown} €<span style="color: var(--text-secondary)"> / </span>${currentDrawdownPercent}%`;
+            drawdownElem.className = 'stat-value' + (currentDrawdown > 0 ? ' loss' : ' win');
 
             // Calculate Max Drawdown from equity curve
             let maxDrawdown = 0;
