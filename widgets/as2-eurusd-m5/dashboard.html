@@ -559,6 +559,24 @@
                     }));
                 }
 
+                // Normalize to show relative performance (subtract first value for timeframe display)
+                // Get the baseline: for non-overall timeframes, use the equity before the timeframe started
+                let baseline = 0;
+                if (timeframe !== 'overall' && aggregatedEquity.length > 0) {
+                    // Find the last equity point before this timeframe
+                    const firstDateInTimeframe = new Date(aggregatedEquity[0].date);
+                    const overallEquity = allData.equity.overall;
+
+                    // Find the last point before the timeframe
+                    for (let i = overallEquity.length - 1; i >= 0; i--) {
+                        const pointDate = new Date(overallEquity[i].date);
+                        if (pointDate < firstDateInTimeframe) {
+                            baseline = overallEquity[i].equity;
+                            break;
+                        }
+                    }
+                }
+
                 // Add starting point at €0 (one day before first trade)
                 const firstDate = new Date(aggregatedEquity[0].date);
                 const startDate = new Date(firstDate.getTime() - 24 * 60 * 60 * 1000); // 1 day before
@@ -567,7 +585,7 @@
                     { x: startDate.getTime(), y: 0 },
                     ...aggregatedEquity.map(point => ({
                         x: new Date(point.date).getTime(),
-                        y: point.equity
+                        y: point.equity - baseline
                     }))
                 ];
 
