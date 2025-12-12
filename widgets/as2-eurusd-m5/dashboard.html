@@ -510,10 +510,10 @@
             }
 
             const maxDrawdownPercent = (maxDrawdown / totalDeposits * 100).toFixed(1);
-            const drawdownElem = document.getElementById('maxDrawdown');
+            const maxDrawdownElem = document.getElementById('maxDrawdown');
             const formattedDrawdown = Math.round(maxDrawdown).toLocaleString('de-DE');
-            drawdownElem.innerHTML = `${formattedDrawdown} €<span style="color: var(--text-secondary)"> / </span>${maxDrawdownPercent}%`;
-            drawdownElem.className = 'stat-value loss';
+            maxDrawdownElem.innerHTML = `${formattedDrawdown} €<span style="color: var(--text-secondary)"> / </span>${maxDrawdownPercent}%`;
+            maxDrawdownElem.className = 'stat-value loss';
 
             // W/L Streak
             if (data.streak) {
