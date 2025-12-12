@@ -499,15 +499,11 @@
                 drawdownElem.className = 'stat-value loss';
             }
 
-            // Calculate Max Drawdown from equity curve
+            // Calculate Max Drawdown from global ATH
             let maxDrawdown = 0;
-            let peak = 0;
             if (equity && equity.length > 0) {
                 equity.forEach(point => {
-                    if (point.equity > peak) {
-                        peak = point.equity;
-                    }
-                    const drawdown = peak - point.equity;
+                    const drawdown = globalATH - point.equity;
                     if (drawdown > maxDrawdown) {
                         maxDrawdown = drawdown;
                     }
