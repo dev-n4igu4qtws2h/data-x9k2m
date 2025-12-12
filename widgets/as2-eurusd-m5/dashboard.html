@@ -490,9 +490,14 @@
             const currentDrawdownPercent = globalATH > 0 ? ((currentDrawdown / globalATH) * 100).toFixed(1) : 0;
 
             const drawdownElem = document.getElementById('drawdown');
-            const formattedCurrentDrawdown = Math.round(currentDrawdown).toLocaleString('de-DE');
-            drawdownElem.innerHTML = `${formattedCurrentDrawdown} €<span style="color: var(--text-secondary)"> / </span>${currentDrawdownPercent}%`;
-            drawdownElem.className = 'stat-value' + (currentDrawdown > 0 ? ' loss' : ' win');
+            if (currentDrawdown <= 0) {
+                drawdownElem.innerHTML = '🏆 All Time High';
+                drawdownElem.className = 'stat-value win';
+            } else {
+                const formattedCurrentDrawdown = Math.round(currentDrawdown).toLocaleString('de-DE');
+                drawdownElem.innerHTML = `${formattedCurrentDrawdown} €<span style="color: var(--text-secondary)"> / </span>${currentDrawdownPercent}%`;
+                drawdownElem.className = 'stat-value loss';
+            }
 
             // Calculate Max Drawdown from equity curve
             let maxDrawdown = 0;
