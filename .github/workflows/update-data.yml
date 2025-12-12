@@ -169,9 +169,9 @@ jobs:
               equity_data = []
               for date_str, equity_values in trade_equity_map.items():
                   trade_date = datetime.strptime(date_str, '%Y-%m-%d')
-                  if start_date and trade_date.date() < start_date:
+                  if start_date and trade_date < start_date:
                       continue
-                  if end_date and trade_date.date() > end_date:
+                  if end_date and trade_date > end_date:
                       continue
 
                   # Add all equity points for this date
