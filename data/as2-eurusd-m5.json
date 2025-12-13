@@ -4,6 +4,7 @@
     "losses": 23,
     "total": 52,
     "winrate": 55.8,
+    "profit_factor": 1.23,
     "streak": {
       "current": 2,
       "current_type": "win",
@@ -16,6 +17,7 @@
     "losses": 23,
     "total": 52,
     "winrate": 55.8,
+    "profit_factor": 1.23,
     "streak": {
       "current": 2,
       "current_type": "win",
@@ -28,6 +30,7 @@
     "losses": 6,
     "total": 14,
     "winrate": 57.1,
+    "profit_factor": 1.29,
     "streak": {
       "current": 2,
       "current_type": "win",
@@ -40,6 +43,7 @@
     "losses": 13,
     "total": 26,
     "winrate": 50.0,
+    "profit_factor": 0.99,
     "streak": {
       "current": 3,
       "current_type": "win",
@@ -52,6 +56,7 @@
     "losses": 1,
     "total": 4,
     "winrate": 75.0,
+    "profit_factor": 2.93,
     "streak": {
       "current": 2,
       "current_type": "win",
@@ -687,7 +692,7 @@
       }
     ]
   },
-  "last_updated": "2025-12-13T20:11:46.625357Z",
+  "last_updated": "2025-12-13T20:39:25.808683Z",
   "total_deposits": 6000,
   "signal_accuracy": {
     "last_month": null,
