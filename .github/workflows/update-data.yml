@@ -217,6 +217,8 @@ jobs:
               def calculate_stats(trade_list, start=None, end=None):
                   wins = 0
                   losses = 0
+                  total_win_profit = 0
+                  total_loss_profit = 0
 
                   # Collect trades with outcomes for streak calculation
                   filtered_trades = []
@@ -254,9 +256,13 @@ jobs:
                           if outcome == 'Win':
                               wins += 1
                               filtered_trades.append({'date': trade_date, 'outcome': 'win'})
+                              if profit is not None and profit > 0:
+                                  total_win_profit += profit
                           elif outcome == 'Loss':
                               losses += 1
                               filtered_trades.append({'date': trade_date, 'outcome': 'loss'})
+                              if profit is not None and profit < 0:
+                                  total_loss_profit += abs(profit)
 
                   # Sort trades by date for streak calculation
                   filtered_trades.sort(key=lambda x: x['date'])
@@ -297,12 +303,14 @@ jobs:
 
                   total = wins + losses
                   winrate = round((wins / total * 100), 1) if total > 0 else 0
+                  profit_factor = round(total_win_profit / total_loss_profit, 2) if total_loss_profit > 0 else 0
 
                   return {
                       'wins': wins,
                       'losses': losses,
                       'total': total,
                       'winrate': winrate,
+                      'profit_factor': profit_factor,
                       'streak': {
                           'current': current_streak if current_streak_type else 0,
                           'current_type': current_streak_type if current_streak_type else 'none',
