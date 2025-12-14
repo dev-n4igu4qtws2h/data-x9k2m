@@ -465,34 +465,22 @@
             const wlPerfElem = document.getElementById('wlPerformance');
             wlPerfElem.innerHTML = `<span style="color: var(--color-win)">${data.wins}</span><span style="color: var(--text-secondary)">:</span><span style="color: var(--color-loss)">${data.losses}</span><span style="color: var(--text-secondary)"> | ${data.total}T</span>`;
 
-            // Profit Factor with color grading
+            // Profit Factor - Family Office Requirements
             const profitFactorElem = document.getElementById('profitFactor');
             const pf = data.profit_factor || 0;
 
             let pfColor, pfText;
-            if (pf < 1.18) {
-                pfColor = '#8b0000'; // Dunkelrot (Dark Red) - Loss
+            if (pf < 1.4) {
+                pfColor = '#f85149'; // Rot - Reject (< Gate 1.3)
                 pfText = pf.toFixed(2);
-            } else if (pf < 1.23) {
-                pfColor = '#ff4500'; // Orange-Rot (Orange-Red) - Marginal
+            } else if (pf < 1.6) {
+                pfColor = '#ff8c00'; // Orange - Beobachten, nicht investieren
                 pfText = pf.toFixed(2);
-            } else if (pf < 1.35) {
-                pfColor = '#ff8c00'; // Orange - Fair
-                pfText = pf.toFixed(2);
-            } else if (pf < 1.65) {
-                pfColor = '#ffa500'; // Gelb-Orange (Yellow-Orange) - Decent
-                pfText = pf.toFixed(2);
-            } else if (pf < 1.95) {
-                pfColor = '#9acd32'; // Gelb-Grün (Yellow-Green) - Good
-                pfText = pf.toFixed(2);
-            } else if (pf < 2.15) {
-                pfColor = '#90ee90'; // Hellgrün (Light Green) - Very Good
-                pfText = pf.toFixed(2);
-            } else if (pf < 2.45) {
-                pfColor = '#3fb950'; // Grün (Green) - Excellent
+            } else if (pf < 2.0) {
+                pfColor = '#3fb950'; // Grün - Capital Allocation OK
                 pfText = pf.toFixed(2);
             } else {
-                pfColor = '#228b22'; // Dunkelgrün (Dark Green) - Elite
+                pfColor = '#3fb950'; // Grün - Erhöhe Allocation (Elite)
                 pfText = '⭐ ' + pf.toFixed(2);
             }
 
@@ -500,8 +488,38 @@
             profitFactorElem.style.color = pfColor;
             profitFactorElem.className = 'stat-value';
 
-            // Get final profit from equity curve and calculate percentage
-            const finalProfit = equity && equity.length > 0 ? equity[equity.length - 1].equity : 0;
+            // Get profit for the timeframe
+            let finalProfit;
+            if (equity && equity.length > 0) {
+                if (timeframe === 'overall') {
+                    // For overall, show total profit (last equity value)
+                    finalProfit = equity[equity.length - 1].equity;
+                } else {
+                    // For time periods, show profit within the period (last - first)
+                    if (equity.length > 1) {
+                        finalProfit = equity[equity.length - 1].equity - equity[0].equity;
+                    } else {
+                        // Only one trade in period - get baseline from overall
+                        const overallEquity = allData.equity.overall;
+                        const firstDateInPeriod = new Date(equity[0].date);
+                        let baselineEquity = 0;
+
+                        // Find last equity point before this period
+                        for (let i = overallEquity.length - 1; i >= 0; i--) {
+                            const pointDate = new Date(overallEquity[i].date);
+                            if (pointDate < firstDateInPeriod) {
+                                baselineEquity = overallEquity[i].equity;
+                                break;
+                            }
+                        }
+
+                        finalProfit = equity[0].equity - baselineEquity;
+                    }
+                }
+            } else {
+                finalProfit = 0;
+            }
+
             const totalDeposits = allData.total_deposits || 1; // Avoid division by zero
             const profitPercent = (finalProfit / totalDeposits * 100).toFixed(1);
 
