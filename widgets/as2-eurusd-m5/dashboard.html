@@ -491,8 +491,8 @@
             // Get profit for the timeframe
             let finalProfit;
             if (equity && equity.length > 0) {
-                if (timeframe === 'overall') {
-                    // For overall, show total profit (last equity value)
+                if (timeframe === 'overall' || timeframe === 'ytd') {
+                    // For overall and YTD, show total profit (last equity value)
                     finalProfit = equity[equity.length - 1].equity;
                 } else {
                     // For time periods, show profit within the period (last - first)
