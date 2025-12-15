@@ -52,16 +52,16 @@
     }
   },
   "last_week": {
-    "wins": 3,
-    "losses": 1,
-    "total": 4,
-    "winrate": 75.0,
-    "profit_factor": 2.93,
+    "wins": 0,
+    "losses": 0,
+    "total": 0,
+    "winrate": 0,
+    "profit_factor": 0,
     "streak": {
-      "current": 2,
-      "current_type": "win",
-      "max_win": 2,
-      "max_loss": 1
+      "current": 0,
+      "current_type": "none",
+      "max_win": 0,
+      "max_loss": 0
     }
   },
   "equity": {
@@ -673,26 +673,9 @@
         "equity": 211.56
       }
     ],
-    "last_week": [
-      {
-        "date": "2025-12-08",
-        "equity": 258.47
-      },
-      {
-        "date": "2025-12-09",
-        "equity": 195.27
-      },
-      {
-        "date": "2025-12-10",
-        "equity": 258.24
-      },
-      {
-        "date": "2025-12-11",
-        "equity": 319.1
-      }
-    ]
+    "last_week": []
   },
-  "last_updated": "2025-12-14T23:10:05.871826Z",
+  "last_updated": "2025-12-15T00:56:58.166577Z",
   "total_deposits": 6000,
   "signal_accuracy": {
     "last_month": null,
