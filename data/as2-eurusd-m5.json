@@ -1,10 +1,10 @@
 {
   "overall": {
-    "wins": 30,
+    "wins": 31,
     "losses": 24,
-    "total": 54,
-    "winrate": 55.6,
-    "profit_factor": 1.22,
+    "total": 55,
+    "winrate": 56.4,
+    "profit_factor": 1.26,
     "streak": {
       "current": 1,
       "current_type": "loss",
@@ -13,11 +13,11 @@
     }
   },
   "ytd": {
-    "wins": 30,
+    "wins": 31,
     "losses": 24,
-    "total": 54,
-    "winrate": 55.6,
-    "profit_factor": 1.22,
+    "total": 55,
+    "winrate": 56.4,
+    "profit_factor": 1.26,
     "streak": {
       "current": 1,
       "current_type": "loss",
@@ -26,15 +26,15 @@
     }
   },
   "this_month": {
-    "wins": 9,
+    "wins": 10,
     "losses": 7,
-    "total": 16,
-    "winrate": 56.2,
-    "profit_factor": 1.24,
+    "total": 17,
+    "winrate": 58.8,
+    "profit_factor": 1.38,
     "streak": {
       "current": 1,
       "current_type": "loss",
-      "max_win": 3,
+      "max_win": 4,
       "max_loss": 4
     }
   },
@@ -52,15 +52,15 @@
     }
   },
   "last_week": {
-    "wins": 1,
+    "wins": 2,
     "losses": 1,
-    "total": 2,
-    "winrate": 50.0,
-    "profit_factor": 0.95,
+    "total": 3,
+    "winrate": 66.7,
+    "profit_factor": 1.88,
     "streak": {
       "current": 1,
       "current_type": "loss",
-      "max_win": 1,
+      "max_win": 2,
       "max_loss": 1
     }
   },
@@ -288,7 +288,11 @@
       },
       {
         "date": "2025-12-16",
-        "equity": 315.54
+        "equity": 442.22
+      },
+      {
+        "date": "2025-12-16",
+        "equity": 376.73
       }
     ],
     "ytd": [
@@ -514,7 +518,11 @@
       },
       {
         "date": "2025-12-16",
-        "equity": 315.54
+        "equity": 442.22
+      },
+      {
+        "date": "2025-12-16",
+        "equity": 376.73
       }
     ],
     "this_month": [
@@ -580,7 +588,11 @@
       },
       {
         "date": "2025-12-16",
-        "equity": 315.54
+        "equity": 442.22
+      },
+      {
+        "date": "2025-12-16",
+        "equity": 376.73
       }
     ],
     "last_month": [
@@ -704,11 +716,15 @@
       },
       {
         "date": "2025-12-16",
-        "equity": 315.54
+        "equity": 442.22
+      },
+      {
+        "date": "2025-12-16",
+        "equity": 376.73
       }
     ]
   },
-  "last_updated": "2025-12-16T11:11:25.330520Z",
+  "last_updated": "2025-12-16T12:23:05.506138Z",
   "total_deposits": 6000,
   "signal_accuracy": {
     "last_month": null,
