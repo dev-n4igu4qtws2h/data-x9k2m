@@ -546,8 +546,8 @@
             }
 
             const currentDrawdown = hwm - currentBalance;
-            const currentDrawdownPercent = hwm > 0
-                ? ((currentDrawdown / hwm) * 100).toFixed(1)
+            const currentDrawdownPercent = totalDeposits > 0
+                ? ((currentDrawdown / totalDeposits) * 100).toFixed(1)
                 : 0;
 
             const drawdownElem = document.getElementById('drawdown');
@@ -573,7 +573,7 @@
                     }
                     // Calculate drawdown from peak
                     const drawdown = peak - point.equity;
-                    const drawdownPercent = peak > 0 ? (drawdown / peak) * 100 : 0;
+                    const drawdownPercent = totalDeposits > 0 ? (drawdown / totalDeposits) * 100 : 0;
 
                     // Track maximum drawdown
                     if (drawdown > maxDrawdown) {
