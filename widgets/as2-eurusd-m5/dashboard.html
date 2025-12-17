@@ -562,16 +562,16 @@
             // Calculate Max Drawdown with proper HWM tracking
             let maxDrawdown = 0;
             let maxDrawdownPercent = 0;
-            let peak = 0;
+            let maxDdPeak = 0;
 
             if (equity && equity.length > 0) {
                 equity.forEach(point => {
                     // Update peak (HWM) if current equity is higher
-                    if (point.equity > peak) {
-                        peak = point.equity;
+                    if (point.equity > maxDdPeak) {
+                        maxDdPeak = point.equity;
                     }
                     // Calculate drawdown from peak
-                    const drawdown = peak - point.equity;
+                    const drawdown = maxDdPeak - point.equity;
                     const drawdownPercent = totalDeposits > 0 ? (drawdown / totalDeposits) * 100 : 0;
 
                     // Track maximum drawdown
