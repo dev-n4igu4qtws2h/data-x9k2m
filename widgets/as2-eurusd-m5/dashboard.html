@@ -529,29 +529,28 @@
             profitElem.innerHTML = `${formattedProfit}€<span style="color: var(--text-secondary)"> | </span>${profitPercentWithSign}%`;
             profitElem.className = 'stat-value' + (finalProfit >= 0 ? ' win' : ' loss');
 
-            // Calculate Drawdown: ATH (up to timeframe end) - Lowest point (in timeframe)
+            // Calculate Drawdown: Peak (ATH up to timeframe end) - Last balance
             let peak = 0;
-            let lowest = Infinity;
+            let lastBalance = 0;
 
             if (equity && equity.length > 0) {
                 equity.forEach(point => {
                     if (point.equity > peak) {
                         peak = point.equity;
                     }
-                    if (point.equity < lowest) {
-                        lowest = point.equity;
-                    }
                 });
+                // Last balance is the final equity value in timeframe
+                lastBalance = equity[equity.length - 1].equity;
             }
 
-            // DD = Peak - Lowest point
-            const currentDrawdown = peak - lowest;
+            // DD = Peak - Last balance
+            const currentDrawdown = peak - lastBalance;
             const currentDrawdownPercent = totalDeposits > 0
                 ? ((currentDrawdown / totalDeposits) * 100).toFixed(1)
                 : 0;
 
             const drawdownElem = document.getElementById('drawdown');
-            if (currentDrawdown <= 0 || lowest === Infinity) {
+            if (currentDrawdown <= 0) {
                 drawdownElem.innerHTML = '🏆 ATH';
                 drawdownElem.className = 'stat-value win';
             } else {
