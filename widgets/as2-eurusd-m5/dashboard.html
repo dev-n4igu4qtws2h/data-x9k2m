@@ -541,7 +541,9 @@
             }
 
             const currentDrawdown = globalATH - finalProfit;
-            const currentDrawdownPercent = (currentDrawdown / totalDeposits * 100).toFixed(1);
+            const currentDrawdownPercent = globalATH > 0
+                ? ((currentDrawdown / globalATH) * 100).toFixed(1)
+                : 0;
 
             const drawdownElem = document.getElementById('drawdown');
             if (currentDrawdown <= 0) {
@@ -553,18 +555,30 @@
                 drawdownElem.className = 'stat-value loss';
             }
 
-            // Calculate Max Drawdown from global ATH
+            // Calculate Max Drawdown with proper HWM tracking
             let maxDrawdown = 0;
+            let maxDrawdownPercent = 0;
+            let peak = 0;
+
             if (equity && equity.length > 0) {
                 equity.forEach(point => {
-                    const drawdown = globalATH - point.equity;
+                    // Update peak (HWM) if current equity is higher
+                    if (point.equity > peak) {
+                        peak = point.equity;
+                    }
+                    // Calculate drawdown from peak
+                    const drawdown = peak - point.equity;
+                    const drawdownPercent = peak > 0 ? (drawdown / peak) * 100 : 0;
+
+                    // Track maximum drawdown
                     if (drawdown > maxDrawdown) {
                         maxDrawdown = drawdown;
+                        maxDrawdownPercent = drawdownPercent;
                     }
                 });
             }
 
-            const maxDrawdownPercent = (maxDrawdown / totalDeposits * 100).toFixed(1);
+            maxDrawdownPercent = maxDrawdownPercent.toFixed(1);
             const maxDrawdownElem = document.getElementById('maxDrawdown');
             const formattedDrawdown = Math.round(maxDrawdown).toLocaleString('de-DE');
             maxDrawdownElem.innerHTML = `${formattedDrawdown}€<span style="color: var(--text-secondary)"> | </span>${maxDrawdownPercent}%`;
