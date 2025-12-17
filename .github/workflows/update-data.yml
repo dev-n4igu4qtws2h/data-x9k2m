@@ -78,8 +78,17 @@ jobs:
 
                   if trade_date_str:
                       try:
-                          clean_date = trade_date_str.split('T')[0]
-                          return datetime.strptime(clean_date, '%Y-%m-%d')
+                          # Parse full datetime with time if available
+                          if 'T' in trade_date_str:
+                              # Has time: 2025-12-16T14:30:00.000Z or 2025-12-16T14:30:00Z
+                              clean_date = trade_date_str.replace('Z', '+00:00').split('.')[0]
+                              if '+' in clean_date:
+                                  return datetime.strptime(clean_date.split('+')[0], '%Y-%m-%dT%H:%M:%S')
+                              else:
+                                  return datetime.strptime(clean_date, '%Y-%m-%dT%H:%M:%S')
+                          else:
+                              # Only date: 2025-12-16
+                              return datetime.strptime(trade_date_str, '%Y-%m-%d')
                       except ValueError:
                           pass
 
