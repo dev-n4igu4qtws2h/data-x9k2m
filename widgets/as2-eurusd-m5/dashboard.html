@@ -529,23 +529,27 @@
             profitElem.innerHTML = `${formattedProfit}€<span style="color: var(--text-secondary)"> | </span>${profitPercentWithSign}%`;
             profitElem.className = 'stat-value' + (finalProfit >= 0 ? ' win' : ' loss');
 
-            // Calculate current Drawdown - timeframe specific
-            // Find HWM and current balance within/up to the timeframe
-            let hwm = 0;
+            // Calculate current Drawdown from global ATH
+            // DD uses global ATH (can be outside timeframe) vs timeframe ending balance
+            let globalATH = 0;
             let currentBalance = 0;
 
-            if (equity && equity.length > 0) {
-                // Find HWM within the timeframe equity data
-                equity.forEach(point => {
-                    if (point.equity > hwm) {
-                        hwm = point.equity;
+            // Find global ATH from overall equity
+            const overallEquity = allData.equity.overall;
+            if (overallEquity && overallEquity.length > 0) {
+                overallEquity.forEach(point => {
+                    if (point.equity > globalATH) {
+                        globalATH = point.equity;
                     }
                 });
-                // Current balance is the last equity value in this timeframe
+            }
+
+            // Current balance is the last equity value in this timeframe
+            if (equity && equity.length > 0) {
                 currentBalance = equity[equity.length - 1].equity;
             }
 
-            const currentDrawdown = hwm - currentBalance;
+            const currentDrawdown = globalATH - currentBalance;
             const currentDrawdownPercent = totalDeposits > 0
                 ? ((currentDrawdown / totalDeposits) * 100).toFixed(1)
                 : 0;
