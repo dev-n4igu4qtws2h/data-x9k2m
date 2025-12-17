@@ -530,7 +530,9 @@
             profitElem.className = 'stat-value' + (finalProfit >= 0 ? ' win' : ' loss');
 
             // Calculate current Drawdown from global All-Time-High
+            // DD always uses current absolute balance, not timeframe profit
             let globalATH = 0;
+            let currentBalance = 0;
             const overallEquity = allData.equity.overall;
             if (overallEquity && overallEquity.length > 0) {
                 overallEquity.forEach(point => {
@@ -538,9 +540,11 @@
                         globalATH = point.equity;
                     }
                 });
+                // Current balance is always the last overall equity value
+                currentBalance = overallEquity[overallEquity.length - 1].equity;
             }
 
-            const currentDrawdown = globalATH - finalProfit;
+            const currentDrawdown = globalATH - currentBalance;
             const currentDrawdownPercent = globalATH > 0
                 ? ((currentDrawdown / globalATH) * 100).toFixed(1)
                 : 0;
