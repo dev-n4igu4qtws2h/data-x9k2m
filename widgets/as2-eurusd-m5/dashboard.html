@@ -521,11 +521,13 @@
             }
 
             const totalDeposits = allData.total_deposits || 1; // Avoid division by zero
-            const profitPercent = (finalProfit / totalDeposits * 100).toFixed(1);
+            // Use Time-Weighted Return % from backend
+            const twrPercent = data.twr_percent || 0;
+            const profitPercent = twrPercent.toFixed(1);
 
             const profitElem = document.getElementById('profit');
             const formattedProfit = Math.round(finalProfit).toLocaleString('de-DE');
-            const profitPercentWithSign = (finalProfit >= 0 ? '+' : '') + profitPercent;
+            const profitPercentWithSign = (twrPercent >= 0 ? '+' : '') + profitPercent;
             profitElem.innerHTML = `${formattedProfit}€<span style="color: var(--text-secondary)"> | </span>${profitPercentWithSign}%`;
             profitElem.className = 'stat-value' + (finalProfit >= 0 ? ' win' : ' loss');
 

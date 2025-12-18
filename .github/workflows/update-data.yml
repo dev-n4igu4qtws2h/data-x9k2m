@@ -195,6 +195,46 @@ jobs:
 
               return equity_data
 
+          def calculate_twr_percent(trades, start_date=None, end_date=None, total_deposits=6000):
+              """Calculate Time-Weighted Return % for a timeframe"""
+              # Get all trades sorted by date
+              all_trades = []
+              for trade in trades:
+                  trade_date = get_trade_date(trade)
+                  if trade_date:
+                      profit = get_profit(trade)
+                      if profit is not None:
+                          all_trades.append({
+                              'date': trade_date,
+                              'profit': profit
+                          })
+
+              # Sort by date
+              all_trades.sort(key=lambda x: x['date'])
+
+              # Calculate TWR% by summing individual trade percentages
+              twr_sum = 0.0
+              balance_before = total_deposits  # Starting balance
+
+              for trade in all_trades:
+                  # Check if trade is within timeframe
+                  if start_date and trade['date'] < start_date:
+                      # Update balance but don't count toward TWR for this timeframe
+                      balance_before += trade['profit']
+                      continue
+                  if end_date and trade['date'] > end_date:
+                      break
+
+                  # Calculate TWR% for this trade
+                  if balance_before > 0:
+                      trade_twr_percent = (trade['profit'] / balance_before) * 100
+                      twr_sum += trade_twr_percent
+
+                  # Update balance for next trade
+                  balance_before += trade['profit']
+
+              return round(twr_sum, 2)
+
           def process_strategy(database_id, api_key, strategy_name):
               print(f"\nProcessing {strategy_name}...")
               print(f"Database ID: {database_id}")
@@ -328,12 +368,26 @@ jobs:
                       }
                   }
 
+              # Calculate stats for each timeframe
+              overall_stats = calculate_stats(trades)
+              ytd_stats = calculate_stats(trades, start_of_year)
+              this_month_stats = calculate_stats(trades, start_of_month)
+              last_month_stats = calculate_stats(trades, start_of_last_month, end_of_last_month)
+              last_week_stats = calculate_stats(trades, start_of_week)
+
+              # Add TWR% to each timeframe
+              overall_stats['twr_percent'] = calculate_twr_percent(trades)
+              ytd_stats['twr_percent'] = calculate_twr_percent(trades, start_of_year)
+              this_month_stats['twr_percent'] = calculate_twr_percent(trades, start_of_month)
+              last_month_stats['twr_percent'] = calculate_twr_percent(trades, start_of_last_month, end_of_last_month)
+              last_week_stats['twr_percent'] = calculate_twr_percent(trades, start_of_week)
+
               result = {
-                  'overall': calculate_stats(trades),
-                  'ytd': calculate_stats(trades, start_of_year),
-                  'this_month': calculate_stats(trades, start_of_month),
-                  'last_month': calculate_stats(trades, start_of_last_month, end_of_last_month),
-                  'last_week': calculate_stats(trades, start_of_week),
+                  'overall': overall_stats,
+                  'ytd': ytd_stats,
+                  'this_month': this_month_stats,
+                  'last_month': last_month_stats,
+                  'last_week': last_week_stats,
                   'equity': {
                       'overall': calculate_equity_curve(trades),
                       'ytd': calculate_equity_curve(trades, start_of_year),
