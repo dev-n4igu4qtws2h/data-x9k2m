@@ -10,7 +10,8 @@
       "current_type": "win",
       "max_win": 4,
       "max_loss": 5
-    }
+    },
+    "twr_percent": 7.32
   },
   "ytd": {
     "wins": 32,
@@ -23,7 +24,8 @@
       "current_type": "win",
       "max_win": 4,
       "max_loss": 5
-    }
+    },
+    "twr_percent": 7.32
   },
   "this_month": {
     "wins": 11,
@@ -36,7 +38,8 @@
       "current_type": "win",
       "max_win": 3,
       "max_loss": 3
-    }
+    },
+    "twr_percent": 3.68
   },
   "last_month": {
     "wins": 13,
@@ -49,7 +52,8 @@
       "current_type": "win",
       "max_win": 3,
       "max_loss": 5
-    }
+    },
+    "twr_percent": -0.09
   },
   "last_week": {
     "wins": 3,
@@ -62,7 +66,8 @@
       "current_type": "win",
       "max_win": 2,
       "max_loss": 1
-    }
+    },
+    "twr_percent": 1.89
   },
   "equity": {
     "overall": [
@@ -740,7 +745,7 @@
       }
     ]
   },
-  "last_updated": "2025-12-18T08:16:31.925772Z",
+  "last_updated": "2025-12-18T09:14:43.597451Z",
   "total_deposits": 6000,
   "signal_accuracy": {
     "last_month": null,
