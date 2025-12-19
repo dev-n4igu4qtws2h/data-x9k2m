@@ -1102,7 +1102,16 @@
                 const d = new Date(date);
                 const day = d.getDay() || 7; // Convert Sunday (0) to 7
                 d.setDate(d.getDate() - (day - 1)); // Go back to Monday
+                d.setHours(0, 0, 0, 0); // Reset time to avoid timezone issues
                 return d;
+            }
+
+            // Helper to format date as YYYY-MM-DD without timezone conversion
+            function formatDateString(date) {
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                return `${year}-${month}-${day}`;
             }
 
             // Create a map of ALL trade data (not just timeframe-specific)
@@ -1146,7 +1155,7 @@
                 for (let i = 0; i < 7; i++) {
                     const dayDate = new Date(monday);
                     dayDate.setDate(monday.getDate() + i);
-                    const dateStr = dayDate.toISOString().split('T')[0];
+                    const dateStr = formatDateString(dayDate);
                     const tradeData = tradeDataMap[dateStr];
                     weekDays.push({
                         date: dateStr,
