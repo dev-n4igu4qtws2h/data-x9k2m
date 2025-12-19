@@ -993,9 +993,10 @@
                         const colorClass = month.wins > month.losses ? 'positive' : (month.wins < month.losses ? 'negative' : (month.wins === 0 && month.losses === 0 ? 'empty' : ''));
                         const [y, m] = month.date.split('-');
                         const monthName = monthNames[parseInt(m) - 1].substring(0, 3);
+                        const monthNumber = parseInt(m);
                         html += `
                             <div class="calendar-day ${colorClass}">
-                                <div class="day-date-topright">${month.date}</div>
+                                <div class="day-date-topright">${monthNumber}</div>
                                 <div class="day-label">${monthName}</div>
                                 <div class="day-wl">${month.wins}:${month.losses}</div>
                                 ${month.profit !== 0 ? `<div style="margin-top: 4px; font-size: 9px;">${Math.round(month.profit).toLocaleString('de-DE')}€</div>` : ''}
@@ -1058,9 +1059,10 @@
                     const colorClass = month.wins > month.losses ? 'positive' : (month.wins < month.losses ? 'negative' : (month.wins === 0 && month.losses === 0 ? 'empty' : ''));
                     const [y, m] = month.date.split('-');
                     const monthName = monthNames[parseInt(m) - 1].substring(0, 3);
+                    const monthNumber = parseInt(m);
                     html += `
                         <div class="calendar-day ${colorClass}">
-                            <div class="day-date-topright">${month.date}</div>
+                            <div class="day-date-topright">${monthNumber}</div>
                             <div class="day-label">${monthName}</div>
                             <div class="day-wl">${month.wins}:${month.losses}</div>
                             ${month.profit !== 0 ? `<div style="margin-top: 4px; font-size: 9px;">${Math.round(month.profit).toLocaleString('de-DE')}€</div>` : ''}
@@ -1077,26 +1079,17 @@
         function generateDailyCalendar(timeframe) {
             const calendarData = allData.calendar[timeframe];
 
-            // Determine date range
+            // Determine ORIGINAL date range (without extension)
             const now = new Date();
-            let startDate, endDate;
+            let originalStartDate, originalEndDate;
 
             if (timeframe === 'this_month') {
-                startDate = new Date(now.getFullYear(), now.getMonth(), 1);
-                endDate = now;
+                originalStartDate = new Date(now.getFullYear(), now.getMonth(), 1);
+                originalEndDate = new Date(now);
             } else if (timeframe === 'last_month') {
-                startDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-                endDate = new Date(now.getFullYear(), now.getMonth(), 0);
+                originalStartDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+                originalEndDate = new Date(now.getFullYear(), now.getMonth(), 0);
             }
-
-            // Extend to complete weeks: Start on Monday, end on Sunday
-            const startDayOfWeek = startDate.getDay() || 7; // Convert Sunday (0) to 7
-            const daysToSubtract = startDayOfWeek - 1; // Days to go back to Monday
-            startDate.setDate(startDate.getDate() - daysToSubtract);
-
-            const endDayOfWeek = endDate.getDay() || 7;
-            const daysToAdd = 7 - endDayOfWeek; // Days to add to reach Sunday
-            endDate.setDate(endDate.getDate() + daysToAdd);
 
             // Helper function to get ISO week number
             function getWeekNumber(date) {
@@ -1108,6 +1101,14 @@
                 return `KW${weekNo}`;
             }
 
+            // Helper to get Monday of the week
+            function getMondayOfWeek(date) {
+                const d = new Date(date);
+                const day = d.getDay() || 7; // Convert Sunday (0) to 7
+                d.setDate(d.getDate() - (day - 1)); // Go back to Monday
+                return d;
+            }
+
             // Create a map of ALL trade data (not just timeframe-specific)
             const tradeDataMap = {};
             if (allData.calendar && allData.calendar.overall && allData.calendar.overall.daily) {
@@ -1116,38 +1117,62 @@
                 });
             }
 
-            // Generate all days in extended range (complete weeks)
-            const allDays = [];
-            const currentDate = new Date(startDate);
-            while (currentDate <= endDate) {
-                const dateStr = currentDate.toISOString().split('T')[0];
-                const tradeData = tradeDataMap[dateStr];
-                allDays.push({
-                    date: dateStr,
-                    wins: tradeData ? tradeData.wins : 0,
-                    losses: tradeData ? tradeData.losses : 0,
-                    profit: tradeData ? tradeData.profit : 0
-                });
+            // First pass: Find which weeks have days in the original timeframe
+            const weeksToInclude = new Set();
+            const currentDate = new Date(originalStartDate);
+            while (currentDate <= originalEndDate) {
+                const week = getWeekNumber(currentDate);
+                weeksToInclude.add(week);
                 currentDate.setDate(currentDate.getDate() + 1);
             }
 
-            // Group days by week
+            // Second pass: For each included week, generate all 7 days
             const weeklyData = {};
-            allDays.forEach(day => {
-                const date = new Date(day.date);
-                const week = getWeekNumber(date);
-                if (!weeklyData[week]) {
-                    weeklyData[week] = {
-                        wins: 0,
-                        losses: 0,
-                        profit: 0,
-                        days: []
-                    };
+            weeksToInclude.forEach(week => {
+                // Find any day in this week from the original range
+                const tempDate = new Date(originalStartDate);
+                let sampleDate = null;
+                while (tempDate <= originalEndDate) {
+                    if (getWeekNumber(tempDate) === week) {
+                        sampleDate = new Date(tempDate);
+                        break;
+                    }
+                    tempDate.setDate(tempDate.getDate() + 1);
                 }
-                weeklyData[week].wins += day.wins;
-                weeklyData[week].losses += day.losses;
-                weeklyData[week].profit += day.profit;
-                weeklyData[week].days.push(day);
+
+                if (!sampleDate) return;
+
+                // Get Monday of this week
+                const monday = getMondayOfWeek(sampleDate);
+
+                // Generate all 7 days of this week
+                const weekDays = [];
+                for (let i = 0; i < 7; i++) {
+                    const dayDate = new Date(monday);
+                    dayDate.setDate(monday.getDate() + i);
+                    const dateStr = dayDate.toISOString().split('T')[0];
+                    const tradeData = tradeDataMap[dateStr];
+                    weekDays.push({
+                        date: dateStr,
+                        wins: tradeData ? tradeData.wins : 0,
+                        losses: tradeData ? tradeData.losses : 0,
+                        profit: tradeData ? tradeData.profit : 0
+                    });
+                }
+
+                // Calculate week totals
+                const weekTotals = weekDays.reduce((acc, day) => ({
+                    wins: acc.wins + day.wins,
+                    losses: acc.losses + day.losses,
+                    profit: acc.profit + day.profit
+                }), { wins: 0, losses: 0, profit: 0 });
+
+                weeklyData[week] = {
+                    wins: weekTotals.wins,
+                    losses: weekTotals.losses,
+                    profit: weekTotals.profit,
+                    days: weekDays
+                };
             });
 
             // Add header with day names
@@ -1167,19 +1192,6 @@
             }).forEach(week => {
                 const data = weeklyData[week];
 
-                // Fill week to start on Monday (ISO week starts on Monday)
-                const firstDay = new Date(data.days[0].date);
-                const dayOfWeek = firstDay.getDay() || 7; // Convert Sunday (0) to 7
-                const daysToAdd = dayOfWeek - 1; // Days to add before first day
-
-                // Create full week array with empty days
-                const fullWeek = new Array(7).fill(null);
-                data.days.forEach(day => {
-                    const date = new Date(day.date);
-                    const dow = date.getDay() || 7;
-                    fullWeek[dow - 1] = day;
-                });
-
                 html += `
                     <div class="calendar-week-row">
                         <div class="week-summary">
@@ -1190,21 +1202,19 @@
                         <div class="week-days">
                 `;
 
-                // Display all 7 days
-                fullWeek.forEach((day, index) => {
-                    if (day) {
-                        const date = new Date(day.date);
-                        const dayNum = date.getDate();
-                        const colorClass = day.wins > day.losses ? 'positive' : (day.wins < day.losses ? 'negative' : '');
-                        html += `
-                            <div class="calendar-day ${colorClass}">
-                                <div class="day-label">${dayNum}</div>
-                                <div class="day-wl">${day.wins}:${day.losses}</div>
-                            </div>
-                        `;
-                    } else {
-                        html += '<div class="calendar-day empty"><div class="day-label">-</div></div>';
-                    }
+                // Display all 7 days (already in correct Mon-Sun order)
+                data.days.forEach((day, index) => {
+                    const date = new Date(day.date);
+                    const dayNum = date.getDate();
+                    const hasData = day.wins > 0 || day.losses > 0;
+                    const colorClass = day.wins > day.losses ? 'positive' : (day.wins < day.losses ? 'negative' : '');
+
+                    html += `
+                        <div class="calendar-day ${colorClass}${!hasData ? ' empty' : ''}">
+                            <div class="day-label">${dayNum}</div>
+                            ${hasData ? `<div class="day-wl">${day.wins}:${day.losses}</div>` : ''}
+                        </div>
+                    `;
                 });
 
                 html += '</div></div>';
