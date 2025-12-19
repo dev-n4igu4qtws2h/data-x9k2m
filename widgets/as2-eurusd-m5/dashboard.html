@@ -192,7 +192,7 @@
         .calendar-header-cell {
             padding: 12px 8px;
             text-align: center;
-            border-right: 1px solid var(--border-primary);
+            border-right: 1px solid #3d444d;
         }
 
         .calendar-header-cell:last-child {
@@ -202,7 +202,7 @@
         .calendar-week-row {
             display: grid;
             grid-template-columns: 140px 1fr;
-            border-bottom: 1px solid var(--border-primary);
+            border-bottom: 1px solid #3d444d;
         }
 
         .calendar-week-row:last-child {
@@ -213,7 +213,7 @@
             background: var(--bg-tertiary);
             padding: 12px;
             font-size: 12px;
-            border-right: 1px solid var(--border-primary);
+            border-right: 1px solid #3d444d;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -242,7 +242,7 @@
             font-size: 11px;
             text-align: center;
             transition: all 0.2s;
-            border-right: 1px solid var(--border-primary);
+            border-right: 1px solid #3d444d;
             min-height: 70px;
             display: flex;
             flex-direction: column;
@@ -993,11 +993,9 @@
                         const colorClass = month.wins > month.losses ? 'positive' : (month.wins < month.losses ? 'negative' : (month.wins === 0 && month.losses === 0 ? 'empty' : ''));
                         const [y, m] = month.date.split('-');
                         const monthName = monthNames[parseInt(m) - 1].substring(0, 3);
-                        const monthNumber = parseInt(m);
                         html += `
                             <div class="calendar-day ${colorClass}">
-                                <div class="day-date-topright">${monthNumber}</div>
-                                <div class="day-label">${monthName}</div>
+                                <div class="day-date-topright">${monthName}</div>
                                 <div class="day-wl">${month.wins}:${month.losses}</div>
                                 ${month.profit !== 0 ? `<div style="margin-top: 4px; font-size: 9px;">${Math.round(month.profit).toLocaleString('de-DE')}€</div>` : ''}
                             </div>
@@ -1059,11 +1057,9 @@
                     const colorClass = month.wins > month.losses ? 'positive' : (month.wins < month.losses ? 'negative' : (month.wins === 0 && month.losses === 0 ? 'empty' : ''));
                     const [y, m] = month.date.split('-');
                     const monthName = monthNames[parseInt(m) - 1].substring(0, 3);
-                    const monthNumber = parseInt(m);
                     html += `
                         <div class="calendar-day ${colorClass}">
-                            <div class="day-date-topright">${monthNumber}</div>
-                            <div class="day-label">${monthName}</div>
+                            <div class="day-date-topright">${monthName}</div>
                             <div class="day-wl">${month.wins}:${month.losses}</div>
                             ${month.profit !== 0 ? `<div style="margin-top: 4px; font-size: 9px;">${Math.round(month.profit).toLocaleString('de-DE')}€</div>` : ''}
                         </div>
@@ -1211,7 +1207,7 @@
 
                     html += `
                         <div class="calendar-day ${colorClass}${!hasData ? ' empty' : ''}">
-                            <div class="day-label">${dayNum}</div>
+                            <div class="day-date-topright">${dayNum}</div>
                             ${hasData ? `<div class="day-wl">${day.wins}:${day.losses}</div>` : ''}
                         </div>
                     `;
