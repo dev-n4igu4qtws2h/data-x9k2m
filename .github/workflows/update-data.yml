@@ -4,6 +4,9 @@ on:
   schedule:
     - cron: '0 * * * *'  # Jede volle Stunde
   workflow_dispatch:  # Manueller Trigger
+  push:
+    branches:
+      - claude/add-drawdown-metric-017bhXaSHFMoeSfRLmsFNMJN
 
 jobs:
   update-data:
@@ -260,9 +263,6 @@ jobs:
                   start_of_last_month = datetime(now.year, now.month - 1, 1)
                   end_of_last_month = start_of_month - timedelta(days=1)
 
-              start_of_week = now - timedelta(days=now.weekday())
-              start_of_week = datetime(start_of_week.year, start_of_week.month, start_of_week.day)
-
               def calculate_stats(trade_list, start=None, end=None):
                   wins = 0
                   losses = 0
@@ -373,27 +373,98 @@ jobs:
               ytd_stats = calculate_stats(trades, start_of_year)
               this_month_stats = calculate_stats(trades, start_of_month)
               last_month_stats = calculate_stats(trades, start_of_last_month, end_of_last_month)
-              last_week_stats = calculate_stats(trades, start_of_week)
 
               # Add TWR% to each timeframe
               overall_stats['twr_percent'] = calculate_twr_percent(trades)
               ytd_stats['twr_percent'] = calculate_twr_percent(trades, start_of_year)
               this_month_stats['twr_percent'] = calculate_twr_percent(trades, start_of_month)
               last_month_stats['twr_percent'] = calculate_twr_percent(trades, start_of_last_month, end_of_last_month)
-              last_week_stats['twr_percent'] = calculate_twr_percent(trades, start_of_week)
+
+              def get_calendar_data(trade_list, start=None, end=None):
+                  """Extract calendar data: trades grouped by date with W:L and P&L"""
+                  from collections import defaultdict
+
+                  daily_data = defaultdict(lambda: {'wins': 0, 'losses': 0, 'profit': 0})
+                  monthly_data = defaultdict(lambda: {'wins': 0, 'losses': 0, 'profit': 0})
+
+                  for trade in trade_list:
+                      trade_date = get_trade_date(trade)
+                      if not trade_date:
+                          continue
+
+                      if start and trade_date < start:
+                          continue
+                      if end and trade_date > end:
+                          continue
+
+                      # Check if trade is excluded
+                      exclude_prop = trade.get('properties', {}).get('Exclude', {})
+                      is_excluded = exclude_prop.get('checkbox', False) if 'checkbox' in exclude_prop else False
+                      if is_excluded:
+                          continue
+
+                      # Get profit
+                      profit = get_profit(trade)
+
+                      # Exclude Break Even trades (within ±10% of risk)
+                      risk_prop = trade.get('properties', {}).get('Risk $', {})
+                      risk = risk_prop.get('number') if 'number' in risk_prop else None
+                      if profit is not None and risk is not None and risk > 0:
+                          break_even_threshold = abs(risk) * 0.10
+                          if -break_even_threshold <= profit <= break_even_threshold:
+                              continue
+
+                      # Get outcome
+                      outcome_prop = trade.get('properties', {}).get('Outcome', {})
+                      if not outcome_prop or 'select' not in outcome_prop or not outcome_prop['select']:
+                          continue
+
+                      outcome = outcome_prop['select']['name']
+
+                      # Format dates
+                      date_key = trade_date.strftime('%Y-%m-%d')
+                      month_key = trade_date.strftime('%Y-%m')
+
+                      # Update daily data
+                      if outcome == 'Win':
+                          daily_data[date_key]['wins'] += 1
+                          monthly_data[month_key]['wins'] += 1
+                      elif outcome == 'Loss':
+                          daily_data[date_key]['losses'] += 1
+                          monthly_data[month_key]['losses'] += 1
+
+                      if profit is not None:
+                          daily_data[date_key]['profit'] += profit
+                          monthly_data[month_key]['profit'] += profit
+
+                  # Convert to sorted lists
+                  daily_list = [{'date': k, **v} for k, v in sorted(daily_data.items())]
+                  monthly_list = [{'date': k, **v} for k, v in sorted(monthly_data.items())]
+
+                  return {'daily': daily_list, 'monthly': monthly_list}
+
+              # Get calendar data for each timeframe
+              overall_calendar = get_calendar_data(trades)
+              ytd_calendar = get_calendar_data(trades, start_of_year)
+              this_month_calendar = get_calendar_data(trades, start_of_month)
+              last_month_calendar = get_calendar_data(trades, start_of_last_month, end_of_last_month)
 
               result = {
                   'overall': overall_stats,
                   'ytd': ytd_stats,
                   'this_month': this_month_stats,
                   'last_month': last_month_stats,
-                  'last_week': last_week_stats,
                   'equity': {
                       'overall': calculate_equity_curve(trades),
                       'ytd': calculate_equity_curve(trades, start_of_year),
                       'this_month': calculate_equity_curve(trades, start_of_month),
-                      'last_month': calculate_equity_curve(trades, start_of_last_month, end_of_last_month),
-                      'last_week': calculate_equity_curve(trades, start_of_week)
+                      'last_month': calculate_equity_curve(trades, start_of_last_month, end_of_last_month)
+                  },
+                  'calendar': {
+                      'overall': overall_calendar,
+                      'ytd': ytd_calendar,
+                      'this_month': this_month_calendar,
+                      'last_month': last_month_calendar
                   },
                   'last_updated': datetime.utcnow().isoformat() + 'Z'
               }

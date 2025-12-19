@@ -159,6 +159,66 @@
             margin-top: 15px;
         }
 
+        .calendar-view {
+            margin-top: 15px;
+        }
+
+        .calendar-grid {
+            display: grid;
+            gap: 4px;
+            margin-top: 10px;
+        }
+
+        .calendar-week-row {
+            display: grid;
+            grid-template-columns: 120px 1fr;
+            gap: 8px;
+            align-items: start;
+        }
+
+        .week-summary {
+            background: var(--bg-secondary);
+            padding: 8px;
+            border-radius: 4px;
+            font-size: 11px;
+        }
+
+        .week-label {
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+
+        .week-days {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+            gap: 4px;
+        }
+
+        .calendar-day {
+            background: var(--bg-secondary);
+            padding: 6px;
+            border-radius: 4px;
+            font-size: 10px;
+            text-align: center;
+            transition: all 0.2s;
+        }
+
+        .calendar-day.positive {
+            background: rgba(63, 185, 80, 0.15);
+        }
+
+        .calendar-day.negative {
+            background: rgba(248, 81, 73, 0.15);
+        }
+
+        .day-label {
+            font-weight: 600;
+            color: var(--text-secondary);
+            font-size: 9px;
+            margin-bottom: 2px;
+        }
+
         .footer {
             text-align: center;
             color: var(--text-muted);
@@ -196,7 +256,6 @@
             <button class="timeframe-btn" data-timeframe="ytd">YTD</button>
             <button class="timeframe-btn" data-timeframe="this_month">This Month</button>
             <button class="timeframe-btn" data-timeframe="last_month">Last Month</button>
-            <button class="timeframe-btn" data-timeframe="last_week">Last Week</button>
         </div>
 
         <div class="stats-grid">
@@ -256,6 +315,13 @@
             <div class="card-title">Equity Curve</div>
             <div class="equity-chart">
                 <div id="equityChart"></div>
+            </div>
+        </div>
+
+        <div class="card equity-card">
+            <div class="card-title">Calendar View</div>
+            <div class="calendar-view">
+                <div id="calendarContainer"></div>
             </div>
         </div>
 
@@ -733,6 +799,180 @@
                 const date = new Date(allData.last_updated);
                 document.getElementById('lastUpdated').textContent = date.toLocaleString('de-DE');
             }
+
+            // Generate Calendar View
+            generateCalendarView(timeframe);
+        }
+
+        // Generate Calendar View based on timeframe
+        function generateCalendarView(timeframe) {
+            const container = document.getElementById('calendarContainer');
+            if (!allData || !allData[timeframe]) {
+                container.innerHTML = '';
+                return;
+            }
+
+            // Get trades data - we need to fetch from notion data
+            // For now, we'll need to calculate from equity curve
+            // This is a simplified version - ideally we'd have trade-level data
+
+            if (timeframe === 'overall' || timeframe === 'ytd') {
+                // Monthly view
+                container.innerHTML = generateMonthlyCalendar(timeframe);
+            } else if (timeframe === 'this_month' || timeframe === 'last_month') {
+                // Daily view grouped by KW
+                container.innerHTML = generateDailyCalendar(timeframe);
+            } else {
+                container.innerHTML = '';
+            }
+        }
+
+        // Generate monthly calendar for Max/YTD
+        function generateMonthlyCalendar(timeframe) {
+            const calendarData = allData.calendar[timeframe];
+            if (!calendarData || !calendarData.monthly || calendarData.monthly.length === 0) {
+                return '<div style="color: var(--text-secondary); font-size: 12px;">No data available</div>';
+            }
+
+            let html = '<div class="calendar-grid">';
+
+            // For Max (overall), add yearly summaries first
+            if (timeframe === 'overall') {
+                const yearlyData = {};
+                calendarData.monthly.forEach(month => {
+                    const year = month.date.substring(0, 4);
+                    if (!yearlyData[year]) {
+                        yearlyData[year] = { wins: 0, losses: 0, profit: 0 };
+                    }
+                    yearlyData[year].wins += month.wins;
+                    yearlyData[year].losses += month.losses;
+                    yearlyData[year].profit += month.profit;
+                });
+
+                // Display yearly summaries
+                Object.keys(yearlyData).sort().forEach(year => {
+                    const data = yearlyData[year];
+                    const colorClass = data.wins > data.losses ? 'positive' : (data.wins < data.losses ? 'negative' : '');
+                    html += `
+                        <div class="calendar-week-row" style="margin-bottom: 15px;">
+                            <div class="week-summary">
+                                <div class="week-label">${year}</div>
+                                <div style="color: var(--color-win)">${data.wins}</div>
+                                <div style="color: var(--color-loss)">${data.losses}</div>
+                                <div style="margin-top: 4px;">${Math.round(data.profit).toLocaleString('de-DE')}€</div>
+                            </div>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 4px;">
+                    `;
+
+                    // Add months for this year
+                    calendarData.monthly.filter(m => m.date.startsWith(year)).forEach(month => {
+                        const monthName = new Date(month.date + '-01').toLocaleDateString('de-DE', { month: 'short', year: 'numeric' });
+                        const colorClass = month.wins > month.losses ? 'positive' : (month.wins < month.losses ? 'negative' : '');
+                        html += `
+                            <div class="calendar-day ${colorClass}">
+                                <div class="day-label">${monthName}</div>
+                                <div style="color: var(--color-win); display: inline;">${month.wins}</div><span style="color: var(--text-secondary);">:</span><div style="color: var(--color-loss); display: inline;">${month.losses}</div>
+                                <div style="margin-top: 2px; font-size: 9px;">${Math.round(month.profit).toLocaleString('de-DE')}€</div>
+                            </div>
+                        `;
+                    });
+
+                    html += '</div></div>';
+                });
+            } else {
+                // YTD: just show months without yearly summary
+                html += '<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 4px;">';
+                calendarData.monthly.forEach(month => {
+                    const monthName = new Date(month.date + '-01').toLocaleDateString('de-DE', { month: 'short', year: 'numeric' });
+                    const colorClass = month.wins > month.losses ? 'positive' : (month.wins < month.losses ? 'negative' : '');
+                    html += `
+                        <div class="calendar-day ${colorClass}">
+                            <div class="day-label">${monthName}</div>
+                            <div style="color: var(--color-win); display: inline;">${month.wins}</div><span style="color: var(--text-secondary);">:</span><div style="color: var(--color-loss); display: inline;">${month.losses}</div>
+                            <div style="margin-top: 2px; font-size: 9px;">${Math.round(month.profit).toLocaleString('de-DE')}€</div>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+            }
+
+            html += '</div>';
+            return html;
+        }
+
+        // Generate daily calendar for This Month/Last Month grouped by KW
+        function generateDailyCalendar(timeframe) {
+            const calendarData = allData.calendar[timeframe];
+            if (!calendarData || !calendarData.daily || calendarData.daily.length === 0) {
+                return '<div style="color: var(--text-secondary); font-size: 12px;">No data available</div>';
+            }
+
+            // Helper function to get ISO week number
+            function getWeekNumber(dateStr) {
+                const date = new Date(dateStr);
+                const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+                const dayNum = d.getUTCDay() || 7;
+                d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+                const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+                const weekNo = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+                return `KW${weekNo}`;
+            }
+
+            // Group days by week
+            const weeklyData = {};
+            calendarData.daily.forEach(day => {
+                const week = getWeekNumber(day.date);
+                if (!weeklyData[week]) {
+                    weeklyData[week] = {
+                        wins: 0,
+                        losses: 0,
+                        profit: 0,
+                        days: []
+                    };
+                }
+                weeklyData[week].wins += day.wins;
+                weeklyData[week].losses += day.losses;
+                weeklyData[week].profit += day.profit;
+                weeklyData[week].days.push(day);
+            });
+
+            let html = '<div class="calendar-grid">';
+
+            // Display each week
+            Object.keys(weeklyData).sort((a, b) => {
+                const weekA = parseInt(a.replace('KW', ''));
+                const weekB = parseInt(b.replace('KW', ''));
+                return weekA - weekB;
+            }).forEach(week => {
+                const data = weeklyData[week];
+                html += `
+                    <div class="calendar-week-row">
+                        <div class="week-summary">
+                            <div class="week-label">${week}</div>
+                            <div><span style="color: var(--color-win)">${data.wins}</span><span style="color: var(--text-secondary)">:</span><span style="color: var(--color-loss)">${data.losses}</span></div>
+                            <div style="margin-top: 4px;">${Math.round(data.profit).toLocaleString('de-DE')}€</div>
+                        </div>
+                        <div class="week-days">
+                `;
+
+                // Display days in this week
+                data.days.forEach(day => {
+                    const date = new Date(day.date);
+                    const dayName = date.toLocaleDateString('de-DE', { weekday: 'short', day: 'numeric', month: 'numeric' });
+                    const colorClass = day.wins > day.losses ? 'positive' : (day.wins < day.losses ? 'negative' : '');
+                    html += `
+                        <div class="calendar-day ${colorClass}">
+                            <div class="day-label">${dayName}</div>
+                            <div><span style="color: var(--color-win)">${day.wins}</span><span style="color: var(--text-secondary)">:</span><span style="color: var(--color-loss)">${day.losses}</span></div>
+                        </div>
+                    `;
+                });
+
+                html += '</div></div>';
+            });
+
+            html += '</div>';
+            return html;
         }
 
         // Load data
