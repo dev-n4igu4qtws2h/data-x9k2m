@@ -165,43 +165,93 @@
 
         .calendar-grid {
             display: grid;
-            gap: 4px;
+            gap: 0;
             margin-top: 10px;
+            border: 1px solid var(--border-primary);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .calendar-header {
+            display: grid;
+            background: var(--bg-tertiary);
+            font-weight: 600;
+            font-size: 12px;
+            color: var(--text-secondary);
+            border-bottom: 2px solid var(--border-primary);
+        }
+
+        .calendar-header-daily {
+            grid-template-columns: 140px repeat(7, 1fr);
+        }
+
+        .calendar-header-monthly {
+            grid-template-columns: 140px repeat(auto-fit, minmax(120px, 1fr));
+        }
+
+        .calendar-header-cell {
+            padding: 12px 8px;
+            text-align: center;
+            border-right: 1px solid var(--border-primary);
+        }
+
+        .calendar-header-cell:last-child {
+            border-right: none;
         }
 
         .calendar-week-row {
             display: grid;
-            grid-template-columns: 120px 1fr;
-            gap: 8px;
-            align-items: start;
+            grid-template-columns: 140px 1fr;
+            border-bottom: 1px solid var(--border-primary);
+        }
+
+        .calendar-week-row:last-child {
+            border-bottom: none;
         }
 
         .week-summary {
-            background: var(--bg-secondary);
-            padding: 8px;
-            border-radius: 4px;
-            font-size: 11px;
+            background: var(--bg-tertiary);
+            padding: 12px;
+            font-size: 12px;
+            border-right: 1px solid var(--border-primary);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
         .week-label {
             font-weight: 600;
-            color: var(--text-secondary);
-            margin-bottom: 4px;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+            font-size: 14px;
         }
 
         .week-days {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
-            gap: 4px;
+            grid-template-columns: repeat(7, 1fr);
+        }
+
+        .calendar-months {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
         }
 
         .calendar-day {
             background: var(--bg-secondary);
-            padding: 6px;
-            border-radius: 4px;
-            font-size: 10px;
+            padding: 12px 8px;
+            font-size: 11px;
             text-align: center;
             transition: all 0.2s;
+            border-right: 1px solid var(--border-primary);
+            min-height: 70px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .calendar-day:nth-child(7n) {
+            border-right: none;
         }
 
         .calendar-day.positive {
@@ -212,11 +262,42 @@
             background: rgba(248, 81, 73, 0.15);
         }
 
+        .calendar-day.empty {
+            background: var(--bg-tertiary);
+            opacity: 0.5;
+        }
+
         .day-label {
             font-weight: 600;
-            color: var(--text-secondary);
-            font-size: 9px;
-            margin-bottom: 2px;
+            color: var(--text-primary);
+            font-size: 11px;
+            margin-bottom: 4px;
+        }
+
+        .day-wl {
+            font-size: 13px;
+            margin-top: 4px;
+        }
+
+        @media (max-width: 1024px) {
+            .calendar-header-daily {
+                grid-template-columns: 100px repeat(7, 1fr);
+            }
+
+            .calendar-week-row {
+                grid-template-columns: 100px 1fr;
+            }
+
+            .week-summary {
+                padding: 8px;
+                font-size: 10px;
+            }
+
+            .calendar-day {
+                padding: 8px 4px;
+                font-size: 10px;
+                min-height: 60px;
+            }
         }
 
         .footer {
@@ -318,7 +399,7 @@
             </div>
         </div>
 
-        <div class="card equity-card">
+        <div class="card equity-card" style="margin-top: 20px;">
             <div class="card-title">Calendar View</div>
             <div class="calendar-view">
                 <div id="calendarContainer"></div>
@@ -830,86 +911,172 @@
         // Generate monthly calendar for Max/YTD
         function generateMonthlyCalendar(timeframe) {
             const calendarData = allData.calendar[timeframe];
-            if (!calendarData || !calendarData.monthly || calendarData.monthly.length === 0) {
-                return '<div style="color: var(--text-secondary); font-size: 12px;">No data available</div>';
-            }
+            const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+                               'July', 'August', 'September', 'October', 'November', 'December'];
 
-            let html = '<div class="calendar-grid">';
+            // Create a map of existing trade data
+            const tradeDataMap = {};
+            if (calendarData && calendarData.monthly) {
+                calendarData.monthly.forEach(month => {
+                    tradeDataMap[month.date] = month;
+                });
+            }
 
             // For Max (overall), add yearly summaries first
             if (timeframe === 'overall') {
+                // Determine all years that have data
+                const years = new Set();
+                if (calendarData && calendarData.monthly) {
+                    calendarData.monthly.forEach(month => {
+                        years.add(month.date.substring(0, 4));
+                    });
+                }
+
                 const yearlyData = {};
-                calendarData.monthly.forEach(month => {
-                    const year = month.date.substring(0, 4);
-                    if (!yearlyData[year]) {
-                        yearlyData[year] = { wins: 0, losses: 0, profit: 0 };
+                Array.from(years).sort().forEach(year => {
+                    yearlyData[year] = { wins: 0, losses: 0, profit: 0, months: [] };
+
+                    // Generate all 12 months for this year
+                    for (let m = 1; m <= 12; m++) {
+                        const monthKey = `${year}-${m.toString().padStart(2, '0')}`;
+                        const monthData = tradeDataMap[monthKey];
+                        const monthObj = {
+                            date: monthKey,
+                            wins: monthData ? monthData.wins : 0,
+                            losses: monthData ? monthData.losses : 0,
+                            profit: monthData ? monthData.profit : 0
+                        };
+                        yearlyData[year].months.push(monthObj);
+                        yearlyData[year].wins += monthObj.wins;
+                        yearlyData[year].losses += monthObj.losses;
+                        yearlyData[year].profit += monthObj.profit;
                     }
-                    yearlyData[year].wins += month.wins;
-                    yearlyData[year].losses += month.losses;
-                    yearlyData[year].profit += month.profit;
                 });
+
+                let html = '<div class="calendar-grid">';
+
+                // Add header with month names
+                html += '<div class="calendar-header calendar-header-monthly">';
+                html += '<div class="calendar-header-cell">Year</div>';
+                monthNames.forEach(month => {
+                    html += `<div class="calendar-header-cell">${month}</div>`;
+                });
+                html += '</div>';
 
                 // Display yearly summaries
                 Object.keys(yearlyData).sort().forEach(year => {
                     const data = yearlyData[year];
-                    const colorClass = data.wins > data.losses ? 'positive' : (data.wins < data.losses ? 'negative' : '');
                     html += `
-                        <div class="calendar-week-row" style="margin-bottom: 15px;">
+                        <div class="calendar-week-row">
                             <div class="week-summary">
                                 <div class="week-label">${year}</div>
-                                <div style="color: var(--color-win)">${data.wins}</div>
-                                <div style="color: var(--color-loss)">${data.losses}</div>
+                                <div class="day-wl"><span style="color: var(--color-win)">${data.wins}</span><span style="color: var(--text-secondary)">:</span><span style="color: var(--color-loss)">${data.losses}</span></div>
                                 <div style="margin-top: 4px;">${Math.round(data.profit).toLocaleString('de-DE')}€</div>
                             </div>
-                            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 4px;">
+                            <div class="calendar-months">
                     `;
 
-                    // Add months for this year
-                    calendarData.monthly.filter(m => m.date.startsWith(year)).forEach(month => {
-                        const monthName = new Date(month.date + '-01').toLocaleDateString('de-DE', { month: 'short', year: 'numeric' });
-                        const colorClass = month.wins > month.losses ? 'positive' : (month.wins < month.losses ? 'negative' : '');
+                    // Add all 12 months
+                    data.months.forEach(month => {
+                        const colorClass = month.wins > month.losses ? 'positive' : (month.wins < month.losses ? 'negative' : (month.wins === 0 && month.losses === 0 ? 'empty' : ''));
+                        const [y, m] = month.date.split('-');
+                        const monthName = monthNames[parseInt(m) - 1].substring(0, 3);
                         html += `
                             <div class="calendar-day ${colorClass}">
                                 <div class="day-label">${monthName}</div>
-                                <div style="color: var(--color-win); display: inline;">${month.wins}</div><span style="color: var(--text-secondary);">:</span><div style="color: var(--color-loss); display: inline;">${month.losses}</div>
-                                <div style="margin-top: 2px; font-size: 9px;">${Math.round(month.profit).toLocaleString('de-DE')}€</div>
+                                <div class="day-wl"><span style="color: var(--color-win)">${month.wins}</span><span style="color: var(--text-secondary)">:</span><span style="color: var(--color-loss)">${month.losses}</span></div>
+                                ${month.profit !== 0 ? `<div style="margin-top: 4px; font-size: 9px;">${Math.round(month.profit).toLocaleString('de-DE')}€</div>` : ''}
                             </div>
                         `;
                     });
 
                     html += '</div></div>';
                 });
+
+                html += '</div>';
+                return html;
             } else {
-                // YTD: just show months without yearly summary
-                html += '<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 4px;">';
-                calendarData.monthly.forEach(month => {
-                    const monthName = new Date(month.date + '-01').toLocaleDateString('de-DE', { month: 'short', year: 'numeric' });
-                    const colorClass = month.wins > month.losses ? 'positive' : (month.wins < month.losses ? 'negative' : '');
+                // YTD: just show months of current year
+                const now = new Date();
+                const currentYear = now.getFullYear();
+                const currentMonth = now.getMonth() + 1;
+
+                // Generate all months for current year up to now
+                const allMonths = [];
+                for (let m = 1; m <= currentMonth; m++) {
+                    const monthKey = `${currentYear}-${m.toString().padStart(2, '0')}`;
+                    const monthData = tradeDataMap[monthKey];
+                    allMonths.push({
+                        date: monthKey,
+                        wins: monthData ? monthData.wins : 0,
+                        losses: monthData ? monthData.losses : 0,
+                        profit: monthData ? monthData.profit : 0
+                    });
+                }
+
+                let html = '<div class="calendar-grid">';
+
+                // Add header with month names for YTD
+                html += '<div class="calendar-header calendar-header-monthly">';
+                html += '<div class="calendar-header-cell">YTD</div>';
+                for (let m = 1; m <= currentMonth; m++) {
+                    html += `<div class="calendar-header-cell">${monthNames[m - 1]}</div>`;
+                }
+                html += '</div>';
+
+                // Single row for YTD
+                const ytdTotals = allMonths.reduce((acc, m) => ({
+                    wins: acc.wins + m.wins,
+                    losses: acc.losses + m.losses,
+                    profit: acc.profit + m.profit
+                }), { wins: 0, losses: 0, profit: 0 });
+
+                html += `
+                    <div class="calendar-week-row">
+                        <div class="week-summary">
+                            <div class="week-label">${currentYear}</div>
+                            <div class="day-wl"><span style="color: var(--color-win)">${ytdTotals.wins}</span><span style="color: var(--text-secondary)">:</span><span style="color: var(--color-loss)">${ytdTotals.losses}</span></div>
+                            <div style="margin-top: 4px;">${Math.round(ytdTotals.profit).toLocaleString('de-DE')}€</div>
+                        </div>
+                        <div class="calendar-months">
+                `;
+
+                allMonths.forEach(month => {
+                    const colorClass = month.wins > month.losses ? 'positive' : (month.wins < month.losses ? 'negative' : (month.wins === 0 && month.losses === 0 ? 'empty' : ''));
+                    const [y, m] = month.date.split('-');
+                    const monthName = monthNames[parseInt(m) - 1].substring(0, 3);
                     html += `
                         <div class="calendar-day ${colorClass}">
                             <div class="day-label">${monthName}</div>
-                            <div style="color: var(--color-win); display: inline;">${month.wins}</div><span style="color: var(--text-secondary);">:</span><div style="color: var(--color-loss); display: inline;">${month.losses}</div>
-                            <div style="margin-top: 2px; font-size: 9px;">${Math.round(month.profit).toLocaleString('de-DE')}€</div>
+                            <div class="day-wl"><span style="color: var(--color-win)">${month.wins}</span><span style="color: var(--text-secondary)">:</span><span style="color: var(--color-loss)">${month.losses}</span></div>
+                            ${month.profit !== 0 ? `<div style="margin-top: 4px; font-size: 9px;">${Math.round(month.profit).toLocaleString('de-DE')}€</div>` : ''}
                         </div>
                     `;
                 });
-                html += '</div>';
-            }
 
-            html += '</div>';
-            return html;
+                html += '</div></div></div>';
+                return html;
+            }
         }
 
         // Generate daily calendar for This Month/Last Month grouped by KW
         function generateDailyCalendar(timeframe) {
             const calendarData = allData.calendar[timeframe];
-            if (!calendarData || !calendarData.daily || calendarData.daily.length === 0) {
-                return '<div style="color: var(--text-secondary); font-size: 12px;">No data available</div>';
+
+            // Determine date range
+            const now = new Date();
+            let startDate, endDate;
+
+            if (timeframe === 'this_month') {
+                startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+                endDate = now;
+            } else if (timeframe === 'last_month') {
+                startDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+                endDate = new Date(now.getFullYear(), now.getMonth(), 0);
             }
 
             // Helper function to get ISO week number
-            function getWeekNumber(dateStr) {
-                const date = new Date(dateStr);
+            function getWeekNumber(date) {
                 const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
                 const dayNum = d.getUTCDay() || 7;
                 d.setUTCDate(d.getUTCDate() + 4 - dayNum);
@@ -918,10 +1085,34 @@
                 return `KW${weekNo}`;
             }
 
+            // Create a map of existing trade data
+            const tradeDataMap = {};
+            if (calendarData && calendarData.daily) {
+                calendarData.daily.forEach(day => {
+                    tradeDataMap[day.date] = day;
+                });
+            }
+
+            // Generate all days in range
+            const allDays = [];
+            const currentDate = new Date(startDate);
+            while (currentDate <= endDate) {
+                const dateStr = currentDate.toISOString().split('T')[0];
+                const tradeData = tradeDataMap[dateStr];
+                allDays.push({
+                    date: dateStr,
+                    wins: tradeData ? tradeData.wins : 0,
+                    losses: tradeData ? tradeData.losses : 0,
+                    profit: tradeData ? tradeData.profit : 0
+                });
+                currentDate.setDate(currentDate.getDate() + 1);
+            }
+
             // Group days by week
             const weeklyData = {};
-            calendarData.daily.forEach(day => {
-                const week = getWeekNumber(day.date);
+            allDays.forEach(day => {
+                const date = new Date(day.date);
+                const week = getWeekNumber(date);
                 if (!weeklyData[week]) {
                     weeklyData[week] = {
                         wins: 0,
@@ -936,7 +1127,14 @@
                 weeklyData[week].days.push(day);
             });
 
+            // Add header with day names
             let html = '<div class="calendar-grid">';
+            html += '<div class="calendar-header calendar-header-daily">';
+            html += '<div class="calendar-header-cell">Week</div>';
+            ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].forEach(day => {
+                html += `<div class="calendar-header-cell">${day}</div>`;
+            });
+            html += '</div>';
 
             // Display each week
             Object.keys(weeklyData).sort((a, b) => {
@@ -945,27 +1143,45 @@
                 return weekA - weekB;
             }).forEach(week => {
                 const data = weeklyData[week];
+
+                // Fill week to start on Monday (ISO week starts on Monday)
+                const firstDay = new Date(data.days[0].date);
+                const dayOfWeek = firstDay.getDay() || 7; // Convert Sunday (0) to 7
+                const daysToAdd = dayOfWeek - 1; // Days to add before first day
+
+                // Create full week array with empty days
+                const fullWeek = new Array(7).fill(null);
+                data.days.forEach(day => {
+                    const date = new Date(day.date);
+                    const dow = date.getDay() || 7;
+                    fullWeek[dow - 1] = day;
+                });
+
                 html += `
                     <div class="calendar-week-row">
                         <div class="week-summary">
                             <div class="week-label">${week}</div>
-                            <div><span style="color: var(--color-win)">${data.wins}</span><span style="color: var(--text-secondary)">:</span><span style="color: var(--color-loss)">${data.losses}</span></div>
+                            <div class="day-wl"><span style="color: var(--color-win)">${data.wins}</span><span style="color: var(--text-secondary)">:</span><span style="color: var(--color-loss)">${data.losses}</span></div>
                             <div style="margin-top: 4px;">${Math.round(data.profit).toLocaleString('de-DE')}€</div>
                         </div>
                         <div class="week-days">
                 `;
 
-                // Display days in this week
-                data.days.forEach(day => {
-                    const date = new Date(day.date);
-                    const dayName = date.toLocaleDateString('de-DE', { weekday: 'short', day: 'numeric', month: 'numeric' });
-                    const colorClass = day.wins > day.losses ? 'positive' : (day.wins < day.losses ? 'negative' : '');
-                    html += `
-                        <div class="calendar-day ${colorClass}">
-                            <div class="day-label">${dayName}</div>
-                            <div><span style="color: var(--color-win)">${day.wins}</span><span style="color: var(--text-secondary)">:</span><span style="color: var(--color-loss)">${day.losses}</span></div>
-                        </div>
-                    `;
+                // Display all 7 days
+                fullWeek.forEach((day, index) => {
+                    if (day) {
+                        const date = new Date(day.date);
+                        const dayNum = date.getDate();
+                        const colorClass = day.wins > day.losses ? 'positive' : (day.wins < day.losses ? 'negative' : '');
+                        html += `
+                            <div class="calendar-day ${colorClass}">
+                                <div class="day-label">${dayNum}</div>
+                                <div class="day-wl"><span style="color: var(--color-win)">${day.wins}</span><span style="color: var(--text-secondary)">:</span><span style="color: var(--color-loss)">${day.losses}</span></div>
+                            </div>
+                        `;
+                    } else {
+                        html += '<div class="calendar-day empty"><div class="day-label">-</div></div>';
+                    }
                 });
 
                 html += '</div></div>';
