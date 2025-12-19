@@ -248,6 +248,7 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
+            position: relative;
         }
 
         .calendar-day:nth-child(7n) {
@@ -255,11 +256,11 @@
         }
 
         .calendar-day.positive {
-            background: rgba(63, 185, 80, 0.15);
+            background: rgba(63, 185, 80, 0.2);
         }
 
         .calendar-day.negative {
-            background: rgba(248, 81, 73, 0.15);
+            background: rgba(248, 81, 73, 0.2);
         }
 
         .calendar-day.empty {
@@ -274,9 +275,20 @@
             margin-bottom: 4px;
         }
 
+        .day-date-topright {
+            position: absolute;
+            top: 4px;
+            right: 6px;
+            font-size: 9px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
         .day-wl {
-            font-size: 13px;
+            font-size: 16px;
+            font-weight: 600;
             margin-top: 4px;
+            color: var(--text-primary);
         }
 
         @media (max-width: 1024px) {
@@ -983,8 +995,9 @@
                         const monthName = monthNames[parseInt(m) - 1].substring(0, 3);
                         html += `
                             <div class="calendar-day ${colorClass}">
+                                <div class="day-date-topright">${month.date}</div>
                                 <div class="day-label">${monthName}</div>
-                                <div class="day-wl"><span style="color: var(--color-win)">${month.wins}</span><span style="color: var(--text-secondary)">:</span><span style="color: var(--color-loss)">${month.losses}</span></div>
+                                <div class="day-wl">${month.wins}:${month.losses}</div>
                                 ${month.profit !== 0 ? `<div style="margin-top: 4px; font-size: 9px;">${Math.round(month.profit).toLocaleString('de-DE')}€</div>` : ''}
                             </div>
                         `;
@@ -1047,8 +1060,9 @@
                     const monthName = monthNames[parseInt(m) - 1].substring(0, 3);
                     html += `
                         <div class="calendar-day ${colorClass}">
+                            <div class="day-date-topright">${month.date}</div>
                             <div class="day-label">${monthName}</div>
-                            <div class="day-wl"><span style="color: var(--color-win)">${month.wins}</span><span style="color: var(--text-secondary)">:</span><span style="color: var(--color-loss)">${month.losses}</span></div>
+                            <div class="day-wl">${month.wins}:${month.losses}</div>
                             ${month.profit !== 0 ? `<div style="margin-top: 4px; font-size: 9px;">${Math.round(month.profit).toLocaleString('de-DE')}€</div>` : ''}
                         </div>
                     `;
@@ -1075,6 +1089,15 @@
                 endDate = new Date(now.getFullYear(), now.getMonth(), 0);
             }
 
+            // Extend to complete weeks: Start on Monday, end on Sunday
+            const startDayOfWeek = startDate.getDay() || 7; // Convert Sunday (0) to 7
+            const daysToSubtract = startDayOfWeek - 1; // Days to go back to Monday
+            startDate.setDate(startDate.getDate() - daysToSubtract);
+
+            const endDayOfWeek = endDate.getDay() || 7;
+            const daysToAdd = 7 - endDayOfWeek; // Days to add to reach Sunday
+            endDate.setDate(endDate.getDate() + daysToAdd);
+
             // Helper function to get ISO week number
             function getWeekNumber(date) {
                 const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
@@ -1085,15 +1108,15 @@
                 return `KW${weekNo}`;
             }
 
-            // Create a map of existing trade data
+            // Create a map of ALL trade data (not just timeframe-specific)
             const tradeDataMap = {};
-            if (calendarData && calendarData.daily) {
-                calendarData.daily.forEach(day => {
+            if (allData.calendar && allData.calendar.overall && allData.calendar.overall.daily) {
+                allData.calendar.overall.daily.forEach(day => {
                     tradeDataMap[day.date] = day;
                 });
             }
 
-            // Generate all days in range
+            // Generate all days in extended range (complete weeks)
             const allDays = [];
             const currentDate = new Date(startDate);
             while (currentDate <= endDate) {
@@ -1161,7 +1184,7 @@
                     <div class="calendar-week-row">
                         <div class="week-summary">
                             <div class="week-label">${week}</div>
-                            <div class="day-wl"><span style="color: var(--color-win)">${data.wins}</span><span style="color: var(--text-secondary)">:</span><span style="color: var(--color-loss)">${data.losses}</span></div>
+                            <div class="day-wl">${data.wins}:${data.losses}</div>
                             <div style="margin-top: 4px;">${Math.round(data.profit).toLocaleString('de-DE')}€</div>
                         </div>
                         <div class="week-days">
@@ -1176,7 +1199,7 @@
                         html += `
                             <div class="calendar-day ${colorClass}">
                                 <div class="day-label">${dayNum}</div>
-                                <div class="day-wl"><span style="color: var(--color-win)">${day.wins}</span><span style="color: var(--text-secondary)">:</span><span style="color: var(--color-loss)">${day.losses}</span></div>
+                                <div class="day-wl">${day.wins}:${day.losses}</div>
                             </div>
                         `;
                     } else {
