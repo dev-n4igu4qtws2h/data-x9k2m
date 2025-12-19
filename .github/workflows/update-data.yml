@@ -4,6 +4,9 @@ on:
   schedule:
     - cron: '0 * * * *'  # Jede volle Stunde
   workflow_dispatch:  # Manueller Trigger
+  push:
+    branches:
+      - claude/add-drawdown-metric-017bhXaSHFMoeSfRLmsFNMJN
 
 jobs:
   update-data:
