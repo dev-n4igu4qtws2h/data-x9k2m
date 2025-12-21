@@ -991,7 +991,7 @@
                 Object.keys(yearlyData).sort().forEach(year => {
                     const data = yearlyData[year];
                     const totalDeposits = allData.total_deposits || 6000;
-                    const yearProfitPercent = ((data.profit / totalDeposits) * 100).toFixed(2);
+                    const yearProfitPercent = ((data.profit / totalDeposits) * 100).toFixed(1);
                     html += `
                         <div class="calendar-week-row">
                             <div class="week-summary">
@@ -1006,7 +1006,7 @@
                     data.months.forEach(month => {
                         const colorClass = month.wins > month.losses ? 'positive' : (month.wins < month.losses ? 'negative' : (month.wins === 0 && month.losses === 0 ? 'empty' : ''));
                         const totalDeposits = allData.total_deposits || 6000;
-                        const monthProfitPercent = ((month.profit / totalDeposits) * 100).toFixed(2);
+                        const monthProfitPercent = ((month.profit / totalDeposits) * 100).toFixed(1);
                         html += `
                             <div class="calendar-day ${colorClass}">
                                 <div class="day-wl">${month.wins}:${month.losses}</div>
@@ -1057,7 +1057,7 @@
                 }), { wins: 0, losses: 0, profit: 0 });
 
                 const totalDeposits = allData.total_deposits || 6000;
-                const ytdProfitPercent = ((ytdTotals.profit / totalDeposits) * 100).toFixed(2);
+                const ytdProfitPercent = ((ytdTotals.profit / totalDeposits) * 100).toFixed(1);
 
                 html += `
                     <div class="calendar-week-row">
@@ -1072,7 +1072,7 @@
                 allMonths.forEach(month => {
                     const colorClass = month.wins > month.losses ? 'positive' : (month.wins < month.losses ? 'negative' : (month.wins === 0 && month.losses === 0 ? 'empty' : ''));
                     const totalDeposits = allData.total_deposits || 6000;
-                    const monthProfitPercent = ((month.profit / totalDeposits) * 100).toFixed(2);
+                    const monthProfitPercent = ((month.profit / totalDeposits) * 100).toFixed(1);
                     html += `
                         <div class="calendar-day ${colorClass}">
                             <div class="day-wl">${month.wins}:${month.losses}</div>
