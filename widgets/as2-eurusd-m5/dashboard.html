@@ -662,33 +662,12 @@
             profitFactorElem.style.color = pfColor;
             profitFactorElem.className = 'stat-value';
 
-            // Get profit for the timeframe
-            let finalProfit;
-            if (equity && equity.length > 0) {
-                if (timeframe === 'overall' || timeframe === 'ytd') {
-                    // For overall and YTD, show total profit (last equity value)
-                    finalProfit = equity[equity.length - 1].equity;
-                } else {
-                    // For time periods, calculate profit earned during the period
-                    // Since equity values are absolute cumulative, we need baseline before period
-                    const overallEquity = allData.equity.overall;
-                    const firstDateInPeriod = new Date(equity[0].date);
-                    let baselineEquity = 0;
-
-                    // Find last equity point before this period
-                    for (let i = overallEquity.length - 1; i >= 0; i--) {
-                        const pointDate = new Date(overallEquity[i].date);
-                        if (pointDate < firstDateInPeriod) {
-                            baselineEquity = overallEquity[i].equity;
-                            break;
-                        }
-                    }
-
-                    // Current equity minus equity before period = profit earned in period
-                    finalProfit = equity[equity.length - 1].equity - baselineEquity;
-                }
-            } else {
-                finalProfit = 0;
+            // Get profit for the timeframe - use monthly calendar data for consistency
+            let finalProfit = 0;
+            const calendarData = allData.calendar[timeframe];
+            if (calendarData && calendarData.monthly) {
+                // Sum up all monthly profits
+                finalProfit = calendarData.monthly.reduce((sum, month) => sum + month.profit, 0);
             }
 
             const totalDeposits = allData.total_deposits || 1; // Avoid division by zero
