@@ -1411,10 +1411,19 @@
       ]
     }
   },
-  "last_updated": "2025-12-21T17:08:53.976316Z",
+  "last_updated": "2025-12-21T19:08:29.813958Z",
   "total_deposits": 6000,
   "signal_accuracy": {
-    "last_month": null,
+    "last_month": {
+      "reference_wins": 10,
+      "reference_losses": 13,
+      "datafeed_diff": 0,
+      "expected_wins": 10,
+      "expected_losses": 13,
+      "wins_match": false,
+      "losses_match": true,
+      "in_sync": false
+    },
     "this_month": null
   }
 }
