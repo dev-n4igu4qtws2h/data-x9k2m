@@ -233,7 +233,7 @@
 
         .calendar-months {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            grid-template-columns: repeat(12, 1fr);
         }
 
         .calendar-day {
@@ -979,7 +979,7 @@
                 html += '<div class="calendar-header calendar-header-monthly">';
                 html += '<div class="calendar-header-cell">Year</div>';
                 monthNames.forEach(month => {
-                    html += `<div class="calendar-header-cell">${month}</div>`;
+                    html += `<div class="calendar-header-cell">${month.substring(0, 3)}</div>`;
                 });
                 html += '</div>';
 
@@ -999,11 +999,8 @@
                     // Add all 12 months
                     data.months.forEach(month => {
                         const colorClass = month.wins > month.losses ? 'positive' : (month.wins < month.losses ? 'negative' : (month.wins === 0 && month.losses === 0 ? 'empty' : ''));
-                        const [y, m] = month.date.split('-');
-                        const monthName = monthNames[parseInt(m) - 1].substring(0, 3);
                         html += `
                             <div class="calendar-day ${colorClass}">
-                                <div class="day-date-topright">${monthName}</div>
                                 <div class="day-wl">${month.wins}:${month.losses}</div>
                                 ${month.profit !== 0 ? `<div style="margin-top: 4px; font-size: 9px;">${Math.round(month.profit).toLocaleString('de-DE')}€</div>` : ''}
                             </div>
@@ -1040,7 +1037,7 @@
                 html += '<div class="calendar-header calendar-header-monthly">';
                 html += '<div class="calendar-header-cell">YTD</div>';
                 for (let m = 1; m <= currentMonth; m++) {
-                    html += `<div class="calendar-header-cell">${monthNames[m - 1]}</div>`;
+                    html += `<div class="calendar-header-cell">${monthNames[m - 1].substring(0, 3)}</div>`;
                 }
                 html += '</div>';
 
@@ -1063,11 +1060,8 @@
 
                 allMonths.forEach(month => {
                     const colorClass = month.wins > month.losses ? 'positive' : (month.wins < month.losses ? 'negative' : (month.wins === 0 && month.losses === 0 ? 'empty' : ''));
-                    const [y, m] = month.date.split('-');
-                    const monthName = monthNames[parseInt(m) - 1].substring(0, 3);
                     html += `
                         <div class="calendar-day ${colorClass}">
-                            <div class="day-date-topright">${monthName}</div>
                             <div class="day-wl">${month.wins}:${month.losses}</div>
                             ${month.profit !== 0 ? `<div style="margin-top: 4px; font-size: 9px;">${Math.round(month.profit).toLocaleString('de-DE')}€</div>` : ''}
                         </div>
