@@ -986,12 +986,14 @@
                 // Display yearly summaries
                 Object.keys(yearlyData).sort().forEach(year => {
                     const data = yearlyData[year];
+                    const totalDeposits = allData.total_deposits || 6000;
+                    const yearProfitPercent = ((data.profit / totalDeposits) * 100).toFixed(2);
                     html += `
                         <div class="calendar-week-row">
                             <div class="week-summary">
                                 <div class="week-label">${year}</div>
                                 <div class="day-wl">${data.wins}:${data.losses}</div>
-                                <div style="margin-top: 4px;">${Math.round(data.profit).toLocaleString('de-DE')}€</div>
+                                <div style="margin-top: 4px;">${Math.round(data.profit).toLocaleString('de-DE')}€ | ${yearProfitPercent}%</div>
                             </div>
                             <div class="calendar-months">
                     `;
@@ -999,10 +1001,12 @@
                     // Add all 12 months
                     data.months.forEach(month => {
                         const colorClass = month.wins > month.losses ? 'positive' : (month.wins < month.losses ? 'negative' : (month.wins === 0 && month.losses === 0 ? 'empty' : ''));
+                        const totalDeposits = allData.total_deposits || 6000;
+                        const monthProfitPercent = ((month.profit / totalDeposits) * 100).toFixed(2);
                         html += `
                             <div class="calendar-day ${colorClass}">
                                 <div class="day-wl">${month.wins}:${month.losses}</div>
-                                ${month.profit !== 0 ? `<div style="margin-top: 4px; font-size: 9px;">${Math.round(month.profit).toLocaleString('de-DE')}€</div>` : ''}
+                                ${month.profit !== 0 ? `<div style="margin-top: 4px; font-size: 9px;">${Math.round(month.profit).toLocaleString('de-DE')}€ | ${monthProfitPercent}%</div>` : ''}
                             </div>
                         `;
                     });
@@ -1048,22 +1052,27 @@
                     profit: acc.profit + m.profit
                 }), { wins: 0, losses: 0, profit: 0 });
 
+                const totalDeposits = allData.total_deposits || 6000;
+                const ytdProfitPercent = ((ytdTotals.profit / totalDeposits) * 100).toFixed(2);
+
                 html += `
                     <div class="calendar-week-row">
                         <div class="week-summary">
                             <div class="week-label">${currentYear}</div>
                             <div class="day-wl">${ytdTotals.wins}:${ytdTotals.losses}</div>
-                            <div style="margin-top: 4px;">${Math.round(ytdTotals.profit).toLocaleString('de-DE')}€</div>
+                            <div style="margin-top: 4px;">${Math.round(ytdTotals.profit).toLocaleString('de-DE')}€ | ${ytdProfitPercent}%</div>
                         </div>
                         <div class="calendar-months">
                 `;
 
                 allMonths.forEach(month => {
                     const colorClass = month.wins > month.losses ? 'positive' : (month.wins < month.losses ? 'negative' : (month.wins === 0 && month.losses === 0 ? 'empty' : ''));
+                    const totalDeposits = allData.total_deposits || 6000;
+                    const monthProfitPercent = ((month.profit / totalDeposits) * 100).toFixed(2);
                     html += `
                         <div class="calendar-day ${colorClass}">
                             <div class="day-wl">${month.wins}:${month.losses}</div>
-                            ${month.profit !== 0 ? `<div style="margin-top: 4px; font-size: 9px;">${Math.round(month.profit).toLocaleString('de-DE')}€</div>` : ''}
+                            ${month.profit !== 0 ? `<div style="margin-top: 4px; font-size: 9px;">${Math.round(month.profit).toLocaleString('de-DE')}€ | ${monthProfitPercent}%</div>` : ''}
                         </div>
                     `;
                 });
