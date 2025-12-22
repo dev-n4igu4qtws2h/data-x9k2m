@@ -1411,7 +1411,7 @@
       ]
     }
   },
-  "last_updated": "2025-12-22T06:19:59.239294Z",
+  "last_updated": "2025-12-22T07:08:46.028370Z",
   "total_deposits": 6000,
   "signal_accuracy": {
     "last_month": {
@@ -1425,5 +1425,31 @@
       "in_sync": false
     },
     "this_month": null
-  }
+  },
+  "trade_deviations": [
+    {
+      "trade_nr": 108,
+      "open_date": "2025-11-28T01:27:00.000+01:00",
+      "close_date": "2025-11-28T16:05:00.000+01:00",
+      "ref_outcome": "Win next Month",
+      "outcome": "Win",
+      "comment": "Beim Signaldienst wurde der Trade am 1. Dezember geschlossen. Ich bin etwas fr\u00fcher in den Trade gekommen und hatte daher ein n\u00e4heres TP, sodass mein Trade noch im November geschlossen wurde."
+    },
+    {
+      "trade_nr": 88,
+      "open_date": "2025-11-11T20:08:00.000+01:00",
+      "close_date": "2025-11-12T05:20:00.000+01:00",
+      "ref_outcome": "Canceled",
+      "outcome": "Win",
+      "comment": "Beim Signaldienst wurde der Trend gebrochen und die Order gecancelt. In meinem Datenfeed entstand nur ein TST und der Trend war noch intakt."
+    },
+    {
+      "trade_nr": 79.1,
+      "open_date": "2025-11-06T01:26:00.000+01:00",
+      "close_date": "2025-11-06T13:51:00.000+01:00",
+      "ref_outcome": "Additionally",
+      "outcome": "Win",
+      "comment": "Da ich immer nur von 12-13 Uhr Mittagspause mache, hatte ich hier einen Trade zus\u00e4tzlich."
+    }
+  ]
 }
