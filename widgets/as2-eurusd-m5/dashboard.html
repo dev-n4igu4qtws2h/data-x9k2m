@@ -917,6 +917,8 @@
             if (timeframe === 'overall' || timeframe === 'ytd') {
                 // Monthly view
                 container.innerHTML = generateMonthlyCalendar(timeframe);
+                // Hide deviations card for yearly views
+                document.getElementById('referenceDeviationsCard').style.display = 'none';
             } else if (timeframe === 'this_month' || timeframe === 'last_month') {
                 // Daily view grouped by KW
                 container.innerHTML = generateDailyCalendar(timeframe);
