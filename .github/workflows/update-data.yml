@@ -596,6 +596,67 @@ jobs:
               print(f"   Total Deposits/Withdrawals: {total_deposits}€")
               return total_deposits
 
+          def fetch_trade_deviations(database_id, api_key):
+              """Fetch trade deviations table from Notion"""
+              print(f"\nFetching trade deviations...")
+              data = fetch_notion_data(database_id, api_key)
+              entries = data.get('results', [])
+
+              deviations = []
+              for entry in entries:
+                  props = entry.get('properties', {})
+
+                  # Get Trade Nr.
+                  trade_nr_prop = props.get('Trade Nr.', {})
+                  trade_nr = trade_nr_prop.get('number') if 'number' in trade_nr_prop else None
+
+                  # Get Open Date / Time
+                  open_date_prop = props.get('Open Date / Time', {})
+                  open_date = None
+                  if open_date_prop.get('date') and open_date_prop['date'].get('start'):
+                      open_date = open_date_prop['date']['start']
+
+                  # Get Close Date / Time
+                  close_date_prop = props.get('Close Date / Time', {})
+                  close_date = None
+                  if close_date_prop.get('date') and close_date_prop['date'].get('start'):
+                      close_date = close_date_prop['date']['start']
+
+                  # Get Ref Outcome
+                  ref_outcome_prop = props.get('Ref Outcome', {})
+                  ref_outcome = None
+                  if ref_outcome_prop.get('select'):
+                      ref_outcome = ref_outcome_prop['select']['name']
+
+                  # Get Outcome
+                  outcome_prop = props.get('Outcome', {})
+                  outcome = None
+                  if outcome_prop.get('select'):
+                      outcome = outcome_prop['select']['name']
+
+                  # Get Comment
+                  comment_prop = props.get('Comment', {})
+                  comment = ''
+                  if comment_prop.get('rich_text') and len(comment_prop['rich_text']) > 0:
+                      comment = comment_prop['rich_text'][0]['plain_text']
+
+                  # Only add if we have at least trade number
+                  if trade_nr is not None:
+                      deviations.append({
+                          'trade_nr': trade_nr,
+                          'open_date': open_date,
+                          'close_date': close_date,
+                          'ref_outcome': ref_outcome,
+                          'outcome': outcome,
+                          'comment': comment
+                      })
+
+              # Sort by trade number descending
+              deviations.sort(key=lambda x: x['trade_nr'], reverse=True)
+
+              print(f"   Found {len(deviations)} deviation entries")
+              return deviations
+
           # Process AS2 EURUSD M5
           as2_data = process_strategy(
               os.environ['AS2_EURUSD_M5_DB_ID'],
@@ -630,6 +691,13 @@ jobs:
               'last_month': compare_with_reference(as2_data['last_month'], reference_data, last_month_key),
               'this_month': compare_with_reference(as2_data['this_month'], reference_data, this_month_key)
           }
+
+          # Fetch trade deviations table
+          trade_deviations_db_id = os.environ.get('TRADE_DEVIATIONS_DB_ID', '2d0482524f458041b4b4e6b314182a12')
+          as2_data['trade_deviations'] = fetch_trade_deviations(
+              trade_deviations_db_id,
+              os.environ['NOTION_API_KEY']
+          )
 
           print(f"\n📊 Signal Accuracy Check:")
           if as2_data['signal_accuracy']['last_month']:

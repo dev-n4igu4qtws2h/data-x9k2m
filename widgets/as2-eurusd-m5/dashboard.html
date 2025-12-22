@@ -905,7 +905,14 @@
                 container.innerHTML = generateMonthlyCalendar(timeframe);
             } else if (timeframe === 'this_month' || timeframe === 'last_month') {
                 // Daily view grouped by KW
-                container.innerHTML = generateDailyCalendar(timeframe);
+                let html = generateDailyCalendar(timeframe);
+
+                // Add trade deviations table for last_month
+                if (timeframe === 'last_month' && allData.trade_deviations && allData.trade_deviations.length > 0) {
+                    html += generateTradeDeviationsTable();
+                }
+
+                container.innerHTML = html;
             } else {
                 container.innerHTML = '';
             }
@@ -1224,6 +1231,93 @@
             });
 
             html += '</div>';
+            return html;
+        }
+
+        // Generate trade deviations table
+        function generateTradeDeviationsTable() {
+            const monthNames = {
+                '01': 'January', '02': 'February', '03': 'March', '04': 'April',
+                '05': 'May', '06': 'June', '07': 'July', '08': 'August',
+                '09': 'September', '10': 'October', '11': 'November', '12': 'December'
+            };
+
+            function formatDateTime(isoString) {
+                if (!isoString) return '-';
+                const date = new Date(isoString);
+                const month = monthNames[String(date.getMonth() + 1).padStart(2, '0')];
+                const day = date.getDate();
+                const year = date.getFullYear();
+                const hours = date.getHours();
+                const minutes = String(date.getMinutes()).padStart(2, '0');
+                const ampm = hours >= 12 ? 'PM' : 'AM';
+                const displayHours = hours % 12 || 12;
+                return `${month} ${day}, ${year} ${displayHours}:${minutes} ${ampm}`;
+            }
+
+            function getOutcomeClass(outcome) {
+                if (!outcome) return '';
+                if (outcome === 'Win' || outcome === 'Win next Month') return 'win';
+                if (outcome === 'Loss' || outcome === 'Loss next Month') return 'loss';
+                if (outcome === 'Canceled') return 'neutral';
+                if (outcome === 'Additionally') return 'neutral';
+                return '';
+            }
+
+            let html = `
+                <div style="margin-top: 30px;">
+                    <h3 style="font-size: 14px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 15px;">
+                        Reference Deviations
+                    </h3>
+                    <div style="overflow-x: auto;">
+                        <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+                            <thead>
+                                <tr style="background: var(--bg-tertiary); border-bottom: 1px solid var(--border-primary);">
+                                    <th style="padding: 12px 8px; text-align: left; font-weight: 600;">Trade Nr.</th>
+                                    <th style="padding: 12px 8px; text-align: left; font-weight: 600;">Open Date/Time</th>
+                                    <th style="padding: 12px 8px; text-align: left; font-weight: 600;">Close Date/Time</th>
+                                    <th style="padding: 12px 8px; text-align: left; font-weight: 600;">Ref Outcome</th>
+                                    <th style="padding: 12px 8px; text-align: left; font-weight: 600;">Outcome</th>
+                                    <th style="padding: 12px 8px; text-align: left; font-weight: 600;">Comment</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+            `;
+
+            allData.trade_deviations.forEach((deviation, index) => {
+                const rowBg = index % 2 === 0 ? 'var(--bg-secondary)' : 'var(--bg-tertiary)';
+                const refOutcomeClass = getOutcomeClass(deviation.ref_outcome);
+                const outcomeClass = getOutcomeClass(deviation.outcome);
+
+                html += `
+                    <tr style="background: ${rowBg}; border-bottom: 1px solid var(--border-primary);">
+                        <td style="padding: 12px 8px;">${deviation.trade_nr}</td>
+                        <td style="padding: 12px 8px; font-size: 11px;">${formatDateTime(deviation.open_date)}</td>
+                        <td style="padding: 12px 8px; font-size: 11px;">${formatDateTime(deviation.close_date)}</td>
+                        <td style="padding: 12px 8px;">
+                            <span class="stat-value ${refOutcomeClass}" style="font-size: 12px; font-weight: 600;">
+                                ${deviation.ref_outcome || '-'}
+                            </span>
+                        </td>
+                        <td style="padding: 12px 8px;">
+                            <span class="stat-value ${outcomeClass}" style="font-size: 12px; font-weight: 600;">
+                                ${deviation.outcome || '-'}
+                            </span>
+                        </td>
+                        <td style="padding: 12px 8px; color: var(--text-secondary); font-size: 11px; max-width: 300px;">
+                            ${deviation.comment || '-'}
+                        </td>
+                    </tr>
+                `;
+            });
+
+            html += `
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+
             return html;
         }
 
