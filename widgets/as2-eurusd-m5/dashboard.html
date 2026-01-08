@@ -686,38 +686,30 @@
             profitElem.innerHTML = `${formattedProfit}€<span style="color: var(--text-secondary)"> | </span>${profitPercentWithSign}%`;
             profitElem.className = 'stat-value' + (finalProfit >= 0 ? ' win' : ' loss');
 
-            // Calculate Drawdown: Peak (ATH up to timeframe end) - Last balance
-            // For non-overall timeframes, we need to subtract the baseline
-            let baselineEquity = 0;
-            if (timeframe !== 'overall' && equity && equity.length > 0) {
-                const firstDateInTimeframe = new Date(equity[0].date);
-                const overallEquity = allData.equity.overall;
-                // Find the last point before this timeframe
-                for (let i = overallEquity.length - 1; i >= 0; i--) {
-                    const pointDate = new Date(overallEquity[i].date);
-                    if (pointDate < firstDateInTimeframe) {
-                        baselineEquity = overallEquity[i].equity;
-                        break;
-                    }
-                }
-            }
-
-            let peak = 0;
-            let lastBalance = 0;
+            // Calculate Drawdown from global ATH (All-Time High)
+            // ATH is the highest equity point up to the end of the current timeframe
+            let globalATH = 0;
+            let currentEquity = 0;
 
             if (equity && equity.length > 0) {
-                equity.forEach(point => {
-                    const relativeEquity = point.equity - baselineEquity;
-                    if (relativeEquity > peak) {
-                        peak = relativeEquity;
+                // Get the last date in the current timeframe
+                const lastDateInTimeframe = new Date(equity[equity.length - 1].date);
+
+                // Find ATH from all historical data up to this date
+                const overallEquity = allData.equity.overall;
+                overallEquity.forEach(point => {
+                    const pointDate = new Date(point.date);
+                    if (pointDate <= lastDateInTimeframe && point.equity > globalATH) {
+                        globalATH = point.equity;
                     }
                 });
-                // Last balance is the final equity value in timeframe (relative)
-                lastBalance = equity[equity.length - 1].equity - baselineEquity;
+
+                // Current equity is the last point in the timeframe
+                currentEquity = equity[equity.length - 1].equity;
             }
 
-            // DD = Peak - Last balance
-            const currentDrawdown = peak - lastBalance;
+            // Current Drawdown = ATH - Current Equity
+            const currentDrawdown = globalATH - currentEquity;
             const currentDrawdownPercent = totalDeposits > 0
                 ? ((currentDrawdown / totalDeposits) * 100).toFixed(1)
                 : 0;
@@ -732,20 +724,28 @@
                 drawdownElem.className = 'stat-value loss';
             }
 
-            // Calculate Max Drawdown with proper HWM tracking
+            // Calculate Max Drawdown in this timeframe
+            // Max DD = maximum of (ATH up to that point - Equity at that point) within the timeframe
             let maxDrawdown = 0;
             let maxDrawdownPercent = 0;
-            let maxDdPeak = 0;
 
             if (equity && equity.length > 0) {
+                const overallEquity = allData.equity.overall;
+
                 equity.forEach(point => {
-                    const relativeEquity = point.equity - baselineEquity;
-                    // Update peak (HWM) if current equity is higher
-                    if (relativeEquity > maxDdPeak) {
-                        maxDdPeak = relativeEquity;
-                    }
-                    // Calculate drawdown from peak
-                    const drawdown = maxDdPeak - relativeEquity;
+                    const pointDate = new Date(point.date);
+
+                    // Find ATH up to this point
+                    let athUpToPoint = 0;
+                    overallEquity.forEach(oPoint => {
+                        const oPointDate = new Date(oPoint.date);
+                        if (oPointDate <= pointDate && oPoint.equity > athUpToPoint) {
+                            athUpToPoint = oPoint.equity;
+                        }
+                    });
+
+                    // Calculate drawdown at this point
+                    const drawdown = athUpToPoint - point.equity;
                     const drawdownPercent = totalDeposits > 0 ? (drawdown / totalDeposits) * 100 : 0;
 
                     // Track maximum drawdown
