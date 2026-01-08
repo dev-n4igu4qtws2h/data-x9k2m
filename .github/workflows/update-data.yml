@@ -198,8 +198,8 @@ jobs:
 
               return equity_data
 
-          def calculate_twr_percent(trades, start_date=None, end_date=None, deposits_list=None):
-              """Calculate Time-Weighted Return % for a timeframe with deposits"""
+          def calculate_twr_percent(trades, start_date=None, end_date=None, total_deposits=6000):
+              """Calculate Time-Weighted Return % for a timeframe"""
               # Get all trades sorted by date
               all_trades = []
               for trade in trades:
@@ -209,54 +209,36 @@ jobs:
                       if profit is not None:
                           all_trades.append({
                               'date': trade_date,
-                              'profit': profit,
-                              'type': 'trade'
+                              'profit': profit
                           })
 
-              # Add deposits to the list
-              if deposits_list:
-                  for deposit in deposits_list:
-                      all_trades.append({
-                          'date': deposit['date'],
-                          'amount': deposit['amount'],
-                          'type': 'deposit'
-                      })
-
-              # Sort by date, deposits before trades on same day
-              all_trades.sort(key=lambda x: (x['date'], 0 if x['type'] == 'deposit' else 1))
+              # Sort by date
+              all_trades.sort(key=lambda x: x['date'])
 
               # Calculate TWR% by summing individual trade percentages
               twr_sum = 0.0
-              balance_before = 0  # Start with 0, deposits will add capital
+              balance_before = total_deposits  # Starting balance
 
-              for item in all_trades:
-                  # Check if before timeframe
-                  if start_date and item['date'] < start_date:
+              for trade in all_trades:
+                  # Check if trade is within timeframe
+                  if start_date and trade['date'] < start_date:
                       # Update balance but don't count toward TWR for this timeframe
-                      if item['type'] == 'trade':
-                          balance_before += item['profit']
-                      elif item['type'] == 'deposit':
-                          balance_before += item['amount']
+                      balance_before += trade['profit']
                       continue
-                  if end_date and item['date'] > end_date:
+                  if end_date and trade['date'] > end_date:
                       break
 
-                  # Process deposit
-                  if item['type'] == 'deposit':
-                      balance_before += item['amount']
-                      continue
-
-                  # Process trade - Calculate TWR% for this trade
+                  # Calculate TWR% for this trade
                   if balance_before > 0:
-                      trade_twr_percent = (item['profit'] / balance_before) * 100
+                      trade_twr_percent = (trade['profit'] / balance_before) * 100
                       twr_sum += trade_twr_percent
 
                   # Update balance for next trade
-                  balance_before += item['profit']
+                  balance_before += trade['profit']
 
               return round(twr_sum, 2)
 
-          def process_strategy(database_id, api_key, strategy_name, deposits_list=None):
+          def process_strategy(database_id, api_key, strategy_name):
               print(f"\nProcessing {strategy_name}...")
               print(f"Database ID: {database_id}")
 
@@ -393,12 +375,12 @@ jobs:
               last_month_stats = calculate_stats(trades, start_of_last_month, end_of_last_month)
 
               # Add TWR% to each timeframe
-              overall_stats['twr_percent'] = calculate_twr_percent(trades, deposits_list=deposits_list)
-              ytd_stats['twr_percent'] = calculate_twr_percent(trades, start_of_year, deposits_list=deposits_list)
-              this_month_stats['twr_percent'] = calculate_twr_percent(trades, start_of_month, deposits_list=deposits_list)
-              last_month_stats['twr_percent'] = calculate_twr_percent(trades, start_of_last_month, end_of_last_month, deposits_list=deposits_list)
+              overall_stats['twr_percent'] = calculate_twr_percent(trades)
+              ytd_stats['twr_percent'] = calculate_twr_percent(trades, start_of_year)
+              this_month_stats['twr_percent'] = calculate_twr_percent(trades, start_of_month)
+              last_month_stats['twr_percent'] = calculate_twr_percent(trades, start_of_last_month, end_of_last_month)
 
-              def get_calendar_data(trade_list, start=None, end=None):
+              def get_calendar_data(trade_list, start=None, end=None, deposits_list=None):
                   """Extract calendar data: trades grouped by date with W:L and P&L"""
                   from collections import defaultdict
 
@@ -459,13 +441,29 @@ jobs:
                   daily_list = [{'date': k, **v} for k, v in sorted(daily_data.items())]
                   monthly_list = [{'date': k, **v} for k, v in sorted(monthly_data.items())]
 
+                  # Add TWR% for each month
+                  for month_data in monthly_list:
+                      month_key = month_data['date']
+                      year, month = month_key.split('-')
+                      month_start = datetime(int(year), int(month), 1)
+
+                      # Calculate end of month
+                      if int(month) == 12:
+                          month_end = datetime(int(year) + 1, 1, 1) - timedelta(days=1)
+                      else:
+                          month_end = datetime(int(year), int(month) + 1, 1) - timedelta(days=1)
+
+                      # Calculate TWR% for this specific month
+                      month_twr = calculate_twr_percent(trade_list, month_start, month_end, deposits_list)
+                      month_data['twr_percent'] = month_twr
+
                   return {'daily': daily_list, 'monthly': monthly_list}
 
               # Get calendar data for each timeframe
-              overall_calendar = get_calendar_data(trades)
-              ytd_calendar = get_calendar_data(trades, start_of_year)
-              this_month_calendar = get_calendar_data(trades, start_of_month)
-              last_month_calendar = get_calendar_data(trades, start_of_last_month, end_of_last_month)
+              overall_calendar = get_calendar_data(trades, deposits_list=deposits_list)
+              ytd_calendar = get_calendar_data(trades, start_of_year, deposits_list=deposits_list)
+              this_month_calendar = get_calendar_data(trades, start_of_month, deposits_list=deposits_list)
+              last_month_calendar = get_calendar_data(trades, start_of_last_month, end_of_last_month, deposits_list=deposits_list)
 
               result = {
                   'overall': overall_stats,
@@ -595,14 +593,12 @@ jobs:
               }
 
           def fetch_deposits_withdrawals(database_id, api_key):
-              """Fetch deposits and withdrawals from Notion with dates"""
+              """Fetch deposits and withdrawals from Notion"""
               print(f"\nFetching deposits/withdrawals...")
               data = fetch_notion_data(database_id, api_key)
               entries = data.get('results', [])
 
-              deposits_list = []
               total_deposits = 0
-
               for entry in entries:
                   props = entry.get('properties', {})
 
@@ -610,110 +606,25 @@ jobs:
                   amount_prop = props.get('Deposit / Withdrawal', {})
                   amount = amount_prop.get('number') if 'number' in amount_prop else None
 
-                  # Get Date
-                  date_prop = props.get('Date', {})
-                  date_str = None
-                  if date_prop.get('date') and date_prop['date'].get('start'):
-                      date_str = date_prop['date']['start']
-
                   if amount is not None:
                       total_deposits += amount
-                      if date_str:
-                          try:
-                              # Parse date
-                              deposit_date = datetime.strptime(date_str.split('T')[0], '%Y-%m-%d')
-                              deposits_list.append({
-                                  'date': deposit_date,
-                                  'amount': amount
-                              })
-                          except:
-                              pass
-
-              # Sort by date
-              deposits_list.sort(key=lambda x: x['date'])
 
               print(f"   Total Deposits/Withdrawals: {total_deposits}€")
-              print(f"   Deposits with dates: {len(deposits_list)}")
-              return total_deposits, deposits_list
-
-          def fetch_trade_deviations(database_id, api_key):
-              """Fetch trade deviations table from Notion"""
-              print(f"\nFetching trade deviations...")
-              data = fetch_notion_data(database_id, api_key)
-              entries = data.get('results', [])
-
-              deviations = []
-              for entry in entries:
-                  props = entry.get('properties', {})
-
-                  # Get Trade Nr.
-                  trade_nr_prop = props.get('Trade Nr.', {})
-                  trade_nr = trade_nr_prop.get('number') if 'number' in trade_nr_prop else None
-
-                  # Get Open Date / Time
-                  open_date_prop = props.get('Open Date / Time', {})
-                  open_date = None
-                  if open_date_prop.get('date') and open_date_prop['date'].get('start'):
-                      open_date = open_date_prop['date']['start']
-
-                  # Get Close Date / Time
-                  close_date_prop = props.get('Close Date / Time', {})
-                  close_date = None
-                  if close_date_prop.get('date') and close_date_prop['date'].get('start'):
-                      close_date = close_date_prop['date']['start']
-
-                  # Get Ref Outcome
-                  ref_outcome_prop = props.get('Ref Outcome', {})
-                  ref_outcome = None
-                  if ref_outcome_prop.get('select'):
-                      ref_outcome = ref_outcome_prop['select']['name']
-
-                  # Get Outcome
-                  outcome_prop = props.get('Outcome', {})
-                  outcome = None
-                  if outcome_prop.get('select'):
-                      outcome = outcome_prop['select']['name']
-
-                  # Get Comment
-                  comment_prop = props.get('Comment', {})
-                  comment = ''
-                  if comment_prop.get('rich_text') and len(comment_prop['rich_text']) > 0:
-                      comment = comment_prop['rich_text'][0]['plain_text']
-
-                  # Only add if we have at least trade number
-                  if trade_nr is not None:
-                      deviations.append({
-                          'trade_nr': trade_nr,
-                          'open_date': open_date,
-                          'close_date': close_date,
-                          'ref_outcome': ref_outcome,
-                          'outcome': outcome,
-                          'comment': comment
-                      })
-
-              # Sort by trade number descending
-              deviations.sort(key=lambda x: x['trade_nr'], reverse=True)
-
-              print(f"   Found {len(deviations)} deviation entries")
-              return deviations
-
-          # Fetch deposits/withdrawals first (needed for TWR calculation)
-          deposits_db_id = os.environ.get('DEPOSITS_DB_ID', '2c6482524f4581a88b2debfcdcefd3c6')
-          total_deposits, deposits_list = fetch_deposits_withdrawals(
-              deposits_db_id,
-              os.environ['NOTION_API_KEY']
-          )
+              return total_deposits
 
           # Process AS2 EURUSD M5
           as2_data = process_strategy(
               os.environ['AS2_EURUSD_M5_DB_ID'],
               os.environ['NOTION_API_KEY'],
-              'AS2 EURUSD M5',
-              deposits_list
+              'AS2 EURUSD M5'
           )
 
-          # Store total deposits
-          as2_data['total_deposits'] = total_deposits
+          # Fetch deposits/withdrawals
+          deposits_db_id = os.environ.get('DEPOSITS_DB_ID', '2c6482524f4581a88b2debfcdcefd3c6')
+          as2_data['total_deposits'] = fetch_deposits_withdrawals(
+              deposits_db_id,
+              os.environ['NOTION_API_KEY']
+          )
 
           # Fetch signal reference data
           print(f"\nFetching signal service reference data...")
@@ -735,13 +646,6 @@ jobs:
               'last_month': compare_with_reference(as2_data['last_month'], reference_data, last_month_key),
               'this_month': compare_with_reference(as2_data['this_month'], reference_data, this_month_key)
           }
-
-          # Fetch trade deviations table
-          trade_deviations_db_id = os.environ.get('TRADE_DEVIATIONS_DB_ID', '2d0482524f458041b4b4e6b314182a12')
-          as2_data['trade_deviations'] = fetch_trade_deviations(
-              trade_deviations_db_id,
-              os.environ['NOTION_API_KEY']
-          )
 
           print(f"\n📊 Signal Accuracy Check:")
           if as2_data['signal_accuracy']['last_month']:
