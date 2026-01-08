@@ -88,7 +88,7 @@
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 20px;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
         }
 
         .card {
@@ -165,155 +165,58 @@
 
         .calendar-grid {
             display: grid;
-            gap: 0;
+            gap: 4px;
             margin-top: 10px;
-            border: 1px solid var(--border-primary);
-            border-radius: 6px;
-            overflow: hidden;
-        }
-
-        .calendar-header {
-            display: grid;
-            background: var(--bg-tertiary);
-            font-weight: 600;
-            font-size: 12px;
-            color: var(--text-secondary);
-            border-bottom: 2px solid var(--border-primary);
-        }
-
-        .calendar-header-daily {
-            grid-template-columns: 140px repeat(7, 1fr);
-        }
-
-        .calendar-header-monthly {
-            grid-template-columns: 140px repeat(12, 1fr);
-        }
-
-        .calendar-header-cell {
-            padding: 12px 8px;
-            text-align: center;
-            border-right: 1px solid #3d444d;
-        }
-
-        .calendar-header-cell:last-child {
-            border-right: none;
         }
 
         .calendar-week-row {
             display: grid;
-            grid-template-columns: 140px 1fr;
-            border-bottom: 1px solid #3d444d;
-        }
-
-        .calendar-week-row:last-child {
-            border-bottom: none;
+            grid-template-columns: 120px 1fr;
+            gap: 8px;
+            align-items: start;
         }
 
         .week-summary {
-            background: var(--bg-tertiary);
-            padding: 12px;
-            font-size: 12px;
-            border-right: 1px solid #3d444d;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
+            background: var(--bg-secondary);
+            padding: 8px;
+            border-radius: 4px;
+            font-size: 11px;
         }
 
         .week-label {
             font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 6px;
-            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
         }
 
         .week-days {
             display: grid;
-            grid-template-columns: repeat(7, 1fr);
-        }
-
-        .calendar-months {
-            display: grid;
-            grid-template-columns: repeat(12, 1fr);
+            grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+            gap: 4px;
         }
 
         .calendar-day {
             background: var(--bg-secondary);
-            padding: 12px 8px;
-            font-size: 11px;
+            padding: 6px;
+            border-radius: 4px;
+            font-size: 10px;
             text-align: center;
             transition: all 0.2s;
-            border-right: 1px solid #3d444d;
-            min-height: 70px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-        }
-
-        .week-days .calendar-day:nth-child(7n) {
-            border-right: none;
-        }
-
-        .calendar-months .calendar-day:nth-child(12n) {
-            border-right: none;
         }
 
         .calendar-day.positive {
-            background: rgba(63, 185, 80, 0.2);
+            background: rgba(63, 185, 80, 0.15);
         }
 
         .calendar-day.negative {
-            background: rgba(248, 81, 73, 0.2);
-        }
-
-        .calendar-day.empty {
-            background: var(--bg-tertiary);
-            opacity: 0.5;
+            background: rgba(248, 81, 73, 0.15);
         }
 
         .day-label {
             font-weight: 600;
-            color: var(--text-primary);
-            font-size: 11px;
-            margin-bottom: 4px;
-        }
-
-        .day-date-topright {
-            position: absolute;
-            top: 4px;
-            right: 6px;
-            font-size: 9px;
             color: var(--text-secondary);
-            font-weight: 500;
-        }
-
-        .day-wl {
-            font-size: 16px;
-            font-weight: 600;
-            margin-top: 4px;
-            color: var(--text-primary);
-        }
-
-        @media (max-width: 1024px) {
-            .calendar-header-daily {
-                grid-template-columns: 100px repeat(7, 1fr);
-            }
-
-            .calendar-week-row {
-                grid-template-columns: 100px 1fr;
-            }
-
-            .week-summary {
-                padding: 8px;
-                font-size: 10px;
-            }
-
-            .calendar-day {
-                padding: 8px 4px;
-                font-size: 10px;
-                min-height: 60px;
-            }
+            font-size: 9px;
+            margin-bottom: 2px;
         }
 
         .footer {
@@ -349,7 +252,7 @@
         </div>
 
         <div class="timeframe-buttons">
-            <button class="timeframe-btn" data-timeframe="overall">Max</button>
+            <button class="timeframe-btn active" data-timeframe="overall">Max</button>
             <button class="timeframe-btn" data-timeframe="ytd">YTD</button>
             <button class="timeframe-btn" data-timeframe="this_month">This Month</button>
             <button class="timeframe-btn" data-timeframe="last_month">Last Month</button>
@@ -388,22 +291,22 @@
             </div>
 
             <div class="card" id="signalAccuracyCard" style="display: none;">
-                <div class="card-title">DowHow Comparison</div>
+                <div class="card-title">Misdeeds</div>
                 <div class="stat-row">
                     <span class="stat-label">Your Stats</span>
                     <span class="stat-value" id="yourStats">-</span>
                 </div>
                 <div class="stat-row">
-                    <span class="stat-label">Reference</span>
+                    <span class="stat-label">Reference Signal Service</span>
                     <span class="stat-value" id="refStats">-</span>
                 </div>
                 <div class="stat-row">
-                    <span class="stat-label">Divergence</span>
-                    <span class="stat-value" id="refDiff">-</span>
+                    <span class="stat-label">Datafeed Diff</span>
+                    <span class="stat-value" id="datafeedDiff">-</span>
                 </div>
                 <div class="stat-row">
                     <span class="stat-label">Misdeeds</span>
-                    <span class="stat-value" id="misdeeds">-</span>
+                    <span class="stat-value" id="missetaten">-</span>
                 </div>
             </div>
         </div>
@@ -415,16 +318,11 @@
             </div>
         </div>
 
-        <div class="card equity-card" style="margin-top: 20px;">
+        <div class="card equity-card">
             <div class="card-title">Calendar View</div>
             <div class="calendar-view">
                 <div id="calendarContainer"></div>
             </div>
-        </div>
-
-        <div class="card equity-card" id="referenceDeviationsCard" style="margin-top: 20px; display: none;">
-            <div class="card-title">Reference Deviations</div>
-            <div id="referenceDeviationsContainer"></div>
         </div>
 
         <div class="footer">
@@ -437,15 +335,7 @@
         let gaugeChart;
         let equityChart;
         let allData = null;
-
-        // Read timeframe from URL hash or default to 'overall'
-        function getInitialTimeframe() {
-            const hash = window.location.hash.substring(1); // Remove '#'
-            const validTimeframes = ['overall', 'ytd', 'this_month', 'last_month'];
-            return validTimeframes.includes(hash) ? hash : 'overall';
-        }
-
-        let currentTimeframe = getInitialTimeframe();
+        let currentTimeframe = 'overall';
 
         // Initialize Gauge Chart
         function initGaugeChart() {
@@ -667,12 +557,33 @@
             profitFactorElem.style.color = pfColor;
             profitFactorElem.className = 'stat-value';
 
-            // Get profit for the timeframe - use monthly calendar data for consistency
-            let finalProfit = 0;
-            const calendarData = allData.calendar[timeframe];
-            if (calendarData && calendarData.monthly) {
-                // Sum up all monthly profits
-                finalProfit = calendarData.monthly.reduce((sum, month) => sum + month.profit, 0);
+            // Get profit for the timeframe
+            let finalProfit;
+            if (equity && equity.length > 0) {
+                if (timeframe === 'overall' || timeframe === 'ytd') {
+                    // For overall and YTD, show total profit (last equity value)
+                    finalProfit = equity[equity.length - 1].equity;
+                } else {
+                    // For time periods, calculate profit earned during the period
+                    // Since equity values are absolute cumulative, we need baseline before period
+                    const overallEquity = allData.equity.overall;
+                    const firstDateInPeriod = new Date(equity[0].date);
+                    let baselineEquity = 0;
+
+                    // Find last equity point before this period
+                    for (let i = overallEquity.length - 1; i >= 0; i--) {
+                        const pointDate = new Date(overallEquity[i].date);
+                        if (pointDate < firstDateInPeriod) {
+                            baselineEquity = overallEquity[i].equity;
+                            break;
+                        }
+                    }
+
+                    // Current equity minus equity before period = profit earned in period
+                    finalProfit = equity[equity.length - 1].equity - baselineEquity;
+                }
+            } else {
+                finalProfit = 0;
             }
 
             const totalDeposits = allData.total_deposits || 1; // Avoid division by zero
@@ -861,31 +772,22 @@
 
                 const ref = allData.signal_accuracy.last_month;
 
-                // Calculate totals
-                const yourTotal = data.wins + data.losses;
-                const refTotal = ref.reference_wins + ref.reference_losses;
-                const diffWins = data.wins - ref.reference_wins;
-                const diffLosses = data.losses - ref.reference_losses;
-                const diffTotal = diffWins + diffLosses;
+                // Your Stats
+                document.getElementById('yourStats').textContent =
+                    `${data.wins}W / ${data.losses}L`;
 
-                // Your Stats: W:L | Total (with color coding)
-                const yourStatsElem = document.getElementById('yourStats');
-                yourStatsElem.innerHTML =
-                    `<span style="color: var(--color-win)">${data.wins}</span>:<span style="color: var(--color-loss)">${data.losses}</span> | ${yourTotal}T`;
+                // Reference Signal Service
+                document.getElementById('refStats').textContent =
+                    `${ref.reference_wins}W / ${ref.reference_losses}L`;
 
-                // Reference: W:L | Total (with color coding)
-                const refStatsElem = document.getElementById('refStats');
-                refStatsElem.innerHTML =
-                    `<span style="color: var(--color-win)">${ref.reference_wins}</span>:<span style="color: var(--color-loss)">${ref.reference_losses}</span> | ${refTotal}T`;
+                // Datafeed Diff
+                const diffElem = document.getElementById('datafeedDiff');
+                diffElem.textContent = `${ref.datafeed_diff >= 0 ? '+' : ''}${ref.datafeed_diff}`;
+                diffElem.style.color = ref.datafeed_diff >= 0 ? 'var(--color-win)' : 'var(--color-loss)';
 
-                // Reference Diff: W:L | Total (with color coding, no + sign)
-                const diffElem = document.getElementById('refDiff');
-                diffElem.innerHTML =
-                    `<span style="color: var(--color-win)">${diffWins}</span>:<span style="color: var(--color-loss)">${diffLosses}</span> | ${diffTotal}T`;
-
-                // Misdeeds: Only additional losses (just the number)
-                const misdeeds = Math.max(0, diffLosses);  // Only count additional losses
-                const misdeedsElem = document.getElementById('misdeeds');
+                // Misdeeds (discrepancies from expected)
+                const misdeeds = Math.abs(data.wins - ref.expected_wins) + Math.abs(data.losses - ref.expected_losses);
+                const misdeedsElem = document.getElementById('missetaten');
                 misdeedsElem.textContent = misdeeds.toString();
                 misdeedsElem.style.color = misdeeds === 0 ? 'var(--color-win)' : 'var(--color-loss)';
             } else {
@@ -917,201 +819,101 @@
             if (timeframe === 'overall' || timeframe === 'ytd') {
                 // Monthly view
                 container.innerHTML = generateMonthlyCalendar(timeframe);
-                // Hide deviations card for yearly views
-                document.getElementById('referenceDeviationsCard').style.display = 'none';
             } else if (timeframe === 'this_month' || timeframe === 'last_month') {
                 // Daily view grouped by KW
                 container.innerHTML = generateDailyCalendar(timeframe);
-
-                // Show/hide reference deviations card
-                const deviationsCard = document.getElementById('referenceDeviationsCard');
-                const deviationsContainer = document.getElementById('referenceDeviationsContainer');
-
-                if (timeframe === 'last_month' && allData.trade_deviations && allData.trade_deviations.length > 0) {
-                    deviationsContainer.innerHTML = generateTradeDeviationsTable();
-                    deviationsCard.style.display = 'block';
-                } else {
-                    deviationsCard.style.display = 'none';
-                }
             } else {
                 container.innerHTML = '';
-                // Hide deviations card for other timeframes
-                document.getElementById('referenceDeviationsCard').style.display = 'none';
             }
         }
 
         // Generate monthly calendar for Max/YTD
         function generateMonthlyCalendar(timeframe) {
             const calendarData = allData.calendar[timeframe];
-            const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
-                               'July', 'August', 'September', 'October', 'November', 'December'];
-
-            // Create a map of existing trade data
-            const tradeDataMap = {};
-            if (calendarData && calendarData.monthly) {
-                calendarData.monthly.forEach(month => {
-                    tradeDataMap[month.date] = month;
-                });
+            if (!calendarData || !calendarData.monthly || calendarData.monthly.length === 0) {
+                return '<div style="color: var(--text-secondary); font-size: 12px;">No data available</div>';
             }
+
+            let html = '<div class="calendar-grid">';
 
             // For Max (overall), add yearly summaries first
             if (timeframe === 'overall') {
-                // Determine all years that have data
-                const years = new Set();
-                if (calendarData && calendarData.monthly) {
-                    calendarData.monthly.forEach(month => {
-                        years.add(month.date.substring(0, 4));
-                    });
-                }
-
                 const yearlyData = {};
-                Array.from(years).sort().forEach(year => {
-                    yearlyData[year] = { wins: 0, losses: 0, profit: 0, months: [] };
-
-                    // Generate all 12 months for this year
-                    for (let m = 1; m <= 12; m++) {
-                        const monthKey = `${year}-${m.toString().padStart(2, '0')}`;
-                        const monthData = tradeDataMap[monthKey];
-                        const monthObj = {
-                            date: monthKey,
-                            wins: monthData ? monthData.wins : 0,
-                            losses: monthData ? monthData.losses : 0,
-                            profit: monthData ? monthData.profit : 0
-                        };
-                        yearlyData[year].months.push(monthObj);
-                        yearlyData[year].wins += monthObj.wins;
-                        yearlyData[year].losses += monthObj.losses;
-                        yearlyData[year].profit += monthObj.profit;
+                calendarData.monthly.forEach(month => {
+                    const year = month.date.substring(0, 4);
+                    if (!yearlyData[year]) {
+                        yearlyData[year] = { wins: 0, losses: 0, profit: 0 };
                     }
+                    yearlyData[year].wins += month.wins;
+                    yearlyData[year].losses += month.losses;
+                    yearlyData[year].profit += month.profit;
                 });
-
-                let html = '<div class="calendar-grid">';
-
-                // Add header with month names
-                html += '<div class="calendar-header calendar-header-monthly">';
-                html += '<div class="calendar-header-cell">Year</div>';
-                monthNames.forEach(month => {
-                    html += `<div class="calendar-header-cell">${month.substring(0, 3)}</div>`;
-                });
-                html += '</div>';
 
                 // Display yearly summaries
                 Object.keys(yearlyData).sort().forEach(year => {
                     const data = yearlyData[year];
-                    const totalDeposits = allData.total_deposits || 6000;
-                    const yearProfitPercent = ((data.profit / totalDeposits) * 100).toFixed(1);
+                    const colorClass = data.wins > data.losses ? 'positive' : (data.wins < data.losses ? 'negative' : '');
                     html += `
-                        <div class="calendar-week-row">
+                        <div class="calendar-week-row" style="margin-bottom: 15px;">
                             <div class="week-summary">
                                 <div class="week-label">${year}</div>
-                                <div class="day-wl">${data.wins}:${data.losses}</div>
-                                <div style="margin-top: 4px;">${Math.round(data.profit).toLocaleString('de-DE')}€ | ${yearProfitPercent}%</div>
+                                <div style="color: var(--color-win)">${data.wins}</div>
+                                <div style="color: var(--color-loss)">${data.losses}</div>
+                                <div style="margin-top: 4px;">${Math.round(data.profit).toLocaleString('de-DE')}€</div>
                             </div>
-                            <div class="calendar-months">
+                            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 4px;">
                     `;
 
-                    // Add all 12 months
-                    data.months.forEach(month => {
+                    // Add months for this year
+                    calendarData.monthly.filter(m => m.date.startsWith(year)).forEach(month => {
+                        const monthName = new Date(month.date + '-01').toLocaleDateString('de-DE', { month: 'short', year: 'numeric' });
                         const colorClass = month.wins > month.losses ? 'positive' : (month.wins < month.losses ? 'negative' : (month.wins === 0 && month.losses === 0 ? 'empty' : ''));
-                        const totalDeposits = allData.total_deposits || 6000;
-                        const monthProfitPercent = ((month.profit / totalDeposits) * 100).toFixed(1);
+                        // Use pre-calculated TWR% from backend if available
+                        const monthProfitPercent = month.twr_percent !== undefined ? month.twr_percent.toFixed(1) : '0.0';
                         html += `
                             <div class="calendar-day ${colorClass}">
-                                <div class="day-wl">${month.wins}:${month.losses}</div>
-                                ${month.profit !== 0 ? `<div style="margin-top: 4px; font-size: 9px;">${Math.round(month.profit).toLocaleString('de-DE')}€ | ${monthProfitPercent}%</div>` : ''}
+                                <div class="day-label">${monthName}</div>
+                                <div style="color: var(--color-win); display: inline;">${month.wins}</div><span style="color: var(--text-secondary);">:</span><div style="color: var(--color-loss); display: inline;">${month.losses}</div>
+                                <div style="margin-top: 2px; font-size: 9px;">${Math.round(month.profit).toLocaleString('de-DE')}€ | ${monthProfitPercent}%</div>
                             </div>
                         `;
                     });
 
                     html += '</div></div>';
                 });
-
-                html += '</div>';
-                return html;
             } else {
-                // YTD: just show months of current year
-                const now = new Date();
-                const currentYear = now.getFullYear();
-                const currentMonth = now.getMonth() + 1;
-
-                // Generate all months for current year up to now
-                const allMonths = [];
-                for (let m = 1; m <= currentMonth; m++) {
-                    const monthKey = `${currentYear}-${m.toString().padStart(2, '0')}`;
-                    const monthData = tradeDataMap[monthKey];
-                    allMonths.push({
-                        date: monthKey,
-                        wins: monthData ? monthData.wins : 0,
-                        losses: monthData ? monthData.losses : 0,
-                        profit: monthData ? monthData.profit : 0
-                    });
-                }
-
-                let html = '<div class="calendar-grid">';
-
-                // Add header with month names for YTD
-                html += '<div class="calendar-header calendar-header-monthly">';
-                html += '<div class="calendar-header-cell">YTD</div>';
-                for (let m = 1; m <= currentMonth; m++) {
-                    html += `<div class="calendar-header-cell">${monthNames[m - 1].substring(0, 3)}</div>`;
-                }
-                html += '</div>';
-
-                // Single row for YTD
-                const ytdTotals = allMonths.reduce((acc, m) => ({
-                    wins: acc.wins + m.wins,
-                    losses: acc.losses + m.losses,
-                    profit: acc.profit + m.profit
-                }), { wins: 0, losses: 0, profit: 0 });
-
-                const totalDeposits = allData.total_deposits || 6000;
-                const ytdProfitPercent = ((ytdTotals.profit / totalDeposits) * 100).toFixed(1);
-
-                html += `
-                    <div class="calendar-week-row">
-                        <div class="week-summary">
-                            <div class="week-label">${currentYear}</div>
-                            <div class="day-wl">${ytdTotals.wins}:${ytdTotals.losses}</div>
-                            <div style="margin-top: 4px;">${Math.round(ytdTotals.profit).toLocaleString('de-DE')}€ | ${ytdProfitPercent}%</div>
-                        </div>
-                        <div class="calendar-months">
-                `;
-
-                allMonths.forEach(month => {
+                // YTD: just show months without yearly summary
+                html += '<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 4px;">';
+                calendarData.monthly.forEach(month => {
+                    const monthName = new Date(month.date + '-01').toLocaleDateString('de-DE', { month: 'short', year: 'numeric' });
                     const colorClass = month.wins > month.losses ? 'positive' : (month.wins < month.losses ? 'negative' : (month.wins === 0 && month.losses === 0 ? 'empty' : ''));
-                    const totalDeposits = allData.total_deposits || 6000;
-                    const monthProfitPercent = ((month.profit / totalDeposits) * 100).toFixed(1);
+                    // Use pre-calculated TWR% from backend if available
+                    const monthProfitPercent = month.twr_percent !== undefined ? month.twr_percent.toFixed(1) : '0.0';
                     html += `
                         <div class="calendar-day ${colorClass}">
-                            <div class="day-wl">${month.wins}:${month.losses}</div>
-                            ${month.profit !== 0 ? `<div style="margin-top: 4px; font-size: 9px;">${Math.round(month.profit).toLocaleString('de-DE')}€ | ${monthProfitPercent}%</div>` : ''}
+                            <div class="day-label">${monthName}</div>
+                            <div style="color: var(--color-win); display: inline;">${month.wins}</div><span style="color: var(--text-secondary);">:</span><div style="color: var(--color-loss); display: inline;">${month.losses}</div>
+                            <div style="margin-top: 2px; font-size: 9px;">${Math.round(month.profit).toLocaleString('de-DE')}€ | ${monthProfitPercent}%</div>
                         </div>
                     `;
                 });
-
-                html += '</div></div></div>';
-                return html;
+                html += '</div>';
             }
+
+            html += '</div>';
+            return html;
         }
 
         // Generate daily calendar for This Month/Last Month grouped by KW
         function generateDailyCalendar(timeframe) {
             const calendarData = allData.calendar[timeframe];
-
-            // Determine ORIGINAL date range (without extension)
-            const now = new Date();
-            let originalStartDate, originalEndDate;
-
-            if (timeframe === 'this_month') {
-                originalStartDate = new Date(now.getFullYear(), now.getMonth(), 1);
-                originalEndDate = new Date(now);
-            } else if (timeframe === 'last_month') {
-                originalStartDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-                originalEndDate = new Date(now.getFullYear(), now.getMonth(), 0);
+            if (!calendarData || !calendarData.daily || calendarData.daily.length === 0) {
+                return '<div style="color: var(--text-secondary); font-size: 12px;">No data available</div>';
             }
 
             // Helper function to get ISO week number
-            function getWeekNumber(date) {
+            function getWeekNumber(dateStr) {
+                const date = new Date(dateStr);
                 const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
                 const dayNum = d.getUTCDay() || 7;
                 d.setUTCDate(d.getUTCDate() + 4 - dayNum);
@@ -1120,101 +922,25 @@
                 return `KW${weekNo}`;
             }
 
-            // Helper to get Monday of the week
-            function getMondayOfWeek(date) {
-                const d = new Date(date);
-                const day = d.getDay() || 7; // Convert Sunday (0) to 7
-                d.setDate(d.getDate() - (day - 1)); // Go back to Monday
-                d.setHours(0, 0, 0, 0); // Reset time to avoid timezone issues
-                return d;
-            }
-
-            // Helper to format date as YYYY-MM-DD without timezone conversion
-            function formatDateString(date) {
-                const year = date.getFullYear();
-                const month = String(date.getMonth() + 1).padStart(2, '0');
-                const day = String(date.getDate()).padStart(2, '0');
-                return `${year}-${month}-${day}`;
-            }
-
-            // Create a map of ALL trade data (not just timeframe-specific)
-            const tradeDataMap = {};
-            if (allData.calendar && allData.calendar.overall && allData.calendar.overall.daily) {
-                allData.calendar.overall.daily.forEach(day => {
-                    tradeDataMap[day.date] = day;
-                });
-            }
-
-            // First pass: Find which weeks have WEEKDAYS (Mon-Fri) in the original timeframe
-            const weeksToInclude = new Set();
-            const currentDate = new Date(originalStartDate);
-            while (currentDate <= originalEndDate) {
-                const dayOfWeek = currentDate.getDay(); // 0=Sunday, 6=Saturday
-                // Only include weeks that have at least one weekday (Mon-Fri) in the timeframe
-                if (dayOfWeek !== 0 && dayOfWeek !== 6) { // Not Saturday or Sunday
-                    const week = getWeekNumber(currentDate);
-                    weeksToInclude.add(week);
-                }
-                currentDate.setDate(currentDate.getDate() + 1);
-            }
-
-            // Second pass: For each included week, generate all 7 days
+            // Group days by week
             const weeklyData = {};
-            weeksToInclude.forEach(week => {
-                // Find any day in this week from the original range
-                const tempDate = new Date(originalStartDate);
-                let sampleDate = null;
-                while (tempDate <= originalEndDate) {
-                    if (getWeekNumber(tempDate) === week) {
-                        sampleDate = new Date(tempDate);
-                        break;
-                    }
-                    tempDate.setDate(tempDate.getDate() + 1);
+            calendarData.daily.forEach(day => {
+                const week = getWeekNumber(day.date);
+                if (!weeklyData[week]) {
+                    weeklyData[week] = {
+                        wins: 0,
+                        losses: 0,
+                        profit: 0,
+                        days: []
+                    };
                 }
-
-                if (!sampleDate) return;
-
-                // Get Monday of this week
-                const monday = getMondayOfWeek(sampleDate);
-
-                // Generate all 7 days of this week
-                const weekDays = [];
-                for (let i = 0; i < 7; i++) {
-                    const dayDate = new Date(monday);
-                    dayDate.setDate(monday.getDate() + i);
-                    const dateStr = formatDateString(dayDate);
-                    const tradeData = tradeDataMap[dateStr];
-                    weekDays.push({
-                        date: dateStr,
-                        wins: tradeData ? tradeData.wins : 0,
-                        losses: tradeData ? tradeData.losses : 0,
-                        profit: tradeData ? tradeData.profit : 0
-                    });
-                }
-
-                // Calculate week totals
-                const weekTotals = weekDays.reduce((acc, day) => ({
-                    wins: acc.wins + day.wins,
-                    losses: acc.losses + day.losses,
-                    profit: acc.profit + day.profit
-                }), { wins: 0, losses: 0, profit: 0 });
-
-                weeklyData[week] = {
-                    wins: weekTotals.wins,
-                    losses: weekTotals.losses,
-                    profit: weekTotals.profit,
-                    days: weekDays
-                };
+                weeklyData[week].wins += day.wins;
+                weeklyData[week].losses += day.losses;
+                weeklyData[week].profit += day.profit;
+                weeklyData[week].days.push(day);
             });
 
-            // Add header with day names
             let html = '<div class="calendar-grid">';
-            html += '<div class="calendar-header calendar-header-daily">';
-            html += '<div class="calendar-header-cell">Week</div>';
-            ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].forEach(day => {
-                html += `<div class="calendar-header-cell">${day}</div>`;
-            });
-            html += '</div>';
 
             // Display each week
             Object.keys(weeklyData).sort((a, b) => {
@@ -1223,28 +949,25 @@
                 return weekA - weekB;
             }).forEach(week => {
                 const data = weeklyData[week];
-
                 html += `
                     <div class="calendar-week-row">
                         <div class="week-summary">
                             <div class="week-label">${week}</div>
-                            <div class="day-wl">${data.wins}:${data.losses}</div>
+                            <div><span style="color: var(--color-win)">${data.wins}</span><span style="color: var(--text-secondary)">:</span><span style="color: var(--color-loss)">${data.losses}</span></div>
                             <div style="margin-top: 4px;">${Math.round(data.profit).toLocaleString('de-DE')}€</div>
                         </div>
                         <div class="week-days">
                 `;
 
-                // Display all 7 days (already in correct Mon-Sun order)
-                data.days.forEach((day, index) => {
+                // Display days in this week
+                data.days.forEach(day => {
                     const date = new Date(day.date);
-                    const dayNum = date.getDate();
-                    const hasData = day.wins > 0 || day.losses > 0;
+                    const dayName = date.toLocaleDateString('de-DE', { weekday: 'short', day: 'numeric', month: 'numeric' });
                     const colorClass = day.wins > day.losses ? 'positive' : (day.wins < day.losses ? 'negative' : '');
-
                     html += `
-                        <div class="calendar-day ${colorClass}${!hasData ? ' empty' : ''}">
-                            <div class="day-date-topright">${dayNum}</div>
-                            ${hasData ? `<div class="day-wl">${day.wins}:${day.losses}</div>` : ''}
+                        <div class="calendar-day ${colorClass}">
+                            <div class="day-label">${dayName}</div>
+                            <div><span style="color: var(--color-win)">${day.wins}</span><span style="color: var(--text-secondary)">:</span><span style="color: var(--color-loss)">${day.losses}</span></div>
                         </div>
                     `;
                 });
@@ -1253,88 +976,6 @@
             });
 
             html += '</div>';
-            return html;
-        }
-
-        // Generate trade deviations table
-        function generateTradeDeviationsTable() {
-            const monthNames = {
-                '01': 'January', '02': 'February', '03': 'March', '04': 'April',
-                '05': 'May', '06': 'June', '07': 'July', '08': 'August',
-                '09': 'September', '10': 'October', '11': 'November', '12': 'December'
-            };
-
-            function formatDateTime(isoString) {
-                if (!isoString) return '-';
-                const date = new Date(isoString);
-                const month = monthNames[String(date.getMonth() + 1).padStart(2, '0')];
-                const day = date.getDate();
-                const year = date.getFullYear();
-                const hours = date.getHours();
-                const minutes = String(date.getMinutes()).padStart(2, '0');
-                const ampm = hours >= 12 ? 'PM' : 'AM';
-                const displayHours = hours % 12 || 12;
-                return `${month} ${day}, ${year} ${displayHours}:${minutes} ${ampm}`;
-            }
-
-            function getOutcomeClass(outcome) {
-                if (!outcome) return '';
-                if (outcome === 'Win' || outcome === 'Win next Month') return 'win';
-                if (outcome === 'Loss' || outcome === 'Loss next Month') return 'loss';
-                if (outcome === 'Canceled') return 'neutral';
-                if (outcome === 'Additionally') return 'neutral';
-                return '';
-            }
-
-            let html = `
-                <div style="overflow-x: auto;">
-                    <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
-                            <thead>
-                                <tr style="background: var(--bg-tertiary); border-bottom: 1px solid var(--border-primary);">
-                                    <th style="padding: 12px 8px; text-align: left; font-weight: 600;">Trade Nr.</th>
-                                    <th style="padding: 12px 8px; text-align: left; font-weight: 600;">Open Date/Time</th>
-                                    <th style="padding: 12px 8px; text-align: left; font-weight: 600;">Close Date/Time</th>
-                                    <th style="padding: 12px 8px; text-align: left; font-weight: 600;">Ref Outcome</th>
-                                    <th style="padding: 12px 8px; text-align: left; font-weight: 600;">Outcome</th>
-                                    <th style="padding: 12px 8px; text-align: left; font-weight: 600;">Comment</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-            `;
-
-            allData.trade_deviations.forEach((deviation, index) => {
-                const rowBg = index % 2 === 0 ? 'var(--bg-secondary)' : 'var(--bg-tertiary)';
-                const refOutcomeClass = getOutcomeClass(deviation.ref_outcome);
-                const outcomeClass = getOutcomeClass(deviation.outcome);
-
-                html += `
-                    <tr style="background: ${rowBg}; border-bottom: 1px solid var(--border-primary);">
-                        <td style="padding: 12px 8px;">${deviation.trade_nr}</td>
-                        <td style="padding: 12px 8px; font-size: 11px;">${formatDateTime(deviation.open_date)}</td>
-                        <td style="padding: 12px 8px; font-size: 11px;">${formatDateTime(deviation.close_date)}</td>
-                        <td style="padding: 12px 8px;">
-                            <span class="stat-value ${refOutcomeClass}" style="font-size: 12px; font-weight: 600;">
-                                ${deviation.ref_outcome || '-'}
-                            </span>
-                        </td>
-                        <td style="padding: 12px 8px;">
-                            <span class="stat-value ${outcomeClass}" style="font-size: 12px; font-weight: 600;">
-                                ${deviation.outcome || '-'}
-                            </span>
-                        </td>
-                        <td style="padding: 12px 8px; color: var(--text-secondary); font-size: 11px; max-width: 300px;">
-                            ${deviation.comment || '-'}
-                        </td>
-                    </tr>
-                `;
-            });
-
-            html += `
-                            </tbody>
-                        </table>
-                </div>
-            `;
-
             return html;
         }
 
@@ -1355,29 +996,13 @@
                 document.querySelectorAll('.timeframe-btn').forEach(b => b.classList.remove('active'));
                 this.classList.add('active');
                 currentTimeframe = this.dataset.timeframe;
-
-                // Update URL hash to save timeframe
-                window.location.hash = currentTimeframe;
-
                 updateDashboard(currentTimeframe);
             });
         });
 
-        // Set active button based on initial timeframe
-        function setActiveButton(timeframe) {
-            document.querySelectorAll('.timeframe-btn').forEach(btn => {
-                if (btn.dataset.timeframe === timeframe) {
-                    btn.classList.add('active');
-                } else {
-                    btn.classList.remove('active');
-                }
-            });
-        }
-
         // Initialize
         initGaugeChart();
         initEquityChart();
-        setActiveButton(currentTimeframe); // Set correct active button from URL hash
         loadData();
 
         // Auto-refresh every 60 seconds
