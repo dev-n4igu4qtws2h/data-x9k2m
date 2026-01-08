@@ -687,17 +687,33 @@
             profitElem.className = 'stat-value' + (finalProfit >= 0 ? ' win' : ' loss');
 
             // Calculate Drawdown: Peak (ATH up to timeframe end) - Last balance
+            // For non-overall timeframes, we need to subtract the baseline
+            let baselineEquity = 0;
+            if (timeframe !== 'overall' && equity && equity.length > 0) {
+                const firstDateInTimeframe = new Date(equity[0].date);
+                const overallEquity = allData.equity.overall;
+                // Find the last point before this timeframe
+                for (let i = overallEquity.length - 1; i >= 0; i--) {
+                    const pointDate = new Date(overallEquity[i].date);
+                    if (pointDate < firstDateInTimeframe) {
+                        baselineEquity = overallEquity[i].equity;
+                        break;
+                    }
+                }
+            }
+
             let peak = 0;
             let lastBalance = 0;
 
             if (equity && equity.length > 0) {
                 equity.forEach(point => {
-                    if (point.equity > peak) {
-                        peak = point.equity;
+                    const relativeEquity = point.equity - baselineEquity;
+                    if (relativeEquity > peak) {
+                        peak = relativeEquity;
                     }
                 });
-                // Last balance is the final equity value in timeframe
-                lastBalance = equity[equity.length - 1].equity;
+                // Last balance is the final equity value in timeframe (relative)
+                lastBalance = equity[equity.length - 1].equity - baselineEquity;
             }
 
             // DD = Peak - Last balance
@@ -723,12 +739,13 @@
 
             if (equity && equity.length > 0) {
                 equity.forEach(point => {
+                    const relativeEquity = point.equity - baselineEquity;
                     // Update peak (HWM) if current equity is higher
-                    if (point.equity > maxDdPeak) {
-                        maxDdPeak = point.equity;
+                    if (relativeEquity > maxDdPeak) {
+                        maxDdPeak = relativeEquity;
                     }
                     // Calculate drawdown from peak
-                    const drawdown = maxDdPeak - point.equity;
+                    const drawdown = maxDdPeak - relativeEquity;
                     const drawdownPercent = totalDeposits > 0 ? (drawdown / totalDeposits) * 100 : 0;
 
                     // Track maximum drawdown
