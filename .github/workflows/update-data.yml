@@ -6,6 +6,7 @@ on:
   workflow_dispatch:  # Manueller Trigger
   push:
     branches:
+      - main
       - claude/add-drawdown-metric-017bhXaSHFMoeSfRLmsFNMJN
 
 jobs:
