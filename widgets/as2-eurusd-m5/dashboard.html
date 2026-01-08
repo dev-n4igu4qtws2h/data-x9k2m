@@ -976,7 +976,8 @@
                             date: monthKey,
                             wins: monthData ? monthData.wins : 0,
                             losses: monthData ? monthData.losses : 0,
-                            profit: monthData ? monthData.profit : 0
+                            profit: monthData ? monthData.profit : 0,
+                            twr_percent: monthData ? monthData.twr_percent : 0
                         };
                         yearlyData[year].months.push(monthObj);
                         yearlyData[year].wins += monthObj.wins;
@@ -1043,7 +1044,8 @@
                         date: monthKey,
                         wins: monthData ? monthData.wins : 0,
                         losses: monthData ? monthData.losses : 0,
-                        profit: monthData ? monthData.profit : 0
+                        profit: monthData ? monthData.profit : 0,
+                        twr_percent: monthData ? monthData.twr_percent : 0
                     });
                 }
 
