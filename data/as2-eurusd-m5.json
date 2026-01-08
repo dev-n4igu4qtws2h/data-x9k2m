@@ -11,7 +11,7 @@
       "max_win": 4,
       "max_loss": 5
     },
-    "twr_percent": 6.15
+    "twr_percent": 7.05
   },
   "ytd": {
     "wins": 0,
@@ -25,7 +25,7 @@
       "max_win": 0,
       "max_loss": 1
     },
-    "twr_percent": -1.16
+    "twr_percent": -1.0
   },
   "this_month": {
     "wins": 0,
@@ -39,7 +39,7 @@
       "max_win": 0,
       "max_loss": 1
     },
-    "twr_percent": -1.16
+    "twr_percent": -1.0
   },
   "last_month": {
     "wins": 12,
@@ -795,7 +795,7 @@
       ]
     }
   },
-  "last_updated": "2026-01-08T10:40:31.591659Z",
+  "last_updated": "2026-01-08T10:49:14.268438Z",
   "total_deposits": 7000,
   "signal_accuracy": {
     "last_month": null,
