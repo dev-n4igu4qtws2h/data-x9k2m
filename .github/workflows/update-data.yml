@@ -380,7 +380,7 @@ jobs:
               this_month_stats['twr_percent'] = calculate_twr_percent(trades, start_of_month)
               last_month_stats['twr_percent'] = calculate_twr_percent(trades, start_of_last_month, end_of_last_month)
 
-              def get_calendar_data(trade_list, start=None, end=None):
+              def get_calendar_data(trade_list, start=None, end=None, deposits_list=None):
                   """Extract calendar data: trades grouped by date with W:L and P&L"""
                   from collections import defaultdict
 
@@ -441,13 +441,29 @@ jobs:
                   daily_list = [{'date': k, **v} for k, v in sorted(daily_data.items())]
                   monthly_list = [{'date': k, **v} for k, v in sorted(monthly_data.items())]
 
+                  # Add TWR% for each month
+                  for month_data in monthly_list:
+                      month_key = month_data['date']
+                      year, month = month_key.split('-')
+                      month_start = datetime(int(year), int(month), 1)
+
+                      # Calculate end of month
+                      if int(month) == 12:
+                          month_end = datetime(int(year) + 1, 1, 1) - timedelta(days=1)
+                      else:
+                          month_end = datetime(int(year), int(month) + 1, 1) - timedelta(days=1)
+
+                      # Calculate TWR% for this specific month
+                      month_twr = calculate_twr_percent(trade_list, month_start, month_end, deposits_list)
+                      month_data['twr_percent'] = month_twr
+
                   return {'daily': daily_list, 'monthly': monthly_list}
 
               # Get calendar data for each timeframe
-              overall_calendar = get_calendar_data(trades)
-              ytd_calendar = get_calendar_data(trades, start_of_year)
-              this_month_calendar = get_calendar_data(trades, start_of_month)
-              last_month_calendar = get_calendar_data(trades, start_of_last_month, end_of_last_month)
+              overall_calendar = get_calendar_data(trades, deposits_list=deposits_list)
+              ytd_calendar = get_calendar_data(trades, start_of_year, deposits_list=deposits_list)
+              this_month_calendar = get_calendar_data(trades, start_of_month, deposits_list=deposits_list)
+              last_month_calendar = get_calendar_data(trades, start_of_last_month, end_of_last_month, deposits_list=deposits_list)
 
               result = {
                   'overall': overall_stats,

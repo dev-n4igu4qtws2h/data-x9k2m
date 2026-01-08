@@ -867,12 +867,14 @@
                     // Add months for this year
                     calendarData.monthly.filter(m => m.date.startsWith(year)).forEach(month => {
                         const monthName = new Date(month.date + '-01').toLocaleDateString('de-DE', { month: 'short', year: 'numeric' });
-                        const colorClass = month.wins > month.losses ? 'positive' : (month.wins < month.losses ? 'negative' : '');
+                        const colorClass = month.wins > month.losses ? 'positive' : (month.wins < month.losses ? 'negative' : (month.wins === 0 && month.losses === 0 ? 'empty' : ''));
+                        // Use pre-calculated TWR% from backend if available
+                        const monthProfitPercent = month.twr_percent !== undefined ? month.twr_percent.toFixed(1) : '0.0';
                         html += `
                             <div class="calendar-day ${colorClass}">
                                 <div class="day-label">${monthName}</div>
                                 <div style="color: var(--color-win); display: inline;">${month.wins}</div><span style="color: var(--text-secondary);">:</span><div style="color: var(--color-loss); display: inline;">${month.losses}</div>
-                                <div style="margin-top: 2px; font-size: 9px;">${Math.round(month.profit).toLocaleString('de-DE')}€</div>
+                                <div style="margin-top: 2px; font-size: 9px;">${Math.round(month.profit).toLocaleString('de-DE')}€ | ${monthProfitPercent}%</div>
                             </div>
                         `;
                     });
@@ -884,12 +886,14 @@
                 html += '<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 4px;">';
                 calendarData.monthly.forEach(month => {
                     const monthName = new Date(month.date + '-01').toLocaleDateString('de-DE', { month: 'short', year: 'numeric' });
-                    const colorClass = month.wins > month.losses ? 'positive' : (month.wins < month.losses ? 'negative' : '');
+                    const colorClass = month.wins > month.losses ? 'positive' : (month.wins < month.losses ? 'negative' : (month.wins === 0 && month.losses === 0 ? 'empty' : ''));
+                    // Use pre-calculated TWR% from backend if available
+                    const monthProfitPercent = month.twr_percent !== undefined ? month.twr_percent.toFixed(1) : '0.0';
                     html += `
                         <div class="calendar-day ${colorClass}">
                             <div class="day-label">${monthName}</div>
                             <div style="color: var(--color-win); display: inline;">${month.wins}</div><span style="color: var(--text-secondary);">:</span><div style="color: var(--color-loss); display: inline;">${month.losses}</div>
-                            <div style="margin-top: 2px; font-size: 9px;">${Math.round(month.profit).toLocaleString('de-DE')}€</div>
+                            <div style="margin-top: 2px; font-size: 9px;">${Math.round(month.profit).toLocaleString('de-DE')}€ | ${monthProfitPercent}%</div>
                         </div>
                     `;
                 });
