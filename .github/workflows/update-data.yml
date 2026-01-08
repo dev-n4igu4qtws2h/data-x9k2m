@@ -222,8 +222,8 @@ jobs:
                           'type': 'deposit'
                       })
 
-              # Sort by date
-              all_trades.sort(key=lambda x: x['date'])
+              # Sort by date, deposits before trades on same day
+              all_trades.sort(key=lambda x: (x['date'], 0 if x['type'] == 'deposit' else 1))
 
               # Calculate TWR% by summing individual trade percentages
               twr_sum = 0.0
