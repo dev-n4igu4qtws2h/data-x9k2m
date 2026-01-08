@@ -199,10 +199,12 @@ jobs:
 
               return equity_data
 
-          def calculate_twr_percent(trades, start_date=None, end_date=None, total_deposits=6000):
-              """Calculate Time-Weighted Return % for a timeframe"""
-              # Get all trades sorted by date
+          def calculate_twr_percent(trades, start_date=None, end_date=None, deposits_list=None):
+              """Calculate Time-Weighted Return % for a timeframe with deposits"""
+              # Combine trades and deposits into one list for chronological processing
               all_trades = []
+
+              # Add trades
               for trade in trades:
                   trade_date = get_trade_date(trade)
                   if trade_date:
@@ -210,32 +212,47 @@ jobs:
                       if profit is not None:
                           all_trades.append({
                               'date': trade_date,
-                              'profit': profit
+                              'profit': profit,
+                              'type': 'trade'
                           })
 
-              # Sort by date
-              all_trades.sort(key=lambda x: x['date'])
+              # Add deposits
+              if deposits_list:
+                  for deposit in deposits_list:
+                      all_trades.append({
+                          'date': deposit['date'],
+                          'amount': deposit['amount'],
+                          'type': 'deposit'
+                      })
+
+              # Sort by date, deposits before trades on same day
+              all_trades.sort(key=lambda x: (x['date'], 0 if x['type'] == 'deposit' else 1))
 
               # Calculate TWR% by summing individual trade percentages
               twr_sum = 0.0
-              balance_before = total_deposits  # Starting balance
+              balance_before = 0  # Starting balance (deposits will add to this)
 
-              for trade in all_trades:
-                  # Check if trade is within timeframe
-                  if start_date and trade['date'] < start_date:
-                      # Update balance but don't count toward TWR for this timeframe
-                      balance_before += trade['profit']
+              for item in all_trades:
+                  # Handle deposits
+                  if item['type'] == 'deposit':
+                      balance_before += item['amount']
                       continue
-                  if end_date and trade['date'] > end_date:
+
+                  # Check if trade is within timeframe
+                  if start_date and item['date'] < start_date:
+                      # Update balance but don't count toward TWR for this timeframe
+                      balance_before += item['profit']
+                      continue
+                  if end_date and item['date'] > end_date:
                       break
 
                   # Calculate TWR% for this trade
                   if balance_before > 0:
-                      trade_twr_percent = (trade['profit'] / balance_before) * 100
+                      trade_twr_percent = (item['profit'] / balance_before) * 100
                       twr_sum += trade_twr_percent
 
                   # Update balance for next trade
-                  balance_before += trade['profit']
+                  balance_before += item['profit']
 
               return round(twr_sum, 2)
 
