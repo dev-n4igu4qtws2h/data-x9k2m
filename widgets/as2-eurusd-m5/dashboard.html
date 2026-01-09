@@ -1239,7 +1239,13 @@
             Object.keys(weeklyData).sort((a, b) => {
                 const weekA = parseInt(a.replace('KW', ''));
                 const weekB = parseInt(b.replace('KW', ''));
-                return weekA - weekB;
+
+                // Handle year transition: KW1-3 should come after KW49-53
+                // Treat KW1-3 as 60+ for sorting purposes
+                const sortA = weekA <= 3 ? weekA + 60 : weekA;
+                const sortB = weekB <= 3 ? weekB + 60 : weekB;
+
+                return sortA - sortB;
             }).forEach(week => {
                 const data = weeklyData[week];
 
