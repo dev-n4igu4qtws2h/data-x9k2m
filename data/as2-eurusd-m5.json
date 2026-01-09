@@ -802,10 +802,19 @@
       ]
     }
   },
-  "last_updated": "2026-01-09T16:14:38.913483Z",
+  "last_updated": "2026-01-09T16:54:16.135636Z",
   "total_deposits": 7000,
   "signal_accuracy": {
-    "last_month": null,
+    "last_month": {
+      "reference_wins": 12,
+      "reference_losses": 8,
+      "datafeed_diff": 0,
+      "expected_wins": 12,
+      "expected_losses": 8,
+      "wins_match": true,
+      "losses_match": true,
+      "in_sync": true
+    },
     "this_month": null
   }
 }
