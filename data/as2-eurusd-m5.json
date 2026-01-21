@@ -1,45 +1,45 @@
 {
   "overall": {
     "wins": 36,
-    "losses": 28,
-    "total": 64,
-    "winrate": 56.2,
-    "profit_factor": 1.24,
+    "losses": 29,
+    "total": 65,
+    "winrate": 55.4,
+    "profit_factor": 1.19,
     "streak": {
       "current": 1,
-      "current_type": "win",
+      "current_type": "loss",
       "max_win": 4,
       "max_loss": 5
     },
-    "twr_percent": 7.97
+    "twr_percent": 6.97
   },
   "ytd": {
     "wins": 3,
-    "losses": 3,
-    "total": 6,
-    "winrate": 50.0,
-    "profit_factor": 0.93,
+    "losses": 4,
+    "total": 7,
+    "winrate": 42.9,
+    "profit_factor": 0.7,
     "streak": {
       "current": 1,
-      "current_type": "win",
+      "current_type": "loss",
       "max_win": 1,
       "max_loss": 1
     },
-    "twr_percent": -0.08
+    "twr_percent": -1.08
   },
   "this_month": {
     "wins": 3,
-    "losses": 3,
-    "total": 6,
-    "winrate": 50.0,
-    "profit_factor": 0.93,
+    "losses": 4,
+    "total": 7,
+    "winrate": 42.9,
+    "profit_factor": 0.7,
     "streak": {
       "current": 1,
-      "current_type": "win",
+      "current_type": "loss",
       "max_win": 1,
       "max_loss": 1
     },
-    "twr_percent": -0.08
+    "twr_percent": -1.08
   },
   "last_month": {
     "wins": 12,
@@ -324,6 +324,10 @@
       {
         "date": "2026-01-20",
         "equity": 429.36
+      },
+      {
+        "date": "2026-01-21",
+        "equity": 354.68
       }
     ],
     "ytd": [
@@ -354,6 +358,10 @@
       {
         "date": "2026-01-20",
         "equity": 429.36
+      },
+      {
+        "date": "2026-01-21",
+        "equity": 354.68
       }
     ],
     "this_month": [
@@ -384,6 +392,10 @@
       {
         "date": "2026-01-20",
         "equity": 429.36
+      },
+      {
+        "date": "2026-01-21",
+        "equity": 354.68
       }
     ],
     "last_month": [
@@ -735,6 +747,12 @@
           "wins": 1,
           "losses": 0,
           "profit": 71.56096890259418
+        },
+        {
+          "date": "2026-01-21",
+          "wins": 0,
+          "losses": 1,
+          "profit": -74.6784615384621
         }
       ],
       "monthly": [
@@ -762,9 +780,9 @@
         {
           "date": "2026-01",
           "wins": 3,
-          "losses": 3,
-          "profit": -16.232346238841316,
-          "twr_percent": -0.08
+          "losses": 4,
+          "profit": -90.91080777730342,
+          "twr_percent": -1.08
         }
       ]
     },
@@ -799,15 +817,21 @@
           "wins": 1,
           "losses": 0,
           "profit": 71.56096890259418
+        },
+        {
+          "date": "2026-01-21",
+          "wins": 0,
+          "losses": 1,
+          "profit": -74.6784615384621
         }
       ],
       "monthly": [
         {
           "date": "2026-01",
           "wins": 3,
-          "losses": 3,
-          "profit": -16.232346238841316,
-          "twr_percent": -0.08
+          "losses": 4,
+          "profit": -90.91080777730342,
+          "twr_percent": -1.08
         }
       ]
     },
@@ -842,15 +866,21 @@
           "wins": 1,
           "losses": 0,
           "profit": 71.56096890259418
+        },
+        {
+          "date": "2026-01-21",
+          "wins": 0,
+          "losses": 1,
+          "profit": -74.6784615384621
         }
       ],
       "monthly": [
         {
           "date": "2026-01",
           "wins": 3,
-          "losses": 3,
-          "profit": -16.232346238841316,
-          "twr_percent": -0.08
+          "losses": 4,
+          "profit": -90.91080777730342,
+          "twr_percent": -1.08
         }
       ]
     },
@@ -946,7 +976,7 @@
       ]
     }
   },
-  "last_updated": "2026-01-21T15:20:19.176833Z",
+  "last_updated": "2026-01-21T16:24:04.331531Z",
   "total_deposits": 7000,
   "signal_accuracy": {
     "last_month": {
