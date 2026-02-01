@@ -28,6 +28,20 @@
     "twr_percent": -3.08
   },
   "this_month": {
+    "wins": 0,
+    "losses": 0,
+    "total": 0,
+    "winrate": 0,
+    "profit_factor": 0,
+    "streak": {
+      "current": 0,
+      "current_type": "none",
+      "max_win": 0,
+      "max_loss": 0
+    },
+    "twr_percent": 0.0
+  },
+  "last_month": {
     "wins": 7,
     "losses": 10,
     "total": 17,
@@ -40,20 +54,6 @@
       "max_loss": 3
     },
     "twr_percent": -3.08
-  },
-  "last_month": {
-    "wins": 12,
-    "losses": 8,
-    "total": 20,
-    "winrate": 60.0,
-    "profit_factor": 1.45,
-    "streak": {
-      "current": 1,
-      "current_type": "loss",
-      "max_win": 3,
-      "max_loss": 3
-    },
-    "twr_percent": 3.67
   },
   "equity": {
     "overall": [
@@ -444,7 +444,8 @@
         "equity": 205.64
       }
     ],
-    "this_month": [
+    "this_month": [],
+    "last_month": [
       {
         "date": "2026-01-07",
         "equity": 362.83
@@ -516,88 +517,6 @@
       {
         "date": "2026-01-30",
         "equity": 205.64
-      }
-    ],
-    "last_month": [
-      {
-        "date": "2025-12-01",
-        "equity": 270.85
-      },
-      {
-        "date": "2025-12-02",
-        "equity": 207.35
-      },
-      {
-        "date": "2025-12-02",
-        "equity": 145.79
-      },
-      {
-        "date": "2025-12-02",
-        "equity": 83.87
-      },
-      {
-        "date": "2025-12-03",
-        "equity": 146.28
-      },
-      {
-        "date": "2025-12-03",
-        "equity": 83.55
-      },
-      {
-        "date": "2025-12-04",
-        "equity": 138.76
-      },
-      {
-        "date": "2025-12-04",
-        "equity": 77.82
-      },
-      {
-        "date": "2025-12-05",
-        "equity": 138.3
-      },
-      {
-        "date": "2025-12-05",
-        "equity": 197.41
-      },
-      {
-        "date": "2025-12-08",
-        "equity": 258.47
-      },
-      {
-        "date": "2025-12-09",
-        "equity": 195.27
-      },
-      {
-        "date": "2025-12-10",
-        "equity": 258.24
-      },
-      {
-        "date": "2025-12-11",
-        "equity": 319.1
-      },
-      {
-        "date": "2025-12-15",
-        "equity": 381.03
-      },
-      {
-        "date": "2025-12-16",
-        "equity": 315.54
-      },
-      {
-        "date": "2025-12-16",
-        "equity": 376.73
-      },
-      {
-        "date": "2025-12-17",
-        "equity": 438.61
-      },
-      {
-        "date": "2025-12-22",
-        "equity": 499.93
-      },
-      {
-        "date": "2025-12-22",
-        "equity": 437.26
       }
     ]
   },
@@ -1040,6 +959,10 @@
       ]
     },
     "this_month": {
+      "daily": [],
+      "monthly": []
+    },
+    "last_month": {
       "daily": [
         {
           "date": "2026-01-07",
@@ -1129,112 +1052,12 @@
           "twr_percent": -3.08
         }
       ]
-    },
-    "last_month": {
-      "daily": [
-        {
-          "date": "2025-12-01",
-          "wins": 1,
-          "losses": 0,
-          "profit": 59.28745206093069
-        },
-        {
-          "date": "2025-12-02",
-          "wins": 0,
-          "losses": 3,
-          "profit": -186.98129070891483
-        },
-        {
-          "date": "2025-12-03",
-          "wins": 1,
-          "losses": 1,
-          "profit": -0.32150732590564957
-        },
-        {
-          "date": "2025-12-04",
-          "wins": 1,
-          "losses": 1,
-          "profit": -5.7254332792994305
-        },
-        {
-          "date": "2025-12-05",
-          "wins": 2,
-          "losses": 0,
-          "profit": 119.59115765558965
-        },
-        {
-          "date": "2025-12-08",
-          "wins": 1,
-          "losses": 0,
-          "profit": 61.051965024986295
-        },
-        {
-          "date": "2025-12-09",
-          "wins": 0,
-          "losses": 1,
-          "profit": -63.194511695072165
-        },
-        {
-          "date": "2025-12-10",
-          "wins": 1,
-          "losses": 0,
-          "profit": 62.969745287948655
-        },
-        {
-          "date": "2025-12-11",
-          "wins": 1,
-          "losses": 0,
-          "profit": 60.85586048058785
-        },
-        {
-          "date": "2025-12-15",
-          "wins": 1,
-          "losses": 0,
-          "profit": 61.932970811674096
-        },
-        {
-          "date": "2025-12-16",
-          "wins": 1,
-          "losses": 1,
-          "profit": -4.296575013118776
-        },
-        {
-          "date": "2025-12-17",
-          "wins": 1,
-          "losses": 0,
-          "profit": 61.879749833850774
-        },
-        {
-          "date": "2025-12-22",
-          "wins": 1,
-          "losses": 1,
-          "profit": -1.3572631322430695
-        }
-      ],
-      "monthly": [
-        {
-          "date": "2025-12",
-          "wins": 12,
-          "losses": 8,
-          "profit": 225.6923200010141,
-          "twr_percent": 3.67
-        }
-      ]
     }
   },
-  "last_updated": "2026-01-31T23:12:44.286589Z",
+  "last_updated": "2026-02-01T01:16:34.256380Z",
   "total_deposits": 7000,
   "signal_accuracy": {
-    "last_month": {
-      "reference_wins": 12,
-      "reference_losses": 8,
-      "datafeed_diff": 0,
-      "expected_wins": 12,
-      "expected_losses": 8,
-      "wins_match": true,
-      "losses_match": true,
-      "in_sync": true
-    },
+    "last_month": null,
     "this_month": null
   }
 }
