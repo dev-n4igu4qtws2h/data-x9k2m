@@ -768,7 +768,7 @@
           "date": "2025-10",
           "wins": 8,
           "losses": 4,
-          "profit": 225.10095150958227,
+          "profit": 225.10095150958233,
           "twr_percent": 4.47
         },
         {
@@ -782,14 +782,14 @@
           "date": "2025-12",
           "wins": 12,
           "losses": 8,
-          "profit": 225.6923200010141,
+          "profit": 225.69232000101405,
           "twr_percent": 3.67
         },
         {
           "date": "2026-01",
           "wins": 7,
           "losses": 10,
-          "profit": -239.9542765281559,
+          "profit": -239.95427652815584,
           "twr_percent": -3.08
         }
       ]
@@ -880,7 +880,7 @@
           "date": "2026-01",
           "wins": 7,
           "losses": 10,
-          "profit": -239.9542765281559,
+          "profit": -239.95427652815584,
           "twr_percent": -3.08
         }
       ]
@@ -894,7 +894,7 @@
       "monthly": []
     }
   },
-  "last_updated": "2026-04-13T17:50:22.892719Z",
+  "last_updated": "2026-04-13T18:59:10.578730Z",
   "total_deposits": 7000,
   "signal_accuracy": {
     "last_month": null,
